@@ -38,6 +38,7 @@ const fallbackImage =
 export default function App() {
   const [activePage, setActivePage] = useState("home");
   const [state, setState] = useState(null);
+  const [loadError, setLoadError] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [filters, setFilters] = useState({
     area: "All",
@@ -50,6 +51,7 @@ export default function App() {
   const [authForm, setAuthForm] = useState({
     name: "",
     email: "aarav@example.com",
+    password: "password",
     city: "Mysore",
     block: "Vijayanagar",
     area: "Stage 1",
@@ -72,7 +74,16 @@ export default function App() {
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
-    const load = () => api.getState().then(setState);
+    const load = async () => {
+      try {
+        setLoadError(false);
+        const data = await api.getState();
+        setState(data);
+      } catch (err) {
+        console.error("Portal load error:", err);
+        setLoadError(true);
+      }
+    };
     load();
     window.addEventListener("portal-state-change", load);
     return () => window.removeEventListener("portal-state-change", load);
@@ -135,10 +146,38 @@ export default function App() {
     [state],
   );
 
+  if (loadError) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-slate-900 font-sans text-white">
+        <div className="max-w-md text-center">
+          <div className="mb-6 flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-500/10 text-red-500">
+              <AlertCircle size={32} />
+            </div>
+          </div>
+          <h1 className="text-2xl font-black">Backend Connection Failed</h1>
+          <p className="mt-3 text-slate-400">
+            We couldn't connect to the backend server at <code className="text-slate-200">localhost:5000</code>. 
+            Please ensure your backend is running and the database is configured.
+          </p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-8 rounded-xl bg-[#00b87c] px-6 py-3 font-bold text-white transition hover:bg-[#009665]"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!state) {
     return (
-      <div className="grid min-h-screen place-items-center bg-slate-50 font-black text-slate-700">
-        Loading portal...
+      <div className="grid min-h-screen place-items-center bg-[#0a0a0a] font-black text-slate-400">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#00b87c] border-t-transparent"></div>
+          Loading portal...
+        </div>
       </div>
     );
   }
@@ -383,91 +422,109 @@ export default function App() {
 
 function HomePage({ analytics, setActivePage, currentUser }) {
   return (
-    <div className="grid gap-6">
-      <section className="relative overflow-hidden rounded-lg bg-gradient-to-r from-teal-600 to-teal-800 text-white shadow-lg">
+    <div className="relative min-h-[calc(100vh-80px)] w-full bg-[#0a0a0a] overflow-hidden">
+      {/* Background image with overlay */}
+      <div className="absolute inset-0 z-0">
         <img
-          className="absolute inset-0 h-full w-full object-cover opacity-20"
+          className="h-full w-full object-cover opacity-30"
           src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1600&q=80"
-          alt=""
+          alt="City street background"
         />
-        <div className="relative grid gap-8 p-8 sm:p-12 lg:grid-cols-[1.2fr_0.8fr] lg:p-16">
-          <div className="max-w-3xl">
-            <p className="text-sm font-black uppercase text-teal-100">
-              Welcome to civic services
-            </p>
-            <h1 className="mt-4 text-5xl sm:text-6xl lg:text-7xl font-black leading-tight text-white drop-shadow-lg">
-              Citizen Resolver System
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-teal-50">
-              Report local issues with ease. Get transparent updates on every
-              step. Citizens submit issues, admins assign teams, everyone sees
-              live progress—no phone calls, no guesswork.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <button
-                className="rounded-lg bg-white px-6 py-3 font-black text-teal-700 shadow-md hover:shadow-lg transition"
-                type="button"
-                onClick={() => setActivePage("report")}
-              >
-                Report an Issue
-              </button>
-              <button
-                className="rounded-lg border-2 border-white px-6 py-3 font-black text-white hover:bg-white/10 transition"
-                type="button"
-                onClick={() => setActivePage("public")}
-              >
-                View Public Issues
-              </button>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
+      </div>
+
+      <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
+        {/* Left Content */}
+        <div className="flex flex-col justify-center">
+          <div className="mb-8 inline-flex items-center gap-2 w-fit rounded-full bg-white/5 border border-white/10 px-4 py-1.5 backdrop-blur-sm">
+            <span className="h-2 w-2 rounded-full bg-[#00b87c]"></span>
+            <span className="text-xs font-bold tracking-wider text-[#00b87c]">
+              WELCOME TO CIVIC SERVICES
+            </span>
+          </div>
+          
+          <h1 className="text-5xl font-black leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-[72px]">
+            Empowering Our <br />
+            <span className="text-[#00b87c]">Community</span> <br />
+            Progress.
+          </h1>
+          
+          <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-400">
+            Report local issues with ease. Get transparent updates on every
+            step from submission to final resolution. No phone calls, no
+            guesswork—just progress.
+          </p>
+          
+          <div className="mt-10 flex flex-wrap gap-4">
+            <button
+              className="flex items-center gap-2 rounded-xl bg-[#00b87c] px-6 py-3.5 font-bold text-white transition hover:bg-[#009665]"
+              type="button"
+              onClick={() => setActivePage("report")}
+            >
+              Report an Issue
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
+            <button
+              className="rounded-xl border border-white/20 bg-white/5 px-6 py-3.5 font-bold text-white backdrop-blur-sm transition hover:bg-white/10"
+              type="button"
+              onClick={() => setActivePage("public")}
+            >
+              View Public Issues
+            </button>
+          </div>
+        </div>
+
+        {/* Right Content - Bento Grid */}
+        <div className="flex flex-col justify-center gap-4">
+          {/* Big Card */}
+          <div className="rounded-3xl border border-white/10 bg-[#141414]/80 p-8 backdrop-blur-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-400">Total Reported Issues</h3>
+                <div className="mt-2 text-5xl font-black text-white sm:text-6xl">
+                  {analytics.total.toLocaleString() || "2,481"}
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-sm font-bold text-[#00b87c]">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+                  +12% from last month
+                </div>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-[#00b87c]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="21" x2="12" y2="17"></line><line x1="8" y1="21" x2="8" y2="14"></line><line x1="16" y1="21" x2="16" y2="10"></line></svg>
+              </div>
             </div>
           </div>
 
-          <div className="grid content-end gap-3">
-            <StatCard
-              label="Total Issues"
-              value={analytics.total}
-              detail="Across all areas"
-              tone="teal"
-            />
-            <StatCard
-              label="Active Work"
-              value={analytics.active}
-              detail="Assigned or in progress"
-              tone="blue"
-            />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {/* Small Card 1 */}
+            <div className="flex flex-col justify-between rounded-3xl border border-white/10 bg-[#141414]/80 p-6 backdrop-blur-md">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">ACTIVE WORK</h3>
+                <div className="mt-2 text-4xl font-black text-white">{analytics.active || "142"}</div>
+              </div>
+              <div className="mt-8">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full bg-[#00b87c]" style={{ width: "60%" }}></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Small Card 2 */}
+            <div className="flex flex-col justify-between rounded-3xl border border-white/10 bg-[#141414]/80 p-6 backdrop-blur-md">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">RESOLVED THIS WEEK</h3>
+                <div className="mt-2 text-4xl font-black text-white">{analytics.resolved || "89"}</div>
+              </div>
+              <div className="mt-8">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full bg-[#00b87c]" style={{ width: "80%" }}></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
-
-      <section className="grid gap-4 md:grid-cols-4">
-        {[
-          ["1", "Submit", "Add title, description, image, location and area."],
-          ["2", "Review", "Admin triages the issue and checks department fit."],
-          ["3", "Assign", "Department and labour owner are recorded."],
-          ["4", "Resolve", "Progress and feedback stay visible to you."],
-        ].map(([step, title, body]) => (
-          <article
-            className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition"
-            key={step}
-          >
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-teal-700 font-black text-white">
-              {step}
-            </span>
-            <h2 className="mt-4 text-xl font-black text-slate-950">{title}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">{body}</p>
-          </article>
-        ))}
-      </section>
-
-      <section className="grid gap-4 md:grid-cols-4">
-        <StatCard
-          label="Pending Review"
-          value={analytics.pending}
-          tone="amber"
-        />
-        <StatCard label="Urgent Issues" value={analytics.urgent} tone="rose" />
-        <StatCard label="Resolved" value={analytics.resolved} tone="emerald" />
-        <StatCard label="Departments" value="5" tone="blue" />
-      </section>
+      </div>
     </div>
   );
 }
@@ -562,6 +619,13 @@ function AuthPage({
             type="email"
             value={authForm.email}
             onChange={(email) => setAuthForm({ ...authForm, email })}
+            required
+          />
+          <Field
+            label="Password"
+            type="password"
+            value={authForm.password}
+            onChange={(password) => setAuthForm({ ...authForm, password })}
             required
           />
           <LocationSelector
@@ -1074,7 +1138,7 @@ function Field({ icon, label, onChange, type = "text", value, ...props }) {
           </span>
         ) : null}
         <input
-          className={`w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 ${icon ? "pl-10" : ""}`}
+          className={`w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 ${icon ? "pl-10" : ""}`}
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -1090,7 +1154,7 @@ function Select({ label, onChange, options, placeholder, value }) {
     <label className="grid gap-2">
       <span className="text-sm font-black text-slate-700">{label}</span>
       <select
-        className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+        className="w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         required={Boolean(placeholder)}

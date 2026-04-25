@@ -1,167 +1,87 @@
-import {
-  areas,
-  departments,
-  issues,
-  labour,
-  notifications,
-  roles,
-  users,
-} from "../data/mockData";
+const BASE_URL = 'http://localhost:5000/api';
 
-const storageKey = "citizen-helpline-portal";
-
-const delay = (payload) =>
-  new Promise((resolve) => {
-    window.setTimeout(() => resolve(structuredClone(payload)), 180);
-  });
-
-const baseState = {
-  users,
-  issues,
-  areas,
-  departments,
-  labour,
-  notifications,
-  currentUser: users[0],
+const getHeaders = () => {
+  const user = JSON.parse(localStorage.getItem('citizen-user') || '{}');
+  const headers = { 'Content-Type': 'application/json' };
+  if (user.token) {
+    headers['Authorization'] = `Bearer ${user.token}`;
+  }
+  return headers;
 };
-
-function readState() {
-  const saved = localStorage.getItem(storageKey);
-
-  if (!saved) {
-    localStorage.setItem(storageKey, JSON.stringify(baseState));
-    return structuredClone(baseState);
-  }
-
-  try {
-    const parsedSaved = JSON.parse(saved);
-    // Only merge baseState for non-user fields; users must be from saved state
-    return {
-      users: parsedSaved.users || [],
-      issues: parsedSaved.issues || baseState.issues,
-      areas: parsedSaved.areas || baseState.areas,
-      departments: parsedSaved.departments || baseState.departments,
-      labour: parsedSaved.labour || baseState.labour,
-      notifications: parsedSaved.notifications || baseState.notifications,
-      currentUser: parsedSaved.currentUser || null,
-    };
-  } catch {
-    localStorage.setItem(storageKey, JSON.stringify(baseState));
-    return structuredClone(baseState);
-  }
-}
-
-function writeState(nextState) {
-  localStorage.setItem(storageKey, JSON.stringify(nextState));
-  window.dispatchEvent(new Event("portal-state-change"));
-}
 
 export const api = {
   async getState() {
-    return delay(readState());
+    const res = await fetch(`${BASE_URL}/state`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch state');
+    const data = await res.json();
+    
+    // We also need the currentUser from local storage for the shell
+    const currentUser = JSON.parse(localStorage.getItem('citizen-user') || 'null');
+    return { ...data, currentUser };
   },
 
-  async login({ email, role }) {
-    const state = readState();
-    const user = state.users.find(
-      (item) => item.email.toLowerCase() === email.toLowerCase(),
-    );
-
-    if (!user) {
-      throw new Error(
-        "No account found with this email. Please sign up first.",
-      );
-    }
-
-    state.currentUser = user;
-    writeState(state);
-    return delay(user);
+  async login({ email }) {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (!res.ok) throw new Error('Invalid credentials');
+    const user = await res.json();
+    localStorage.setItem('citizen-user', JSON.stringify(user));
+    window.dispatchEvent(new Event('portal-state-change'));
+    return user;
   },
 
-  async signup({ name, email, city, block, area }) {
-    const state = readState();
-    const nextUser = {
-      id: Date.now(),
-      name,
-      email,
-      role: roles.citizen,
-      city,
-      block,
-      area,
-    };
-
-    state.users = [nextUser, ...state.users];
-    state.currentUser = nextUser;
-    writeState(state);
-    return delay(nextUser);
+  async signup(payload) {
+    const res = await fetch(`${BASE_URL}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Signup failed');
+    const user = await res.json();
+    localStorage.setItem('citizen-user', JSON.stringify(user));
+    window.dispatchEvent(new Event('portal-state-change'));
+    return user;
   },
 
   async createIssue(payload) {
-    const state = readState();
-    const nextIssue = {
-      ...payload,
-      id: `CHP-${1001 + state.issues.length}`,
-      status: "Pending",
-      assignedLabour: "Unassigned",
-      createdAt: new Date().toISOString().slice(0, 10),
-      updatedAt: new Date().toISOString().slice(0, 10),
-      note: "Issue received. Waiting for admin review.",
-    };
-
-    state.issues = [nextIssue, ...state.issues];
-    state.notifications = [
-      {
-        id: Date.now(),
-        title: `${nextIssue.id} submitted`,
-        body: "Your report has entered the admin review queue.",
-        read: false,
-        createdAt: new Date().toLocaleString(),
-      },
-      ...state.notifications,
-    ];
-    writeState(state);
-    return delay(nextIssue);
+    const res = await fetch(`${BASE_URL}/issues`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Failed to create issue');
+    return res.json();
   },
 
   async updateIssue(id, patch) {
-    const state = readState();
-    state.issues = state.issues.map((issue) =>
-      issue.id === id
-        ? {
-            ...issue,
-            ...patch,
-            updatedAt: new Date().toISOString().slice(0, 10),
-          }
-        : issue,
-    );
-    state.notifications = [
-      {
-        id: Date.now(),
-        title: `${id} updated`,
-        body: patch.note || `Status changed to ${patch.status}.`,
-        read: false,
-        createdAt: new Date().toLocaleString(),
-      },
-      ...state.notifications,
-    ];
-    writeState(state);
-    return delay(state.issues.find((issue) => issue.id === id));
+    const res = await fetch(`${BASE_URL}/issues/${id}`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify(patch)
+    });
+    if (!res.ok) throw new Error('Failed to update issue');
+    return res.json();
   },
 
   async addEntity(type, payload) {
-    const state = readState();
-    const next = { id: Date.now(), ...payload };
-    state[type] = [next, ...state[type]];
-    writeState(state);
-    return delay(next);
+    const res = await fetch(`${BASE_URL}/entities/${type}`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Failed to add entity');
+    return res.json();
   },
 
   async markNotificationRead(id) {
-    const state = readState();
-    state.notifications = state.notifications.map((notification) =>
-      notification.id === id ? { ...notification, read: true } : notification,
-    );
-    writeState(state);
-    return delay(state.notifications);
-  },
+    const res = await fetch(`${BASE_URL}/notifications/${id}/read`, {
+      method: 'PATCH',
+      headers: getHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to mark notification as read');
+    return res.json();
+  }
 };
