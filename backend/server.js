@@ -191,12 +191,51 @@ app.patch('/api/issues/:id', authenticateToken, async (req, res, next) => {
   try {
     let issueIdStr = req.params.id;
     let actualId = parseInt(issueIdStr.replace('CHP-', '')) - 1000;
-    
+
     const { status, department, assignedLabour, note } = req.body;
-    
-    await pool.query('UPDATE issues SET status = ? WHERE id = ?', [status, actualId]);
-    
-    // Create notification
+
+    // --- Step 1: Resolve department name → department_id ---
+    let deptId = null;
+    if (department) {
+      const [deptRows] = await pool.query('SELECT id FROM departments WHERE name = ?', [department]);
+      if (deptRows.length > 0) {
+        deptId = deptRows[0].id;
+      }
+    }
+
+    // --- Step 2: Resolve assignedLabour name → labour_id ---
+    // Filter by department_id if available for accuracy
+    let labourId = null;
+    if (assignedLabour) {
+      const labourQuery = deptId
+        ? 'SELECT id FROM labour WHERE name = ? AND department_id = ?'
+        : 'SELECT id FROM labour WHERE name = ?';
+      const labourParams = deptId ? [assignedLabour, deptId] : [assignedLabour];
+      const [labourRows] = await pool.query(labourQuery, labourParams);
+      if (labourRows.length > 0) {
+        labourId = labourRows[0].id;
+      }
+    }
+
+    // --- Step 3: UPDATE issues (status + department_id if resolved) ---
+    if (deptId) {
+      await pool.query(
+        'UPDATE issues SET status = ?, department_id = ? WHERE id = ?',
+        [status, deptId, actualId]
+      );
+    } else {
+      await pool.query('UPDATE issues SET status = ? WHERE id = ?', [status, actualId]);
+    }
+
+    // --- Step 4: INSERT into issue_assignments if a labour worker was assigned ---
+    if (labourId) {
+      await pool.query(
+        'INSERT INTO issue_assignments (issue_id, labour_id, note, assigned_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)',
+        [actualId, labourId, note || null]
+      );
+    }
+
+    // --- Step 5: Create notification for the citizen ---
     const [issueRows] = await pool.query('SELECT citizen_id FROM issues WHERE id = ?', [actualId]);
     if (issueRows.length > 0) {
       await pool.query(
@@ -204,7 +243,7 @@ app.patch('/api/issues/:id', authenticateToken, async (req, res, next) => {
         [issueRows[0].citizen_id, actualId, `CHP-${actualId + 1000} updated`, note || `Status changed to ${status}`]
       );
     }
-    
+
     res.json({ success: true });
   } catch (err) {
     next(err);
