@@ -47,7 +47,7 @@ const apiErrorHandler = (err, req, res, next) => {
 };
 
 // --- GET ENTIRE STATE (For frontend compatibility) ---
-app.get("/api/state", async (req, res) => {
+app.get("/api/state", authenticateToken, async (req, res) => {
   try {
     const [users] = await pool.query(
       "SELECT id, name, email, role, created_at FROM users",
@@ -88,9 +88,9 @@ app.get("/api/state", async (req, res) => {
       FROM labour l 
       LEFT JOIN departments d ON l.department_id = d.id
     `);
-    const [notifications] = await pool.query(
-      "SELECT * FROM notifications ORDER BY created_at DESC",
-    );
+    const [notifications] = req.user.role === "admin"
+      ? await pool.query("SELECT * FROM notifications ORDER BY created_at DESC")
+      : await pool.query("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC", [req.user.id]);
 
     res.json({
       users,
