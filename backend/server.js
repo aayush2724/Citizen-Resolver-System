@@ -140,6 +140,7 @@ app.post("/api/auth/login", async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET || "supersecret",
+      { expiresIn: "7d" },
     );
     res.json({
       id: user.id,
@@ -179,6 +180,7 @@ app.post("/api/auth/signup", async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET || "supersecret",
+      { expiresIn: "7d" },
     );
     res.json({ ...user, token });
   } catch (err) {
