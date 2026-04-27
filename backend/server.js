@@ -228,10 +228,11 @@ app.patch('/api/issues/:id', authenticateToken, async (req, res, next) => {
     }
 
     // --- Step 4: INSERT into issue_assignments if a labour worker was assigned ---
-    if (labourId) {
+    // Both department_id and assigned_by are NOT NULL in schema — must be included
+    if (labourId && deptId) {
       await pool.query(
-        'INSERT INTO issue_assignments (issue_id, labour_id, note, assigned_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)',
-        [actualId, labourId, note || null]
+        'INSERT INTO issue_assignments (issue_id, department_id, labour_id, assigned_by, note, assigned_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)',
+        [actualId, deptId, labourId, req.user.id, note || null]
       );
     }
 
