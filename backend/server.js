@@ -34,6 +34,11 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+const requireAdmin = (req, res, next) => {
+  if (req.user?.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
+  next();
+};
+
 // Ensure all API routes return valid JSON
 const apiErrorHandler = (err, req, res, next) => {
   const errorMsg = `${new Date().toISOString()} - ${err.stack}\n`;
@@ -225,7 +230,7 @@ app.post("/api/issues", authenticateToken, async (req, res, next) => {
   }
 });
 
-app.patch("/api/issues/:id", authenticateToken, async (req, res, next) => {
+app.patch("/api/issues/:id", authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     let issueIdStr = req.params.id;
     let actualId = parseInt(issueIdStr.replace("CHP-", "")) - 1000;
@@ -308,7 +313,7 @@ app.patch("/api/issues/:id", authenticateToken, async (req, res, next) => {
 });
 
 // --- ENTITIES ROUTES ---
-app.post("/api/entities/:type", authenticateToken, async (req, res, next) => {
+app.post("/api/entities/:type", authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const { type } = req.params;
     const data = req.body;
