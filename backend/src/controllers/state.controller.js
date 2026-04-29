@@ -6,7 +6,8 @@ export const getEntireState = async (req, res, next) => {
 
     const [issues] = await pool.query(`
       SELECT 
-        i.id, i.title, i.description, i.image_url, i.status, i.priority, i.created_at, i.updated_at,
+        i.id, i.title, i.description, i.image_url as imageUrl, i.status, i.priority, i.created_at, i.updated_at,
+        i.sla_hours as slaHours, i.citizen_id as citizenId,
         u.name as citizenName,
         a.name as area,
         d.name as department,

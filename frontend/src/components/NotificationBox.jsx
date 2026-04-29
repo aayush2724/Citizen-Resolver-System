@@ -14,7 +14,7 @@ export default function NotificationBox({
 
   return (
     <div
-      className={`fixed bottom-6 right-6 max-w-sm rounded-lg border ${colors[type]} p-4 shadow-lg flex items-start gap-3 animate-in slide-in-from-bottom-4 duration-200`}
+      className={`fixed bottom-6 right-6 z-[100] max-w-sm rounded-lg border ${colors[type]} p-4 shadow-xl flex items-start gap-3 transition-all duration-300 transform scale-100 opacity-100`}
     >
       <div className="flex-1">
         <p className="text-sm font-bold">{message}</p>

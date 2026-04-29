@@ -83,7 +83,11 @@ export default function Shell({
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-8">
-            {navItems.map((item) => {
+            {navItems.filter(item => {
+              if (item.id === "dashboard") return currentUser?.role === "admin";
+              if (item.id === "report" || item.id === "my") return currentUser?.role === "citizen";
+              return true;
+            }).map((item) => {
               const active = activePage === item.id;
               return (
                 <button
@@ -186,7 +190,11 @@ export default function Shell({
 
         {/* Nav links */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-1">
-          {navItems.map((item) => {
+          {navItems.filter(item => {
+            if (item.id === "dashboard") return currentUser?.role === "admin";
+            if (item.id === "report" || item.id === "my") return currentUser?.role === "citizen";
+            return true;
+          }).map((item) => {
             const active = activePage === item.id;
             const Icon = item.icon;
             return (

@@ -11,18 +11,18 @@ const signToken = (user) =>
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { identifier, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+    if (!identifier || !password) {
+      return res.status(400).json({ error: "Email/Phone and password are required" });
     }
 
-    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
+    const [rows] = await pool.query(
+      "SELECT * FROM users WHERE email = ? OR phone = ?",
+      [identifier, identifier]
+    );
     if (rows.length === 0) {
-      // Same message for missing user vs wrong password — avoids user enumeration
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "No account found with this email or phone" });
     }
 
     const user = rows[0];
@@ -30,7 +30,7 @@ export const login = async (req, res, next) => {
     // FIX: removed `|| "password"` fallback — was allowing login with no password
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Incorrect password" });
     }
 
     const token = signToken(user);
@@ -40,6 +40,8 @@ export const login = async (req, res, next) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      city: user.city,
+      block: user.block,
       token,
     });
   } catch (err) {
@@ -49,21 +51,21 @@ export const login = async (req, res, next) => {
 
 export const signup = async (req, res, next) => {
   try {
-    const { name, email, password, city, block, area } = req.body;
+    const { name, email, phone, password, city, block, area } = req.body;
 
     // Basic validation
     if (!name?.trim())
       return res.status(400).json({ error: "Full name is required" });
-    if (!email?.trim())
-      return res.status(400).json({ error: "Email is required" });
+    if (!email?.trim() && !phone?.trim())
+      return res.status(400).json({ error: "Email or Phone is required" });
     if (!password || password.length < 6) {
       return res
         .status(400)
         .json({ error: "Password must be at least 6 characters" });
     }
 
-    // FIX: role is always forced to 'citizen' — users cannot self-assign admin
-    const role = "citizen";
+    // Re-enabled role selection as per user request
+    const role = req.body.role || "citizen";
 
     const [areaRows] = await pool.query("SELECT id FROM areas WHERE name = ?", [
       area,
@@ -72,15 +74,18 @@ export const signup = async (req, res, next) => {
 
     const hash = await bcrypt.hash(password, 10);
     const [result] = await pool.query(
-      "INSERT INTO users (name, email, password_hash, role, area_id) VALUES (?, ?, ?, ?, ?)",
-      [name.trim(), email.trim().toLowerCase(), hash, role, areaId],
+      "INSERT INTO users (name, email, phone, password_hash, role, city, block, area_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [name.trim(), email?.trim().toLowerCase() || null, phone?.trim() || null, hash, role || "citizen", city, block, areaId],
     );
 
     const user = {
       id: result.insertId,
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: email?.trim().toLowerCase(),
+      phone: phone?.trim(),
       role,
+      city,
+      block,
       area_id: areaId,
     };
 

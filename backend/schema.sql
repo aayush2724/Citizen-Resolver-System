@@ -4,8 +4,11 @@ CREATE TABLE IF NOT EXISTS users (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(120) NOT NULL,
   email VARCHAR(160) NOT NULL UNIQUE,
+  phone VARCHAR(20) UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   role ENUM('citizen', 'admin') NOT NULL DEFAULT 'citizen',
+  city VARCHAR(100),
+  block VARCHAR(100),
   area_id BIGINT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_users_role (role),
@@ -116,5 +119,5 @@ INSERT IGNORE INTO labour (name, phone, department_id, availability_status) VALU
 ('Deepak Das', '9876543213', 5, 'On Task'),
 ('Maya Singh', '9876543214', 3, 'Available');
 
-INSERT IGNORE INTO users (name, email, password_hash, role) VALUES ('Admin User', 'admin@helpline.local', '$2b$10$EP/D2.K.OtkK.oP1iI/0.e8sB0LhX1JjN2W5S2l2b1q7Y0/q3U/yW', 'admin'); -- password: password
+INSERT IGNORE INTO users (name, email, password_hash, role) VALUES ('Admin User', 'admin@helpline.local', '$2b$10$JlCAjLFBLlnS/KAtflYzEO6fhboV9NAQhhHawYr0jICRKIe/hUKC6', 'admin'); -- password: password
 INSERT IGNORE INTO users (name, email, password_hash, role, area_id) VALUES ('Aarav Sharma', 'aarav@example.com', '$2b$10$EP/D2.K.OtkK.oP1iI/0.e8sB0LhX1JjN2W5S2l2b1q7Y0/q3U/yW', 'citizen', 1); -- password: password

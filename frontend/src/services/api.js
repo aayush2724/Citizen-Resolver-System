@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "/api";
 
 const getHeaders = () => {
   const user = JSON.parse(localStorage.getItem("citizen-user") || "{}");
@@ -63,7 +63,7 @@ export const api = {
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ identifier: email, password }),
     });
 
     if (!res.ok) throw await parseError(res, "Invalid email or password");
@@ -137,6 +137,7 @@ export const api = {
 
     if (!res.ok)
       throw await parseError(res, "Failed to mark notification as read");
+    window.dispatchEvent(new Event("portal-state-change"));
     return res.json();
   },
 };

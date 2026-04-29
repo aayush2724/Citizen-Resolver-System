@@ -51,10 +51,12 @@ export default function App() {
   const [authForm, setAuthForm] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     city: "",
     block: "",
     area: "",
+    role: "citizen",
   });
   const [authError, setAuthError] = useState("");
   const [assignment, setAssignment] = useState({
@@ -89,7 +91,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!state?.issues.length) return;
+    if (!state || !state.issues.length) return;
     const first = state.issues[0];
     setAssignment({
       issueId: first.id,
@@ -145,6 +147,13 @@ export default function App() {
     [state],
   );
 
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   if (loadError) {
     return (
       <div className="grid min-h-screen place-items-center bg-slate-900 font-sans text-white">
@@ -172,10 +181,10 @@ export default function App() {
 
   if (!state) {
     return (
-      <div className="grid min-h-screen place-items-center bg-[#0a0a0a] font-black text-slate-400">
+      <div className="grid min-h-screen place-items-center bg-[#0a0a0a] font-sans">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#00b87c] border-t-transparent"></div>
-          Loading portal...
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#00b87c] border-t-transparent" />
+          <p className="font-bold text-slate-400">Loading portal data...</p>
         </div>
       </div>
     );
@@ -209,8 +218,8 @@ export default function App() {
       }
     }
 
-    if (!authForm.email.trim()) {
-      const msg = "Email is required";
+    if (!authForm.email.trim() && !authForm.phone.trim()) {
+      const msg = authMode === "login" ? "Email or Phone is required" : "Email or Phone is required";
       setAuthError(msg);
       setNotification({ type: "error", message: msg });
       return;
@@ -247,6 +256,14 @@ export default function App() {
 
   async function handleReport(event) {
     event.preventDefault();
+    if (!state?.currentUser) {
+      setNotification({
+        type: "error",
+        message: "Session expired. Please sign in again.",
+      });
+      setActivePage("auth");
+      return;
+    }
 
     if (!report.city || !report.block || !report.area) {
       setNotification({
@@ -336,16 +353,33 @@ export default function App() {
 
   function handleLogout() {
     localStorage.removeItem("citizen-user");
-    setState(null);
-    setActivePage("home");
     window.location.reload();
   }
+
+  const navigate = (id) => {
+    if (!state?.currentUser) {
+      if (id === "report" || id === "my" || id === "dashboard") {
+        setActivePage("auth");
+        return;
+      }
+    } else {
+      if (id === "dashboard" && state.currentUser.role !== "admin") {
+        setActivePage("home");
+        return;
+      }
+      if ((id === "report" || id === "my") && state.currentUser.role !== "citizen") {
+        setActivePage("home");
+        return;
+      }
+    }
+    setActivePage(id);
+  };
 
   return (
     <Shell
       activePage={activePage}
-      setActivePage={setActivePage}
-      currentUser={state?.currentUser}
+      setActivePage={navigate}
+      currentUser={state.currentUser}
       unreadCount={unreadCount}
       onLogout={handleLogout}
     >
@@ -384,21 +418,43 @@ export default function App() {
       ) : null}
 
       {activePage === "report" ? (
-        <ReportPage
-          departmentNames={departmentNames}
-          report={report}
-          setReport={setReport}
-          onSubmit={handleReport}
-        />
+        state.currentUser ? (
+          <ReportPage
+            departmentNames={departmentNames}
+            report={report}
+            setReport={setReport}
+            onSubmit={handleReport}
+          />
+        ) : (
+          <AuthPage
+            authError={authError}
+            authForm={authForm}
+            authMode={authMode}
+            setAuthForm={setAuthForm}
+            setAuthMode={setAuthMode}
+            onSubmit={handleAuth}
+          />
+        )
       ) : null}
 
       {activePage === "my" ? (
-        <MyIssuesPage
-          issues={myIssues}
-          notifications={state.notifications}
-          onOpen={setSelectedIssue}
-          onRead={(id) => api.markNotificationRead(id)}
-        />
+        state.currentUser ? (
+          <MyIssuesPage
+            issues={myIssues}
+            notifications={state.notifications}
+            onOpen={setSelectedIssue}
+            onRead={(id) => api.markNotificationRead(id)}
+          />
+        ) : (
+          <AuthPage
+            authError={authError}
+            authForm={authForm}
+            authMode={authMode}
+            setAuthForm={setAuthForm}
+            setAuthMode={setAuthMode}
+            onSubmit={handleAuth}
+          />
+        )
       ) : null}
 
       {activePage === "public" ? (
@@ -654,12 +710,22 @@ function AuthPage({
             />
           ) : null}
           <Field
-            label="Email"
-            type="email"
+            label={authMode === "login" ? "Email or Phone" : "Email"}
+            type="text"
             value={authForm.email}
             onChange={(email) => setAuthForm({ ...authForm, email })}
             required
           />
+          {authMode === "signup" ? (
+            <Field
+              label="Phone number"
+              type="tel"
+              value={authForm.phone}
+              onChange={(phone) => setAuthForm({ ...authForm, phone })}
+              placeholder="e.g. 9876543210"
+              required={!authForm.email}
+            />
+          ) : null}
           <Field
             label="Password"
             type="password"
@@ -677,8 +743,27 @@ function AuthPage({
               onAreaChange={(area) => setAuthForm({ ...authForm, area })}
             />
           ) : null}
-          {/* FIX: Role selector removed — all signups are citizens.
-              Admin accounts must be created via the database seed/CLI. */}
+          {authMode === "signup" ? (
+            <div className="grid gap-2">
+              <span className="text-sm font-black text-slate-700">Account Type</span>
+              <div className="flex gap-2">
+                {["citizen", "admin"].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={`flex-1 rounded-lg border py-2 text-sm font-bold capitalize transition ${
+                      authForm.role === r
+                        ? "border-teal-600 bg-teal-50 text-teal-700"
+                        : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                    }`}
+                    onClick={() => setAuthForm({ ...authForm, role: r })}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <button
             className="rounded-lg bg-teal-700 px-5 py-3 font-black text-white hover:bg-teal-800 transition"
             type="submit"
