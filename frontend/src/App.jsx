@@ -50,12 +50,11 @@ export default function App() {
   const [authMode, setAuthMode] = useState("login");
   const [authForm, setAuthForm] = useState({
     name: "",
-    email: "aarav@example.com",
-    password: "password",
-    city: "Mysore",
-    block: "Vijayanagar",
-    area: "Stage 1",
-    role: "citizen",
+    email: "",
+    password: "",
+    city: "",
+    block: "",
+    area: "",
   });
   const [authError, setAuthError] = useState("");
   const [assignment, setAssignment] = useState({
@@ -194,28 +193,33 @@ export default function App() {
     event.preventDefault();
     setAuthError("");
 
-    // Validation
-    if (authMode === "signup" && !authForm.name.trim()) {
-      setAuthError("Full name is required for signup");
-      setNotification({
-        type: "error",
-        message: "Please enter your full name",
-      });
-      return;
+    // Client-side validation — only run the checks relevant to each mode
+    if (authMode === "signup") {
+      if (!authForm.name.trim()) {
+        const msg = "Full name is required";
+        setAuthError(msg);
+        setNotification({ type: "error", message: msg });
+        return;
+      }
+      if (!authForm.city || !authForm.block || !authForm.area) {
+        const msg = "Please select city, block, and area";
+        setAuthError(msg);
+        setNotification({ type: "error", message: msg });
+        return;
+      }
     }
 
     if (!authForm.email.trim()) {
-      setAuthError("Email is required");
-      setNotification({ type: "error", message: "Please enter a valid email" });
+      const msg = "Email is required";
+      setAuthError(msg);
+      setNotification({ type: "error", message: msg });
       return;
     }
 
-    if (!authForm.city || !authForm.block || !authForm.area) {
-      setAuthError("Please select city, block, and area");
-      setNotification({
-        type: "error",
-        message: "Location details are required",
-      });
+    if (!authForm.password) {
+      const msg = "Password is required";
+      setAuthError(msg);
+      setNotification({ type: "error", message: msg });
       return;
     }
 
@@ -226,22 +230,16 @@ export default function App() {
           : await api.signup(authForm);
 
       setAuthError("");
-      setToast(`${user.name} is now active.`);
+      setToast(`${user.name} signed in.`);
       setNotification({
         type: "success",
-        message: `Welcome ${user.name}! Signed in successfully.`,
+        message: `Welcome${authMode === "signup" ? "" : " back"}, ${user.name}!`,
       });
-      setAuthForm({
-        name: "",
-        email: "aarav@example.com",
-        city: "Mysore",
-        block: "Vijayanagar",
-        area: "Stage 1",
-        role: "citizen",
-      });
+      // Reset to a completely empty form — no pre-filled demo values
+      setAuthForm({ name: "", email: "", password: "", city: "", block: "", area: "" });
+      setActivePage("home");
     } catch (error) {
-      const errorMessage =
-        error?.message || "Invalid credentials. Please try again.";
+      const errorMessage = error?.message || "Something went wrong. Please try again.";
       setAuthError(errorMessage);
       setNotification({ type: "error", message: errorMessage });
     }
@@ -258,32 +256,46 @@ export default function App() {
       return;
     }
 
-    const created = await api.createIssue({
-      ...report,
-      imageUrl: report.imageUrl || fallbackImage,
-      citizenId: state.currentUser.id,
-      citizenName: state.currentUser.name,
-      slaHours:
-        report.priority === "Urgent"
-          ? 24
-          : report.priority === "High"
-            ? 36
-            : 72,
-    });
-    setReport(emptyReport);
-    setToast(`${created.id} submitted for admin review.`);
-    setActivePage("my");
+    try {
+      const created = await api.createIssue({
+        ...report,
+        imageUrl: report.imageUrl || fallbackImage,
+        citizenId: state.currentUser.id,
+        citizenName: state.currentUser.name,
+        slaHours:
+          report.priority === "Urgent"
+            ? 24
+            : report.priority === "High"
+              ? 36
+              : 72,
+      });
+      setReport(emptyReport);
+      setToast(`${created.id} submitted for admin review.`);
+      setActivePage("my");
+    } catch (error) {
+      setNotification({
+        type: "error",
+        message: error?.message || "Failed to submit issue. Please try again.",
+      });
+    }
   }
 
   async function handleAssignment(event) {
     event.preventDefault();
-    const updated = await api.updateIssue(assignment.issueId, {
-      department: assignment.department,
-      assignedLabour: assignment.assignedLabour || "Unassigned",
-      status: assignment.status,
-      note: assignment.note || "Status updated by admin.",
-    });
-    setToast(`${updated.id} updated.`);
+    try {
+      const updated = await api.updateIssue(assignment.issueId, {
+        department: assignment.department,
+        assignedLabour: assignment.assignedLabour || "Unassigned",
+        status: assignment.status,
+        note: assignment.note || "Status updated by admin.",
+      });
+      setToast(`${assignment.issueId} updated successfully.`);
+    } catch (error) {
+      setNotification({
+        type: "error",
+        message: error?.message || "Failed to update issue. Please try again.",
+      });
+    }
   }
 
   async function handleEntity(event) {
@@ -298,9 +310,16 @@ export default function App() {
               department: entityForm.extra || "General",
               status: "Available",
             };
-    await api.addEntity(entityForm.type, payload);
-    setToast(`${entityForm.name} added.`);
-    setEntityForm({ ...entityForm, name: "", extra: "" });
+    try {
+      await api.addEntity(entityForm.type, payload);
+      setToast(`${entityForm.name} added successfully.`);
+      setEntityForm({ ...entityForm, name: "", extra: "" });
+    } catch (error) {
+      setNotification({
+        type: "error",
+        message: error?.message || "Failed to add record. Please try again.",
+      });
+    }
   }
 
   function syncSelectedAssignment(issueId) {
@@ -565,8 +584,8 @@ function AuthPage({
           Login or create a citizen account
         </h1>
         <p className="mt-3 leading-7 text-slate-600">
-          Use a citizen account to report and track issues, or switch to admin
-          to assign work and update progress.
+          Use a citizen account to report and track issues. Admin accounts are
+          created by the system administrator.
         </p>
         <div className="mt-6 grid gap-3">
           <button
@@ -576,7 +595,7 @@ function AuthPage({
               setAuthForm({
                 ...authForm,
                 email: "admin@helpline.local",
-                role: "admin",
+                password: "password",
               })
             }
           >
@@ -589,7 +608,7 @@ function AuthPage({
               setAuthForm({
                 ...authForm,
                 email: "aarav@example.com",
-                role: "citizen",
+                password: "password",
               })
             }
           >
@@ -619,7 +638,7 @@ function AuthPage({
           <div className="mb-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
             <AlertCircle size={18} className="mt-0.5 shrink-0" />
             <div>
-              <p className="font-bold">Invalid Credentials</p>
+              <p className="font-bold">Authentication Error</p>
               <p className="mt-1">{authError}</p>
             </div>
           </div>
@@ -648,25 +667,23 @@ function AuthPage({
             onChange={(password) => setAuthForm({ ...authForm, password })}
             required
           />
-          <LocationSelector
-            selectedCity={authForm.city}
-            selectedBlock={authForm.block}
-            selectedArea={authForm.area}
-            onCityChange={(city) => setAuthForm({ ...authForm, city })}
-            onBlockChange={(block) => setAuthForm({ ...authForm, block })}
-            onAreaChange={(area) => setAuthForm({ ...authForm, area })}
-          />
-          <Select
-            label="Role"
-            value={authForm.role}
-            options={["citizen", "admin"]}
-            onChange={(role) => setAuthForm({ ...authForm, role })}
-          />
+          {authMode === "signup" ? (
+            <LocationSelector
+              selectedCity={authForm.city}
+              selectedBlock={authForm.block}
+              selectedArea={authForm.area}
+              onCityChange={(city) => setAuthForm({ ...authForm, city, block: "", area: "" })}
+              onBlockChange={(block) => setAuthForm({ ...authForm, block, area: "" })}
+              onAreaChange={(area) => setAuthForm({ ...authForm, area })}
+            />
+          ) : null}
+          {/* FIX: Role selector removed — all signups are citizens.
+              Admin accounts must be created via the database seed/CLI. */}
           <button
             className="rounded-lg bg-teal-700 px-5 py-3 font-black text-white hover:bg-teal-800 transition"
             type="submit"
           >
-            Continue
+            {authMode === "login" ? "Sign in" : "Create account"}
           </button>
         </div>
       </form>
