@@ -140,4 +140,14 @@ export const api = {
     window.dispatchEvent(new Event("portal-state-change"));
     return res.json();
   },
+
+  async submitBugReport(data) {
+    const res = await fetch(`${BASE_URL}/bug-reports`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw await parseError(res, "Failed to submit bug report");
+    return res.json();
+  },
 };

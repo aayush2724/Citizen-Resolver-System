@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   BarChart3,
   CheckCircle2,
@@ -495,11 +495,133 @@ export default function App() {
         )
       ) : null}
 
+      {activePage === "feedback" ? (
+        <BugReportPage currentUser={state.currentUser} />
+      ) : null}
+
       <IssueModal
         issue={selectedIssue}
         onClose={() => setSelectedIssue(null)}
       />
     </Shell>
+  );
+}
+
+function BugReportPage({ currentUser }) {
+  const [form, setForm] = React.useState({
+    category: "bug",
+    subject: "",
+    description: "",
+    email: currentUser?.email || "",
+  });
+  const [submitted, setSubmitted] = React.useState(false);
+  const [error, setError] = React.useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    try {
+      await api.submitBugReport(form);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.message || "Failed to send. Please try again.");
+    }
+  }
+
+  if (submitted) {
+    return (
+      <section className="grid gap-6">
+        <div className="mx-auto max-w-xl rounded-2xl border border-emerald-200 bg-emerald-50 p-10 text-center shadow-soft">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-3xl">✓</div>
+          <h1 className="text-2xl font-black text-slate-950">Report Sent!</h1>
+          <p className="mt-2 text-slate-600">
+            Thank you for your feedback. Our developers have received your report and will look into it.
+          </p>
+          <button
+            className="mt-6 rounded-lg bg-teal-700 px-6 py-2.5 font-bold text-white hover:bg-teal-800 transition"
+            type="button"
+            onClick={() => setSubmitted(false)}
+          >
+            Submit another report
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="grid gap-6 lg:grid-cols-[1fr_380px]">
+      <form className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft" onSubmit={handleSubmit}>
+        <p className="text-sm font-black uppercase text-teal-700">Developer feedback</p>
+        <h1 className="mt-2 text-3xl font-black text-slate-950">Report a Website Issue</h1>
+        <p className="mt-2 text-slate-500">Found a bug or have a suggestion? Let us know and we'll fix it.</p>
+
+        {error && (
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</div>
+        )}
+
+        <div className="mt-6 grid gap-4">
+          <Select
+            label="Category"
+            value={form.category}
+            options={["bug", "ui", "performance", "feature", "general"]}
+            onChange={(category) => setForm({ ...form, category })}
+          />
+          <Field
+            label="Subject"
+            value={form.subject}
+            onChange={(subject) => setForm({ ...form, subject })}
+            placeholder="Brief summary of the issue"
+            required
+          />
+          <label className="grid gap-2">
+            <span className="text-sm font-black text-slate-700">Description</span>
+            <textarea
+              className="min-h-36 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              placeholder="Describe the issue in detail. What did you expect vs what happened?"
+              required
+            />
+          </label>
+          <Field
+            label="Contact email (optional)"
+            type="email"
+            value={form.email}
+            onChange={(email) => setForm({ ...form, email })}
+            placeholder="We'll reply here if we need more details"
+          />
+          <button className="rounded-lg bg-teal-700 px-5 py-3 font-black text-white hover:bg-teal-800 transition" type="submit">
+            Send report to developers
+          </button>
+        </div>
+      </form>
+
+      <aside className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft h-fit">
+        <h2 className="text-lg font-black text-slate-950">What can you report?</h2>
+        <ul className="mt-4 grid gap-3">
+          {[
+            ["🐛", "Bug", "Something broken or not working as expected"],
+            ["🎨", "UI Issue", "Invisible text, broken layout, or display problem"],
+            ["⚡", "Performance", "Page is slow or takes too long to load"],
+            ["💡", "Feature Request", "A suggestion to improve the system"],
+            ["📝", "General", "Any other feedback for our team"],
+          ].map(([emoji, title, desc]) => (
+            <li key={title} className="flex items-start gap-3 rounded-lg bg-slate-50 p-3">
+              <span className="text-xl">{emoji}</span>
+              <div>
+                <p className="font-bold text-slate-900">{title}</p>
+                <p className="text-sm text-slate-500">{desc}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-5 rounded-lg bg-teal-50 border border-teal-200 p-4">
+          <p className="text-sm font-bold text-teal-800">🔒 Your report is confidential</p>
+          <p className="mt-1 text-xs text-teal-700">Reports are only visible to developers and administrators.</p>
+        </div>
+      </aside>
+    </section>
   );
 }
 
@@ -954,6 +1076,7 @@ function PublicIssuesPage({
   );
 }
 
+
 function AdminDashboard({
   analytics,
   assignment,
@@ -968,200 +1091,192 @@ function AdminDashboard({
   onAssignmentSubmit,
   onEntitySubmit,
 }) {
+  const [activeTab, setActiveTab] = React.useState("analytics");
+
+  const tabs = [
+    { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "assignments", label: "Assignments", icon: Wrench },
+    { id: "labour", label: "Labour", icon: UsersRound },
+    { id: "manage", label: "Manage Data", icon: Database },
+    { id: "schema", label: "Database", icon: ShieldCheck },
+  ];
+
   return (
-    <section className="grid gap-6 lg:grid-cols-[260px_1fr]">
-      <aside className="rounded-lg border border-slate-200 bg-slate-950 p-5 text-white shadow-soft">
+    <section className="grid gap-6 lg:grid-cols-[240px_1fr]">
+      {/* Sidebar */}
+      <aside className="rounded-lg border border-slate-200 bg-slate-950 p-5 text-white shadow-soft h-fit">
         <h1 className="text-2xl font-black">Admin Dashboard</h1>
-        <div className="mt-6 grid gap-3">
-          {[
-            [BarChart3, "Analytics"],
-            [Wrench, "Assignments"],
-            [UsersRound, "Labour"],
-            [Database, "Schema-ready UI"],
-            [ShieldCheck, "Role controls"],
-          ].map(([Icon, label]) => (
-            <div
-              className="flex items-center gap-3 rounded-lg bg-white/10 p-3 font-bold"
-              key={label}
+        <nav className="mt-6 grid gap-2">
+          {tabs.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setActiveTab(id)}
+              className={`flex items-center gap-3 rounded-lg p-3 text-left font-bold transition ${
+                activeTab === id
+                  ? "bg-[#00b87c] text-white"
+                  : "bg-white/10 text-white/80 hover:bg-white/20"
+              }`}
             >
               <Icon size={18} />
               {label}
-            </div>
+            </button>
           ))}
-        </div>
+        </nav>
       </aside>
 
-      <div className="grid gap-6">
-        <div className="grid gap-4 md:grid-cols-4">
-          <StatCard label="Pending" value={analytics.pending} tone="amber" />
-          <StatCard label="Active" value={analytics.active} tone="blue" />
-          <StatCard
-            label="Resolved"
-            value={analytics.resolved}
-            tone="emerald"
-          />
-          <StatCard label="Urgent" value={analytics.urgent} tone="rose" />
-        </div>
+      {/* Main Panel */}
+      <div className="grid gap-6 content-start">
 
-        <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+        {/* Analytics Tab */}
+        {activeTab === "analytics" && (
+          <div className="grid gap-6">
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
+              <h2 className="text-xl font-black text-slate-950 mb-4">System Overview</h2>
+              <div className="grid gap-4 md:grid-cols-4">
+                <StatCard label="Pending" value={analytics.pending} tone="amber" />
+                <StatCard label="Active" value={analytics.active} tone="blue" />
+                <StatCard label="Resolved" value={analytics.resolved} tone="emerald" />
+                <StatCard label="Urgent" value={analytics.urgent} tone="rose" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Assignments Tab */}
+        {activeTab === "assignments" && (
+          <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+            <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft">
+              <div className="border-b border-slate-200 p-5">
+                <h2 className="text-xl font-black text-slate-950">Issue Queue</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[700px] text-left text-sm">
+                  <thead className="bg-slate-50 text-xs font-black uppercase text-slate-500">
+                    <tr>
+                      <th className="p-4">Issue</th>
+                      <th className="p-4">Area</th>
+                      <th className="p-4">Department</th>
+                      <th className="p-4">Status</th>
+                      <th className="p-4">Labour</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {issues.map((issue) => (
+                      <tr className="border-t border-slate-100" key={issue.id}>
+                        <td className="p-4 font-bold text-slate-950">
+                          {issue.id}
+                          <span className="block font-medium text-slate-500">{issue.title}</span>
+                        </td>
+                        <td className="p-4 text-slate-700">{issue.area}</td>
+                        <td className="p-4 text-slate-700">{issue.department}</td>
+                        <td className="p-4">
+                          <span className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${statusTone(issue.status)}`}>
+                            {issue.status}
+                          </span>
+                        </td>
+                        <td className="p-4 text-slate-700">{issue.assignedLabour}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <form className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft h-fit" onSubmit={onAssignmentSubmit}>
+              <h2 className="text-xl font-black text-slate-950">Update Assignment</h2>
+              <div className="mt-4 grid gap-4">
+                <Select label="Issue" value={assignment.issueId} options={issues.map((i) => i.id)} onChange={syncSelectedAssignment} />
+                <Select label="Department" value={assignment.department} options={departmentNames} onChange={(department) => setAssignment({ ...assignment, department })} />
+                <Select label="Labour" value={assignment.assignedLabour} options={["Unassigned", ...labour.map((l) => l.name)]} onChange={(assignedLabour) => setAssignment({ ...assignment, assignedLabour })} />
+                <Select label="Status" value={assignment.status} options={statusOrder} onChange={(status) => setAssignment({ ...assignment, status })} />
+                <label className="grid gap-2">
+                  <span className="text-sm font-black text-slate-700">Update note</span>
+                  <textarea
+                    className="min-h-24 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                    value={assignment.note}
+                    onChange={(e) => setAssignment({ ...assignment, note: e.target.value })}
+                  />
+                </label>
+                <button className="rounded-lg bg-teal-700 px-5 py-3 font-black text-white hover:bg-teal-800 transition" type="submit">
+                  Save update
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Labour Tab */}
+        {activeTab === "labour" && (
           <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft">
             <div className="border-b border-slate-200 p-5">
-              <h2 className="text-xl font-black text-slate-950">Issue Queue</h2>
+              <h2 className="text-xl font-black text-slate-950">Labour Teams</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left text-sm">
+              <table className="w-full text-left text-sm">
                 <thead className="bg-slate-50 text-xs font-black uppercase text-slate-500">
                   <tr>
-                    <th className="p-4">Issue</th>
-                    <th className="p-4">Area</th>
+                    <th className="p-4">Name</th>
                     <th className="p-4">Department</th>
-                    <th className="p-4">Status</th>
-                    <th className="p-4">Labour</th>
-                    <th className="p-4">Updated</th>
+                    <th className="p-4">Availability</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {issues.map((issue) => (
-                    <tr className="border-t border-slate-100" key={issue.id}>
-                      <td className="p-4 font-bold text-slate-950">
-                        {issue.id}
-                        <span className="block font-medium text-slate-500">
-                          {issue.title}
-                        </span>
-                      </td>
-                      <td className="p-4">{issue.area}</td>
-                      <td className="p-4">{issue.department}</td>
+                  {labour.map((member) => (
+                    <tr className="border-t border-slate-100" key={member.id}>
+                      <td className="p-4 font-bold text-slate-900">{member.name}</td>
+                      <td className="p-4 text-slate-700">{member.department}</td>
                       <td className="p-4">
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${statusTone(issue.status)}`}
-                        >
-                          {issue.status}
+                        <span className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${
+                          member.availability_status === "Available"
+                            ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+                            : "bg-amber-50 text-amber-700 ring-amber-200"
+                        }`}>
+                          {member.availability_status}
                         </span>
                       </td>
-                      <td className="p-4">{issue.assignedLabour}</td>
-                      <td className="p-4">{issue.updatedAt}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </section>
+        )}
 
-          <form
-            className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft"
-            onSubmit={onAssignmentSubmit}
-          >
-            <h2 className="text-xl font-black text-slate-950">
-              Update Assignment
-            </h2>
-            <div className="mt-4 grid gap-4">
-              <Select
-                label="Issue"
-                value={assignment.issueId}
-                options={issues.map((issue) => issue.id)}
-                onChange={syncSelectedAssignment}
-              />
-              <Select
-                label="Department"
-                value={assignment.department}
-                options={departmentNames}
-                onChange={(department) =>
-                  setAssignment({ ...assignment, department })
-                }
-              />
-              <Select
-                label="Labour"
-                value={assignment.assignedLabour}
-                options={["Unassigned", ...labour.map((item) => item.name)]}
-                onChange={(assignedLabour) =>
-                  setAssignment({ ...assignment, assignedLabour })
-                }
-              />
-              <Select
-                label="Status"
-                value={assignment.status}
-                options={statusOrder}
-                onChange={(status) => setAssignment({ ...assignment, status })}
-              />
-              <label className="grid gap-2">
-                <span className="text-sm font-black text-slate-700">
-                  Update note
-                </span>
-                <textarea
-                  className="min-h-24 rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
-                  value={assignment.note}
-                  onChange={(event) =>
-                    setAssignment({ ...assignment, note: event.target.value })
-                  }
-                />
-              </label>
-              <button
-                className="rounded-lg bg-teal-700 px-5 py-3 font-black text-white"
-                type="submit"
-              >
-                Save update
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          <form
-            className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft"
-            onSubmit={onEntitySubmit}
-          >
-            <h2 className="text-xl font-black text-slate-950">
-              Manage Master Data
-            </h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Select
-                label="Type"
-                value={entityForm.type}
-                options={["areas", "departments", "labour"]}
-                onChange={(type) => setEntityForm({ ...entityForm, type })}
-              />
+        {/* Manage Data Tab */}
+        {activeTab === "manage" && (
+          <form className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft max-w-xl" onSubmit={onEntitySubmit}>
+            <h2 className="text-xl font-black text-slate-950">Manage Master Data</h2>
+            <p className="mt-1 text-sm text-slate-500">Add new areas, departments, or labour to the system.</p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <Select label="Type" value={entityForm.type} options={["areas", "departments", "labour"]} onChange={(type) => setEntityForm({ ...entityForm, type })} />
+              <Field label="Name" value={entityForm.name} onChange={(name) => setEntityForm({ ...entityForm, name })} required />
               <Field
-                label="Name"
-                value={entityForm.name}
-                onChange={(name) => setEntityForm({ ...entityForm, name })}
-                required
-              />
-              <Field
-                label={
-                  entityForm.type === "areas"
-                    ? "Zone"
-                    : entityForm.type === "departments"
-                      ? "Lead"
-                      : "Department"
-                }
+                label={entityForm.type === "areas" ? "Zone" : entityForm.type === "departments" ? "Lead" : "Department"}
                 value={entityForm.extra}
                 onChange={(extra) => setEntityForm({ ...entityForm, extra })}
               />
-              <button
-                className="flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 font-black text-white"
-                type="submit"
-              >
+              <button className="flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 font-black text-white hover:bg-slate-800 transition" type="submit">
                 <Plus size={18} /> Add record
               </button>
             </div>
           </form>
+        )}
 
+        {/* Schema Tab */}
+        {activeTab === "schema" && (
           <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
-            <h2 className="text-xl font-black text-slate-950">
-              Database Contract
-            </h2>
+            <h2 className="text-xl font-black text-slate-950">Database Contract</h2>
+            <p className="mt-1 text-sm text-slate-500">Live schema reference for all tables in the system.</p>
             <div className="mt-4 grid gap-2">
               {schemaPreview.map((item) => (
-                <code
-                  className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-bold text-teal-100"
-                  key={item}
-                >
+                <code className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-bold text-teal-100" key={item}>
                   {item}
                 </code>
               ))}
             </div>
           </section>
-        </div>
+        )}
       </div>
     </section>
   );

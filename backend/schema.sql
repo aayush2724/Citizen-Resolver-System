@@ -118,6 +118,17 @@ INSERT IGNORE INTO labour (name, phone, department_id, availability_status) VALU
 ('Sonal Patil', '9876543212', 1, 'Available'),
 ('Deepak Das', '9876543213', 5, 'On Task'),
 ('Maya Singh', '9876543214', 3, 'Available');
+CREATE TABLE IF NOT EXISTS bug_reports (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT,
+  category ENUM('bug', 'ui', 'performance', 'feature', 'general') DEFAULT 'general',
+  subject VARCHAR(200) NOT NULL,
+  description TEXT NOT NULL,
+  contact_email VARCHAR(160),
+  status ENUM('open', 'reviewed', 'resolved') DEFAULT 'open',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
 
 INSERT IGNORE INTO users (name, email, password_hash, role) VALUES ('Admin User', 'admin@helpline.local', '$2b$10$JlCAjLFBLlnS/KAtflYzEO6fhboV9NAQhhHawYr0jICRKIe/hUKC6', 'admin'); -- password: password
 INSERT IGNORE INTO users (name, email, password_hash, role, area_id) VALUES ('Aarav Sharma', 'aarav@example.com', '$2b$10$EP/D2.K.OtkK.oP1iI/0.e8sB0LhX1JjN2W5S2l2b1q7Y0/q3U/yW', 'citizen', 1); -- password: password

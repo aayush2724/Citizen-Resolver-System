@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Bell,
+  Bug,
   ClipboardList,
   Home,
   LayoutDashboard,
@@ -17,6 +18,7 @@ const navItems = [
   { id: "my", label: "My Issues", icon: User },
   { id: "public", label: "Public Issues", icon: ClipboardList },
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "feedback", label: "Report Bug", icon: Bug },
 ];
 
 function Logo({ onClick }) {

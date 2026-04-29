@@ -6,12 +6,13 @@ import issueRoutes from "./routes/issue.routes.js";
 import entityRoutes from "./routes/entity.routes.js";
 import stateRoutes from "./routes/state.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import bugReportRoutes from "./routes/bugreport.routes.js";
 import { apiErrorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
 app.use(cors({
-  origin: true, // Allows any origin
+  origin: true,
   credentials: true,
 }));
 app.use(express.json());
@@ -21,6 +22,7 @@ app.use("/api/issues", issueRoutes);
 app.use("/api/entities", entityRoutes);
 app.use("/api/state", stateRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/bug-reports", bugReportRoutes);
 
 app.use(apiErrorHandler);
 
