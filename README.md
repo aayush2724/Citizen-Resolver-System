@@ -31,6 +31,12 @@ A Full-Stack civic issue reporting platform featuring a modern **Bento-grid UI**
 ```text
 .
 ├── backend/                # Express server and DB scripts
+│   ├── src/                # SaaS-level modular architecture
+│   │   ├── config/         # Database configuration
+│   │   ├── controllers/    # Business logic (auth, issues, state)
+│   │   ├── middlewares/    # Custom Express middlewares
+│   │   ├── routes/         # API endpoint definitions
+│   │   └── app.js          # Express app configuration
 │   ├── server.js           # API entry point
 │   ├── init_db.js          # DB initialization script
 │   ├── schema.sql          # MySQL database schema
