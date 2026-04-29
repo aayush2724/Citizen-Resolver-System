@@ -21,7 +21,7 @@ export default function LocationSelector({
       <label className="grid gap-2">
         <span className="text-sm font-black text-slate-700">City</span>
         <select
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+          className="w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 disabled:bg-slate-100 disabled:text-slate-400"
           value={selectedCity}
           onChange={(e) => onCityChange(e.target.value)}
           required
@@ -38,7 +38,7 @@ export default function LocationSelector({
       <label className="grid gap-2">
         <span className="text-sm font-black text-slate-700">Block</span>
         <select
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 disabled:bg-slate-100"
+          className="w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 disabled:bg-slate-100 disabled:text-slate-400"
           value={selectedBlock}
           onChange={(e) => onBlockChange(e.target.value)}
           disabled={!selectedCity}
@@ -56,7 +56,7 @@ export default function LocationSelector({
       <label className="grid gap-2">
         <span className="text-sm font-black text-slate-700">Area</span>
         <select
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 disabled:bg-slate-100"
+          className="w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 disabled:bg-slate-100 disabled:text-slate-400"
           value={selectedArea}
           onChange={(e) => onAreaChange(e.target.value)}
           disabled={!selectedBlock}

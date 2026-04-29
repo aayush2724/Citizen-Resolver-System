@@ -1,3 +1,5 @@
+SET FOREIGN_KEY_CHECKS=0;
+
 CREATE TABLE IF NOT EXISTS users (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(120) NOT NULL,
@@ -6,8 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
   role ENUM('citizen', 'admin') NOT NULL DEFAULT 'citizen',
   area_id BIGINT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_users_role (role)
-  -- Foreign key added later to avoid circular dependency
+  INDEX idx_users_role (role),
+  CONSTRAINT fk_user_area FOREIGN KEY (area_id) REFERENCES areas(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS areas (
@@ -17,8 +19,7 @@ CREATE TABLE IF NOT EXISTS areas (
   is_active BOOLEAN DEFAULT TRUE
 );
 
--- Add foreign key now that areas table exists
-ALTER TABLE users ADD CONSTRAINT fk_user_area FOREIGN KEY (area_id) REFERENCES areas(id) ON DELETE SET NULL;
+SET FOREIGN_KEY_CHECKS=1;
 
 CREATE TABLE IF NOT EXISTS departments (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -99,5 +100,21 @@ CREATE TABLE IF NOT EXISTS notifications (
 
 -- Insert dummy data
 INSERT IGNORE INTO areas (name, zone) VALUES ('Stage 1', 'Zone A'), ('Stage 2', 'Zone A'), ('Central Ward', 'Zone B');
+
+INSERT IGNORE INTO departments (name) VALUES 
+('Roads'), 
+('Sanitation'), 
+('Water Supply'), 
+('Street Lights'), 
+('Drainage'),
+('Public Parks');
+
+INSERT IGNORE INTO labour (name, phone, department_id, availability_status) VALUES 
+('Ramesh Kumar', '9876543210', 2, 'Available'),
+('Imran Ali', '9876543211', 4, 'On Task'),
+('Sonal Patil', '9876543212', 1, 'Available'),
+('Deepak Das', '9876543213', 5, 'On Task'),
+('Maya Singh', '9876543214', 3, 'Available');
+
 INSERT IGNORE INTO users (name, email, password_hash, role) VALUES ('Admin User', 'admin@helpline.local', '$2b$10$EP/D2.K.OtkK.oP1iI/0.e8sB0LhX1JjN2W5S2l2b1q7Y0/q3U/yW', 'admin'); -- password: password
 INSERT IGNORE INTO users (name, email, password_hash, role, area_id) VALUES ('Aarav Sharma', 'aarav@example.com', '$2b$10$EP/D2.K.OtkK.oP1iI/0.e8sB0LhX1JjN2W5S2l2b1q7Y0/q3U/yW', 'citizen', 1); -- password: password

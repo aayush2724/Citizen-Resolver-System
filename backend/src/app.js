@@ -10,12 +10,8 @@ import { apiErrorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:5173").split(",");
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS blocked: origin ${origin} not allowed`));
-  },
+  origin: true, // Allows any origin
   credentials: true,
 }));
 app.use(express.json());

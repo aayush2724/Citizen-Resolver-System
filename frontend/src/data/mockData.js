@@ -9,16 +9,20 @@ export const locations = [
     blocks: [
       {
         name: "Vijayanagar",
-        areas: ["Stage 1", "Stage 2", "Stage 3", "Stage 4", "Stage 5"],
+        areas: ["Stage 1", "Stage 2", "Stage 3", "Stage 4", "Stage 5", "Stage 6", "Hinkal", "Bogadi"],
       },
       {
         name: "Jayanagar",
-        areas: ["East", "West", "North", "South"],
+        areas: ["East", "West", "North", "South", "Ashokapuram"],
       },
       {
         name: "Kuvempunagar",
-        areas: ["Area 1", "Area 2", "Area 3"],
+        areas: ["M-Block", "N-Block", "K-Block", "Udayagiri"],
       },
+      {
+        name: "Saraswathipuram",
+        areas: ["1st Main", "Fire Brigade", "Swimming Pool Rd", "Kamakshi Hospital Rd"],
+      }
     ],
   },
   {
@@ -26,14 +30,35 @@ export const locations = [
     blocks: [
       {
         name: "Whitefield",
-        areas: ["Phase 1", "Phase 2", "Phase 3"],
+        areas: ["Phase 1", "Phase 2", "Phase 3", "EPIP Zone", "ITPL"],
       },
       {
         name: "Indiranagar",
-        areas: ["100 Feet Road", "12th Main", "6th Main"],
+        areas: ["100 Feet Road", "12th Main", "6th Main", "Double Road", "CMH Road"],
       },
+      {
+        name: "Koramangala",
+        areas: ["1st Block", "3rd Block", "5th Block", "6th Block", "Sony World Jnc"],
+      }
     ],
   },
+  {
+    city: "Delhi",
+    blocks: [
+      {
+        name: "South Delhi",
+        areas: ["Hauz Khas", "Saket", "Vasant Kunj", "Greater Kailash", "Green Park"]
+      },
+      {
+        name: "Central Delhi",
+        areas: ["Connaught Place", "Paharganj", "Karol Bagh", "Rajendra Nagar"]
+      },
+      {
+        name: "North Delhi",
+        areas: ["Civil Lines", "Model Town", "Mukherjee Nagar", "Kamla Nagar"]
+      }
+    ]
+  }
 ];
 
 export const areas = [

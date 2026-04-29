@@ -11,12 +11,23 @@ const getHeaders = () => {
 
 export const api = {
   async getState() {
+    const currentUser = JSON.parse(localStorage.getItem('citizen-user') || 'null');
+    
+    if (!currentUser || !currentUser.token) {
+      return { issues: [], areas: [], departments: [], labour: [], notifications: [], users: [], currentUser: null };
+    }
+
     const res = await fetch(`${BASE_URL}/state`, { headers: getHeaders() });
+    
+    if (res.status === 401 || res.status === 403) {
+      localStorage.removeItem('citizen-user');
+      return { issues: [], areas: [], departments: [], labour: [], notifications: [], users: [], currentUser: null };
+    }
+    
     if (!res.ok) throw new Error('Failed to fetch state');
     const data = await res.json();
+    console.log('Fetched State:', data);
     
-    // We also need the currentUser from local storage for the shell
-    const currentUser = JSON.parse(localStorage.getItem('citizen-user') || 'null');
     return { ...data, currentUser };
   },
 

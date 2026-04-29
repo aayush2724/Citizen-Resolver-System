@@ -315,12 +315,20 @@ export default function App() {
     });
   }
 
+  function handleLogout() {
+    localStorage.removeItem("citizen-user");
+    setState(null);
+    setActivePage("home");
+    window.location.reload();
+  }
+
   return (
     <Shell
       activePage={activePage}
       setActivePage={setActivePage}
-      currentUser={state.currentUser}
+      currentUser={state?.currentUser}
       unreadCount={unreadCount}
+      onLogout={handleLogout}
     >
       {toast ? (
         <div className="mb-5 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">
@@ -444,10 +452,22 @@ function HomePage({ analytics, setActivePage, currentUser }) {
             </span>
           </div>
           
-          <h1 className="text-5xl font-black leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-[72px]">
-            Empowering Our <br />
-            <span className="text-[#00b87c]">Community</span> <br />
-            Progress.
+          <h1 className="flex flex-col w-full">
+            <span className="text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-[72px] leading-[0.9]">
+              Citizen
+            </span>
+            <div className="flex items-center gap-6 w-full">
+              <span className="text-6xl font-black tracking-tight text-[#00b87c] sm:text-7xl lg:text-[88px] leading-[0.85]">
+                Resolver
+              </span>
+              <span className="hidden sm:block h-[3px] flex-1 rounded-full bg-gradient-to-r from-[#00b87c]/50 to-transparent"></span>
+            </div>
+            <div className="flex items-end gap-6 w-full mt-1">
+              <span className="text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-[72px] leading-[0.9]">
+                System
+              </span>
+              
+            </div>
           </h1>
           
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-400">
@@ -460,7 +480,7 @@ function HomePage({ analytics, setActivePage, currentUser }) {
             <button
               className="flex items-center gap-2 rounded-xl bg-[#00b87c] px-6 py-3.5 font-bold text-white transition hover:bg-[#009665]"
               type="button"
-              onClick={() => setActivePage("report")}
+              onClick={() => setActivePage(currentUser ? "report" : "auth")}
             >
               Report an Issue
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
@@ -704,7 +724,7 @@ function ReportPage({ departmentNames, report, setReport, onSubmit }) {
               Description
             </span>
             <textarea
-              className="min-h-32 rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+              className="min-h-32 rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
               value={report.description}
               onChange={(event) =>
                 setReport({ ...report, description: event.target.value })

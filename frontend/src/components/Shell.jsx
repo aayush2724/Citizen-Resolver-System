@@ -4,6 +4,7 @@ import {
   Home,
   LayoutDashboard,
   LogIn,
+  LogOut,
   PlusCircle,
   User,
 } from "lucide-react";
@@ -21,6 +22,7 @@ export default function Shell({
   setActivePage,
   currentUser,
   unreadCount,
+  onLogout,
   children,
 }) {
   return (
@@ -58,6 +60,11 @@ export default function Shell({
                   onClick={() => setActivePage(item.id)}
                 >
                   {item.label}
+                  {item.id === "my" && unreadCount > 0 && (
+                    <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#00b87c] text-[10px] font-bold text-white">
+                      {unreadCount}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -83,8 +90,12 @@ export default function Shell({
                     <span className="absolute -top-1 -right-1 block h-2.5 w-2.5 rounded-full bg-[#00b87c] ring-2 ring-[#0a0a0a]"></span>
                   )}
                 </button>
-                <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white transition">
-                  <User size={20} />
+                <button 
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white transition group relative"
+                  title="Sign Out"
+                  onClick={onLogout}
+                >
+                  <LogOut size={18} className="group-hover:text-red-400" />
                 </button>
               </div>
             ) : (
@@ -105,4 +116,3 @@ export default function Shell({
     </div>
   );
 }
-
