@@ -1,4 +1,4 @@
-# Citizen Helpline Portal (CHP)
+# Citizen-Resolver-System(CRS)
 
 A Full-Stack civic issue reporting platform featuring a modern **Bento-grid UI** and a robust **Node.js + MySQL** backend. Citizens can submit issues, track progress, and receive notifications, while admins can manage assignments, labour, and departments.
 
