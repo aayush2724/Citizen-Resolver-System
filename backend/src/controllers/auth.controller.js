@@ -14,15 +14,19 @@ export const login = async (req, res, next) => {
     const { identifier, password } = req.body;
 
     if (!identifier || !password) {
-      return res.status(400).json({ error: "Email/Phone and password are required" });
+      return res
+        .status(400)
+        .json({ error: "Email/Phone and password are required" });
     }
 
     const [rows] = await pool.query(
       "SELECT * FROM users WHERE email = ? OR phone = ?",
-      [identifier, identifier]
+      [identifier, identifier],
     );
     if (rows.length === 0) {
-      return res.status(401).json({ error: "No account found with this email or phone" });
+      return res
+        .status(401)
+        .json({ error: "No account found with this email or phone" });
     }
 
     const user = rows[0];
@@ -75,7 +79,16 @@ export const signup = async (req, res, next) => {
     const hash = await bcrypt.hash(password, 10);
     const [result] = await pool.query(
       "INSERT INTO users (name, email, phone, password_hash, role, city, block, area_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      [name.trim(), email?.trim().toLowerCase() || null, phone?.trim() || null, hash, role || "citizen", city, block, areaId],
+      [
+        name.trim(),
+        email?.trim().toLowerCase() || null,
+        phone?.trim() || null,
+        hash,
+        role || "citizen",
+        city,
+        block,
+        areaId,
+      ],
     );
 
     const user = {
@@ -93,6 +106,13 @@ export const signup = async (req, res, next) => {
     res.status(201).json({ ...user, token });
   } catch (err) {
     if (err.code === "ER_DUP_ENTRY") {
+      const message = String(err.sqlMessage || err.message || "");
+      if (message.includes("phone")) {
+        return res
+          .status(400)
+          .json({ error: "An account with this phone number already exists" });
+      }
+
       return res
         .status(400)
         .json({ error: "An account with this email already exists" });
