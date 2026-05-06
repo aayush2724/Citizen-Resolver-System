@@ -4,6 +4,13 @@ export const createIssue = async (req, res, next) => {
   try {
     const { title, description, imageUrl, priority, department, area } = req.body;
 
+    if (!title?.trim()) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+    if (!description?.trim()) {
+      return res.status(400).json({ error: "Description is required" });
+    }
+
     const [areaRows] = await pool.query("SELECT id FROM areas WHERE name = ?", [area]);
     const areaId = areaRows.length > 0 ? areaRows[0].id : 1; 
 
@@ -65,10 +72,15 @@ export const updateIssue = async (req, res, next) => {
       }
     }
 
+    let updateResult;
     if (deptId) {
-      await pool.query("UPDATE issues SET status = ?, department_id = ? WHERE id = ?", [status, deptId, actualId]);
+      [updateResult] = await pool.query("UPDATE issues SET status = ?, department_id = ? WHERE id = ?", [status, deptId, actualId]);
     } else {
-      await pool.query("UPDATE issues SET status = ? WHERE id = ?", [status, actualId]);
+      [updateResult] = await pool.query("UPDATE issues SET status = ? WHERE id = ?", [status, actualId]);
+    }
+
+    if (updateResult.affectedRows === 0) {
+      return res.status(404).json({ error: `Issue ${issueIdStr} not found` });
     }
 
     if (labourId && deptId) {

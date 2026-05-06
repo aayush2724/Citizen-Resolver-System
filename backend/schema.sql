@@ -131,4 +131,4 @@ CREATE TABLE IF NOT EXISTS bug_reports (
 );
 
 INSERT IGNORE INTO users (name, email, password_hash, role) VALUES ('Admin User', 'admin@helpline.local', '$2b$10$JlCAjLFBLlnS/KAtflYzEO6fhboV9NAQhhHawYr0jICRKIe/hUKC6', 'admin'); -- password: password
-INSERT IGNORE INTO users (name, email, password_hash, role, area_id) VALUES ('Aarav Sharma', 'aarav@example.com', '$2b$10$EP/D2.K.OtkK.oP1iI/0.e8sB0LhX1JjN2W5S2l2b1q7Y0/q3U/yW', 'citizen', 1); -- password: password
+INSERT IGNORE INTO users (name, email, password_hash, role, area_id) VALUES ('Aarav Sharma', 'aarav@example.com', '$2b$10$qfK6.lb/xo0vBU4uQrg9duTgUnQFOwhxFheiHbooMxu2Rr1Emo3f.', 'citizen', 1); -- password: password
