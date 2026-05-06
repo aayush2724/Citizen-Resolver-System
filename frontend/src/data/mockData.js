@@ -22,6 +22,14 @@ export const locations = [
       {
         name: "Saraswathipuram",
         areas: ["1st Main", "Fire Brigade", "Swimming Pool Rd", "Kamakshi Hospital Rd"],
+      },
+      {
+        name: "Gokulam",
+        areas: ["1st Stage", "2nd Stage", "3rd Stage", "Vani Vilas Mohalla"],
+      },
+      {
+        name: "Hebbal",
+        areas: ["Industrial Area", "Surya Bakery", "Lokanayakanagar"],
       }
     ],
   },
@@ -39,6 +47,14 @@ export const locations = [
       {
         name: "Koramangala",
         areas: ["1st Block", "3rd Block", "5th Block", "6th Block", "Sony World Jnc"],
+      },
+      {
+        name: "Jayanagar",
+        areas: ["4th Block", "9th Block", "1st Block", "South End Circle"],
+      },
+      {
+        name: "Malleswaram",
+        areas: ["8th Cross", "18th Cross", "Margosa Road", "Sampige Road"],
       }
     ],
   },
@@ -56,6 +72,14 @@ export const locations = [
       {
         name: "North Delhi",
         areas: ["Civil Lines", "Model Town", "Mukherjee Nagar", "Kamla Nagar"]
+      },
+      {
+        name: "East Delhi",
+        areas: ["Preet Vihar", "Laxmi Nagar", "Mayur Vihar", "Shahdara"]
+      },
+      {
+        name: "West Delhi",
+        areas: ["Rajouri Garden", "Punjabi Bagh", "Janakpuri", "Patel Nagar"]
       }
     ]
   },
@@ -73,6 +97,14 @@ export const locations = [
       {
         name: "Eastern Suburbs",
         areas: ["Kurla", "Ghatkopar", "Powai", "Vikhroli"]
+      },
+      {
+        name: "Navi Mumbai",
+        areas: ["Vashi", "Nerul", "Belapur", "Kharghar"]
+      },
+      {
+        name: "Thane",
+        areas: ["Majiwada", "Ghodbunder Road", "Vartak Nagar", "Kopri"]
       }
     ]
   },
@@ -90,6 +122,14 @@ export const locations = [
       {
         name: "North Chennai",
         areas: ["Royapuram", "Tondiarpet", "Perambur", "Washermanpet"]
+      },
+      {
+        name: "East Coast Road",
+        areas: ["Palavakkam", "Neelankarai", "Injambakkam", "Akkarai"]
+      },
+      {
+        name: "OMR",
+        areas: ["Sholinganallur", "Thoraipakkam", "Perungudi", "Navalur"]
       }
     ]
   },
@@ -107,6 +147,14 @@ export const locations = [
       {
         name: "Secunderabad",
         areas: ["Begumpet", "Tarnaka", "Marredpally", "Bowenpally"]
+      },
+      {
+        name: "Old City",
+        areas: ["Charminar", "Shalibanda", "Falaknuma", "Chandrayangutta"]
+      },
+      {
+        name: "East Zone",
+        areas: ["Dilsukhnagar", "LB Nagar", "Uppal", "Ramanthapur"]
       }
     ]
   },
@@ -124,6 +172,14 @@ export const locations = [
       {
         name: "Salt Lake",
         areas: ["Sector 1", "Sector 2", "Sector 3", "Sector 5"]
+      },
+      {
+        name: "East Kolkata",
+        areas: ["Rajarhat", "New Town", "Phoolbagan", "Kankurgachi"]
+      },
+      {
+        name: "Howrah",
+        areas: ["Shibpur", "Bally", "Liluah", "Salkia"]
       }
     ]
   },
@@ -141,6 +197,14 @@ export const locations = [
       {
         name: "Central Pune",
         areas: ["Shivajinagar", "Camp", "Deccan Gymkhana", "Swargate"]
+      },
+      {
+        name: "South Pune",
+        areas: ["Kondhwa", "Wanowrie", "NIBM Road", "Katraj"]
+      },
+      {
+        name: "Pimpri-Chinchwad",
+        areas: ["Pimpri", "Chinchwad", "Wakad", "Nigdi"]
       }
     ]
   },
@@ -158,6 +222,14 @@ export const locations = [
       {
         name: "New West Zone",
         areas: ["SG Highway", "Bodakdev", "Thaltej", "Makarba"]
+      },
+      {
+        name: "North Zone",
+        areas: ["Sabarmati", "Chandkheda", "Motera", "Nava Wadaj"]
+      },
+      {
+        name: "South Zone",
+        areas: ["Isanpur", "Vatva", "Ghodasar", "Maninagar South"]
       }
     ]
   }
