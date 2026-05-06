@@ -1,8 +1,11 @@
 import { X } from "lucide-react";
 import { progressFor, statusOrder, statusTone } from "../utils/status";
+import { fallbackImage, getRelevantImage } from "../utils/image";
 
 export default function IssueModal({ issue, onClose }) {
   if (!issue) return null;
+
+  const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department);
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/55 p-4">
@@ -23,7 +26,15 @@ export default function IssueModal({ issue, onClose }) {
         </header>
 
         <div className="grid gap-5 p-5">
-          <img className="max-h-72 w-full rounded-lg object-cover" src={issue.imageUrl} alt="" />
+          <img
+            className="max-h-72 w-full rounded-lg object-cover"
+            src={imageSrc}
+            alt=""
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = fallbackImage;
+            }}
+          />
           <p className="leading-7 text-slate-700">{issue.description}</p>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

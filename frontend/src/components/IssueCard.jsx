@@ -1,15 +1,22 @@
 import { CalendarDays, MapPin, UserRound } from "lucide-react";
 import { priorityTone, progressFor, statusTone } from "../utils/status";
+import { fallbackImage, getRelevantImage } from "../utils/image";
 
 export default function IssueCard({ issue, onOpen }) {
+  const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department);
+
   return (
     <article className="group flex min-w-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-lift">
       <div className="relative h-44 overflow-hidden bg-slate-100">
         <img
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-          src={issue.imageUrl}
+          src={imageSrc}
           alt=""
           loading="lazy"
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = fallbackImage;
+          }}
         />
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
           <span className={`rounded-full px-3 py-1 text-xs font-black ${priorityTone(issue.priority)}`}>
