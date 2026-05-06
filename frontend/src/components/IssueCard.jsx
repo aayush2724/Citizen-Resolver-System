@@ -6,10 +6,10 @@ export default function IssueCard({ issue, onOpen }) {
   const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department);
 
   return (
-    <article className="group flex min-w-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-lift">
-      <div className="relative h-44 overflow-hidden bg-slate-100">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/5 bg-[#0f0f0f] shadow-premium transition-all duration-300 hover:-translate-y-1.5 hover:border-white/10 hover:shadow-2xl">
+      <div className="relative h-48 overflow-hidden">
         <img
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
           src={imageSrc}
           alt=""
           loading="lazy"
@@ -18,60 +18,62 @@ export default function IssueCard({ issue, onOpen }) {
             event.currentTarget.src = fallbackImage;
           }}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent opacity-60" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-          <span className={`rounded-full px-3 py-1 text-xs font-black ${priorityTone(issue.priority)}`}>
+          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${priorityTone(issue.priority)}`}>
             {issue.priority}
           </span>
-          <span className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${statusTone(issue.status)}`}>
+          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${statusTone(issue.status)}`}>
             {issue.status}
           </span>
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col p-6">
         <div className="flex items-center justify-between gap-3">
-          <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-black text-teal-800">
+          <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-teal-400">
             {issue.department}
           </span>
-          <span className="text-xs font-bold text-slate-500">{issue.id}</span>
+          <span className="text-[10px] font-bold text-slate-500 tracking-widest">{issue.id}</span>
         </div>
 
-        <h3 className="mt-4 text-xl font-black leading-tight text-slate-950">{issue.title}</h3>
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{issue.description}</p>
+        <h3 className="mt-4 text-lg font-bold leading-tight text-white transition-colors group-hover:text-teal-400">{issue.title}</h3>
+        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-400">{issue.description}</p>
 
         {issue.note && (
-          <div className="mt-4 rounded-md bg-slate-50 p-3 border border-slate-200">
-            <span className="block text-xs font-black uppercase tracking-wider text-teal-800 mb-1">Latest Update</span>
-            <p className="text-sm text-slate-800 line-clamp-2">{issue.note}</p>
+          <div className="mt-4 rounded-xl bg-white/5 p-4 border border-white/5">
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-teal-500 mb-1.5">Latest Update</span>
+            <p className="text-sm text-slate-300 line-clamp-2 leading-relaxed">{issue.note}</p>
           </div>
         )}
 
-        <div className="mt-5">
-          <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+        <div className="mt-6">
+          <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
             <span
-              className="block h-full rounded-full bg-teal-600 transition-all duration-500"
+              className="block h-full rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 shadow-[0_0_10px_rgba(20,184,166,0.5)] transition-all duration-700 ease-out"
               style={{ width: `${progressFor(issue.status)}%` }}
             />
           </div>
-          <div className="mt-3 grid gap-2 text-sm text-slate-600">
-            <span className="flex items-center gap-2">
-              <MapPin size={16} /> {issue.area}
+          <div className="mt-4 grid gap-2.5 text-xs text-slate-500">
+            <span className="flex items-center gap-2.5">
+              <MapPin size={14} className="text-teal-500/70" /> {issue.area}
             </span>
-            <span className="flex items-center gap-2">
-              <UserRound size={16} /> {issue.assignedLabour}
+            <span className="flex items-center gap-2.5">
+              <UserRound size={14} className="text-teal-500/70" /> {issue.assignedLabour}
             </span>
-            <span className="flex items-center gap-2">
-              <CalendarDays size={16} /> Updated {issue.updatedAt}
+            <span className="flex items-center gap-2.5">
+              <CalendarDays size={14} className="text-teal-500/70" /> Updated {issue.updatedAt}
             </span>
           </div>
         </div>
 
         <button
-          className="mt-5 rounded-lg border border-slate-300 px-4 py-2 text-sm font-black text-slate-800 transition hover:border-teal-600 hover:text-teal-700"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-white transition-all duration-300 hover:bg-white/10 hover:border-white/20 active:scale-[0.98]"
           type="button"
           onClick={() => onOpen(issue)}
         >
-          View details
+          View Full Details
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
         </button>
       </div>
     </article>

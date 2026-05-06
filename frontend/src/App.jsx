@@ -236,6 +236,7 @@ export default function App() {
           ? await api.login(authForm)
           : await api.signup(authForm);
 
+      console.log("Auth successful, user role:", user.role);
       setAuthError("");
       setToast(`${user.name} signed in.`);
       setNotification({
@@ -243,8 +244,8 @@ export default function App() {
         message: `Welcome${authMode === "signup" ? "" : " back"}, ${user.name}!`,
       });
       // Reset to a completely empty form — no pre-filled demo values
-      setAuthForm({ name: "", email: "", password: "", city: "", block: "", area: "" });
-      setActivePage("home");
+      setAuthForm({ name: "", email: "", password: "", city: "", block: "", area: "", role: "citizen" });
+      setActivePage(user.role === "admin" ? "dashboard" : "home");
     } catch (error) {
       const errorMessage = error?.message || "Something went wrong. Please try again.";
       setAuthError(errorMessage);
@@ -529,18 +530,18 @@ function BugReportPage({ currentUser }) {
   if (submitted) {
     return (
       <section className="grid gap-6">
-        <div className="mx-auto max-w-xl rounded-2xl border border-emerald-200 bg-emerald-50 p-10 text-center shadow-soft">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-3xl">✓</div>
-          <h1 className="text-2xl font-black text-slate-950">Report Sent!</h1>
-          <p className="mt-2 text-slate-600">
-            Thank you for your feedback. Our developers have received your report and will look into it.
+        <div className="mx-auto max-w-xl rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-12 text-center shadow-premium">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 text-4xl shadow-[0_0_20px_rgba(16,185,129,0.2)]">✓</div>
+          <h1 className="text-3xl font-black text-white">Report Sent Successfully</h1>
+          <p className="mt-4 text-slate-400 leading-relaxed">
+            Thank you for helping us improve. Our engineering team has received your report and will investigate it shortly.
           </p>
           <button
-            className="mt-6 rounded-lg bg-teal-700 px-6 py-2.5 font-bold text-white hover:bg-teal-800 transition"
+            className="mt-8 rounded-xl bg-teal-600 px-8 py-3.5 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98]"
             type="button"
             onClick={() => setSubmitted(false)}
           >
-            Submit another report
+            Submit Another Report
           </button>
         </div>
       </section>
@@ -548,19 +549,19 @@ function BugReportPage({ currentUser }) {
   }
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[1fr_380px]">
-      <form className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft" onSubmit={handleSubmit}>
-        <p className="text-sm font-black uppercase text-teal-700">Developer feedback</p>
-        <h1 className="mt-2 text-3xl font-black text-slate-950">Report a Website Issue</h1>
-        <p className="mt-2 text-slate-500">Found a bug or have a suggestion? Let us know and we'll fix it.</p>
+    <section className="grid gap-8 lg:grid-cols-[1fr_380px] items-start">
+      <form className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium" onSubmit={handleSubmit}>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-teal-500 mb-3">Developer Feedback</p>
+        <h1 className="text-3xl font-black text-white">Report a System Issue</h1>
+        <p className="mt-3 text-slate-400">Found a bug or have a suggestion? Help us improve the Citizen Resolver System.</p>
 
         {error && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</div>
+          <div className="mt-6 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">{error}</div>
         )}
 
-        <div className="mt-6 grid gap-4">
+        <div className="mt-8 grid gap-6">
           <Select
-            label="Category"
+            label="Issue Category"
             value={form.category}
             options={["bug", "ui", "performance", "feature", "general"]}
             onChange={(category) => setForm({ ...form, category })}
@@ -573,50 +574,53 @@ function BugReportPage({ currentUser }) {
             required
           />
           <label className="grid gap-2">
-            <span className="text-sm font-black text-slate-700">Description</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Detailed Description</span>
             <textarea
-              className="min-h-36 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+              className="min-h-40 w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all leading-relaxed"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              placeholder="Describe the issue in detail. What did you expect vs what happened?"
+              placeholder="What happened? What did you expect to happen? Steps to reproduce?"
               required
             />
           </label>
           <Field
-            label="Contact email (optional)"
+            label="Contact Email (Optional)"
             type="email"
             value={form.email}
             onChange={(email) => setForm({ ...form, email })}
-            placeholder="We'll reply here if we need more details"
+            placeholder="We'll notify you here once it's fixed"
           />
-          <button className="rounded-lg bg-teal-700 px-5 py-3 font-black text-white hover:bg-teal-800 transition" type="submit">
-            Send report to developers
+          <button className="rounded-xl bg-teal-600 px-6 py-4 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20" type="submit">
+            Send Feedback to Developers
           </button>
         </div>
       </form>
 
-      <aside className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft h-fit">
-        <h2 className="text-lg font-black text-slate-950">What can you report?</h2>
-        <ul className="mt-4 grid gap-3">
+      <aside className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium h-fit sticky top-24">
+        <h2 className="text-lg font-bold text-white mb-6">What can you report?</h2>
+        <ul className="grid gap-4">
           {[
-            ["🐛", "Bug", "Something broken or not working as expected"],
-            ["🎨", "UI Issue", "Invisible text, broken layout, or display problem"],
-            ["⚡", "Performance", "Page is slow or takes too long to load"],
-            ["💡", "Feature Request", "A suggestion to improve the system"],
-            ["📝", "General", "Any other feedback for our team"],
+            ["🐛", "Bug", "Functional issues or errors"],
+            ["🎨", "UI Issue", "Visual bugs or layout problems"],
+            ["⚡", "Performance", "Slow loading or laggy interactions"],
+            ["💡", "Feature Request", "Ideas for new functionality"],
+            ["📝", "General", "Any other feedback or questions"],
           ].map(([emoji, title, desc]) => (
-            <li key={title} className="flex items-start gap-3 rounded-lg bg-slate-50 p-3">
-              <span className="text-xl">{emoji}</span>
+            <li key={title} className="flex items-start gap-4 rounded-xl bg-white/[0.02] p-4 transition-colors hover:bg-white/5">
+              <span className="text-2xl">{emoji}</span>
               <div>
-                <p className="font-bold text-slate-900">{title}</p>
-                <p className="text-sm text-slate-500">{desc}</p>
+                <p className="font-bold text-white text-sm">{title}</p>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">{desc}</p>
               </div>
             </li>
           ))}
         </ul>
-        <div className="mt-5 rounded-lg bg-teal-50 border border-teal-200 p-4">
-          <p className="text-sm font-bold text-teal-800">🔒 Your report is confidential</p>
-          <p className="mt-1 text-xs text-teal-700">Reports are only visible to developers and administrators.</p>
+        <div className="mt-8 rounded-xl bg-teal-500/5 border border-teal-500/10 p-5">
+          <p className="text-xs font-bold text-teal-400 flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]"></span>
+            Your report is confidential
+          </p>
+          <p className="mt-2 text-[11px] text-teal-500/70 leading-relaxed">Reports are only visible to our core development and admin teams.</p>
         </div>
       </aside>
     </section>
@@ -753,54 +757,57 @@ function AuthPage({
   onSubmit,
 }) {
   return (
-    <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
-        <p className="text-sm font-black uppercase text-teal-700">Access</p>
-        <h1 className="mt-2 text-3xl font-black text-slate-950">
-          Login or create a citizen account
+    <section className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] items-start">
+      <div className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-teal-500 mb-3">Access Portal</p>
+        <h1 className="text-3xl font-black text-white leading-tight">
+          Join the community or sign in
         </h1>
-        <p className="mt-3 leading-7 text-slate-600">
-          Use a citizen account to report and track issues. Admin accounts are
-          created by the system administrator.
+        <p className="mt-4 leading-relaxed text-slate-400">
+          Use a citizen account to report and track issues. Admin accounts are managed by the department leads.
         </p>
-        <div className="mt-6 grid gap-3">
+        <div className="mt-8 grid gap-4">
           <button
-            className="rounded-lg border border-slate-200 p-4 text-left font-bold hover:bg-slate-50 transition"
+            className="group rounded-xl border border-white/5 bg-white/[0.02] p-5 text-left transition-all hover:bg-white/5 hover:border-white/10"
             type="button"
             onClick={() =>
               setAuthForm({
                 ...authForm,
                 email: "admin@helpline.local",
                 password: "password",
+                role: "admin",
               })
             }
           >
-            Admin demo: admin@helpline.local
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 group-hover:text-teal-400 transition-colors">Admin Demo</span>
+            <span className="block font-bold text-white">admin@helpline.local</span>
           </button>
           <button
-            className="rounded-lg border border-slate-200 p-4 text-left font-bold hover:bg-slate-50 transition"
+            className="group rounded-xl border border-white/5 bg-white/[0.02] p-5 text-left transition-all hover:bg-white/5 hover:border-white/10"
             type="button"
             onClick={() =>
               setAuthForm({
                 ...authForm,
                 email: "aarav@example.com",
                 password: "password",
+                role: "citizen",
               })
             }
           >
-            Citizen demo: aarav@example.com
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 group-hover:text-teal-400 transition-colors">Citizen Demo</span>
+            <span className="block font-bold text-white">aarav@example.com</span>
           </button>
         </div>
       </div>
 
       <form
-        className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft"
+        className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium"
         onSubmit={onSubmit}
       >
-        <div className="mb-5 flex gap-2">
+        <div className="mb-8 flex gap-3 p-1.5 bg-black rounded-xl w-fit border border-white/5">
           {["login", "signup"].map((mode) => (
             <button
-              className={`rounded-lg px-4 py-2 font-black ${authMode === mode ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700"}`}
+              className={`rounded-lg px-6 py-2 text-xs font-bold transition-all ${authMode === mode ? "bg-white text-black shadow-lg" : "text-slate-500 hover:text-white"}`}
               key={mode}
               type="button"
               onClick={() => setAuthMode(mode)}
@@ -811,16 +818,16 @@ function AuthPage({
         </div>
 
         {authError && (
-          <div className="mb-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-            <AlertCircle size={18} className="mt-0.5 shrink-0" />
+          <div className="mb-6 flex items-start gap-4 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">
+            <AlertCircle size={20} className="shrink-0" />
             <div>
               <p className="font-bold">Authentication Error</p>
-              <p className="mt-1">{authError}</p>
+              <p className="mt-1 opacity-80">{authError}</p>
             </div>
           </div>
         )}
 
-        <div className="grid gap-4">
+        <div className="grid gap-6">
           {authMode === "signup" ? (
             <Field
               label="Full name"
@@ -864,17 +871,17 @@ function AuthPage({
             />
           ) : null}
           {authMode === "signup" ? (
-            <div className="grid gap-2">
-              <span className="text-sm font-black text-slate-700">Account Type</span>
-              <div className="flex gap-2">
+            <div className="grid gap-3">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Account Type</span>
+              <div className="flex gap-3">
                 {["citizen", "admin"].map((r) => (
                   <button
                     key={r}
                     type="button"
-                    className={`flex-1 rounded-lg border py-2 text-sm font-bold capitalize transition ${
+                    className={`flex-1 rounded-xl border py-3 text-sm font-bold capitalize transition-all ${
                       authForm.role === r
-                        ? "border-teal-600 bg-teal-50 text-teal-700"
-                        : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                        ? "border-teal-500 bg-teal-500/10 text-teal-400 shadow-[0_0_15px_rgba(20,184,166,0.1)]"
+                        : "border-white/5 bg-white/[0.02] text-slate-500 hover:border-white/10 hover:text-white"
                     }`}
                     onClick={() => setAuthForm({ ...authForm, role: r })}
                   >
@@ -885,10 +892,10 @@ function AuthPage({
             </div>
           ) : null}
           <button
-            className="rounded-lg bg-teal-700 px-5 py-3 font-black text-white hover:bg-teal-800 transition"
+            className="mt-4 rounded-xl bg-teal-600 px-6 py-4 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20"
             type="submit"
           >
-            {authMode === "login" ? "Sign in" : "Create account"}
+            {authMode === "login" ? "Sign in to Dashboard" : "Create Citizen Account"}
           </button>
         </div>
       </form>
@@ -898,27 +905,28 @@ function AuthPage({
 
 function ReportPage({ departmentNames, report, setReport, onSubmit }) {
   return (
-    <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+    <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start">
       <form
-        className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft"
+        className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium"
         onSubmit={onSubmit}
       >
-        <p className="text-sm font-black uppercase text-teal-700">
-          Citizen report
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-teal-500 mb-3">
+          Citizen Reporting
         </p>
-        <h1 className="mt-2 text-3xl font-black text-slate-950">
-          Report Issue
+        <h1 className="text-3xl font-black text-white">
+          Report New Issue
         </h1>
-        <div className="mt-6 grid gap-4">
+        <div className="mt-8 grid gap-6">
           <Field
-            label="Title"
+            label="Short Title"
             value={report.title}
             onChange={(title) => setReport({ ...report, title })}
+            placeholder="e.g. Pothole on Main St"
             required
           />
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2">
             <Select
-              label="Priority"
+              label="Priority Level"
               value={report.priority}
               options={["Normal", "High", "Urgent"]}
               onChange={(priority) => setReport({ ...report, priority })}
@@ -942,49 +950,60 @@ function ReportPage({ departmentNames, report, setReport, onSubmit }) {
             onAreaChange={(area) => setReport({ ...report, area })}
           />
           <label className="grid gap-2">
-            <span className="text-sm font-black text-slate-700">
-              Description
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Detailed Description
             </span>
             <textarea
-              className="min-h-32 rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+              className="min-h-36 w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all leading-relaxed"
               value={report.description}
               onChange={(event) =>
                 setReport({ ...report, description: event.target.value })
               }
+              placeholder="Provide as much detail as possible to help our teams resolve this faster."
               required
             />
           </label>
           <Field
-            label="Image URL"
+            label="Reference Image URL"
             value={report.imageUrl}
             onChange={(imageUrl) => setReport({ ...report, imageUrl })}
-            placeholder="Optional for demo"
+            placeholder="https://images.unsplash.com/..."
             icon={<Upload size={16} />}
           />
           <button
-            className="self-end rounded-lg bg-teal-700 px-5 py-3 font-black text-white"
+            className="rounded-xl bg-teal-600 px-8 py-4 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20"
             type="submit"
           >
-            Submit issue
+            Submit Report
           </button>
         </div>
       </form>
 
-      <aside className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
-        <p className="text-sm font-black uppercase text-teal-700">Preview</p>
-        <div className="mt-4 overflow-hidden rounded-lg border border-slate-200">
+      <aside className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium sticky top-24">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-4">Live Preview</p>
+        <div className="overflow-hidden rounded-xl border border-white/5 bg-black/40">
           <img
-            className="h-56 w-full object-cover"
+            className="h-60 w-full object-cover opacity-80"
             src={report.imageUrl || fallbackImage}
             alt=""
           />
-          <div className="p-4">
-            <h2 className="text-xl font-black text-slate-950">
-              {report.title || "Issue title appears here"}
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase border ${priorityTone(report.priority)}`}>
+                {report.priority}
+              </span>
+              {report.department && (
+                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-bold uppercase text-teal-400 border border-white/5">
+                  {report.department}
+                </span>
+              )}
+            </div>
+            <h2 className="text-xl font-bold text-white">
+              {report.title || "Issue title will appear here"}
             </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-3 text-sm leading-relaxed text-slate-400">
               {report.description ||
-                "Your issue description will help the department act faster."}
+                "A detailed description helps the assigned department understand the severity and location of the issue."}
             </p>
           </div>
         </div>
@@ -995,25 +1014,25 @@ function ReportPage({ departmentNames, report, setReport, onSubmit }) {
 
 function MyIssuesPage({ issues, notifications, onOpen, onRead }) {
   return (
-    <section className="grid gap-6 lg:grid-cols-[1fr_360px]">
-      <IssueGrid title="My Issues" issues={issues} onOpen={onOpen} />
-      <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
-        <h2 className="text-xl font-black text-slate-950">Notifications</h2>
-        <div className="mt-4 grid gap-3">
+    <section className="grid gap-8 lg:grid-cols-[1fr_360px] items-start">
+      <IssueGrid title="My Reported Issues" issues={issues} onOpen={onOpen} />
+      <aside className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium h-fit">
+        <h2 className="text-xl font-bold text-white mb-6">Notifications</h2>
+        <div className="grid gap-4">
           {notifications.map((notification) => (
             <button
-              className={`rounded-lg border p-4 text-left ${notification.read ? "border-slate-200 bg-white" : "border-teal-200 bg-teal-50"}`}
+              className={`rounded-xl border p-5 text-left transition-all duration-300 ${notification.read ? "border-white/5 bg-white/[0.02] opacity-60" : "border-teal-500/20 bg-teal-500/5 shadow-lg shadow-teal-500/5"}`}
               key={notification.id}
               type="button"
               onClick={() => onRead(notification.id)}
             >
-              <strong className="block text-sm text-slate-950">
+              <strong className={`block text-sm mb-1 ${notification.read ? "text-slate-400" : "text-white"}`}>
                 {notification.title}
               </strong>
-              <span className="mt-1 block text-sm leading-6 text-slate-600">
+              <span className="block text-sm leading-relaxed text-slate-500">
                 {notification.body}
               </span>
-              <span className="mt-2 block text-xs font-bold text-slate-500">
+              <span className="mt-4 block text-[10px] font-bold uppercase tracking-widest text-slate-600">
                 {notification.createdAt}
               </span>
             </button>
@@ -1033,32 +1052,35 @@ function PublicIssuesPage({
   onOpen,
 }) {
   return (
-    <section className="grid gap-6">
-      <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
-        <div className="flex items-center gap-2">
-          <Filter size={18} />
-          <h1 className="text-2xl font-black text-slate-950">Public Issues</h1>
+    <section className="grid gap-8">
+      <div className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-2 rounded-lg bg-teal-500/10 text-teal-500">
+            <Filter size={20} />
+          </div>
+          <h1 className="text-2xl font-black text-white">Public Resolution Board</h1>
         </div>
-        <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-4">
           <Field
-            label="Search"
+            label="Search Query"
             value={filters.q}
             onChange={(q) => setFilters({ ...filters, q })}
+            placeholder="Title, area, or ID..."
           />
           <Select
-            label="Area"
+            label="Filter by Area"
             value={filters.area}
             options={["All", ...areaNames]}
             onChange={(area) => setFilters({ ...filters, area })}
           />
           <Select
-            label="Status"
+            label="Filter by Status"
             value={filters.status}
             options={["All", ...statusOrder]}
             onChange={(status) => setFilters({ ...filters, status })}
           />
           <Select
-            label="Department"
+            label="Filter by Dept"
             value={filters.department}
             options={["All", ...departmentNames]}
             onChange={(department) => setFilters({ ...filters, department })}
@@ -1066,7 +1088,7 @@ function PublicIssuesPage({
         </div>
       </div>
       <IssueGrid
-        title={`${issues.length} matching issues`}
+        title={`${issues.length} Matching Reports`}
         issues={issues}
         onOpen={onOpen}
       />
@@ -1125,13 +1147,12 @@ function AdminDashboard({
 
       {/* Main Panel */}
       <div className="grid gap-6 content-start">
-
         {/* Analytics Tab */}
         {activeTab === "analytics" && (
           <div className="grid gap-6">
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
-              <h2 className="text-xl font-black text-slate-950 mb-4">System Overview</h2>
-              <div className="grid gap-4 md:grid-cols-4">
+            <div className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium">
+              <h2 className="text-xl font-bold text-white mb-6">System Overview</h2>
+              <div className="grid gap-6 md:grid-cols-4">
                 <StatCard label="Pending" value={analytics.pending} tone="amber" />
                 <StatCard label="Active" value={analytics.active} tone="blue" />
                 <StatCard label="Resolved" value={analytics.resolved} tone="emerald" />
@@ -1144,36 +1165,40 @@ function AdminDashboard({
         {/* Assignments Tab */}
         {activeTab === "assignments" && (
           <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-            <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft">
-              <div className="border-b border-slate-200 p-5">
-                <h2 className="text-xl font-black text-slate-950">Issue Queue</h2>
+            <section className="overflow-hidden rounded-2xl border border-white/5 bg-[#0f0f0f] shadow-premium">
+              <div className="border-b border-white/5 p-6 bg-white/[0.02]">
+                <h2 className="text-xl font-bold text-white">Issue Queue</h2>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[700px] text-left text-sm">
-                  <thead className="bg-slate-50 text-xs font-black uppercase text-slate-500">
+                <table className="w-full min-w-[700px] text-left text-sm border-collapse">
+                  <thead className="bg-white/[0.02] text-[11px] font-bold uppercase tracking-widest text-slate-500">
                     <tr>
-                      <th className="p-4">Issue</th>
-                      <th className="p-4">Area</th>
-                      <th className="p-4">Department</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4">Labour</th>
+                      <th className="px-6 py-4 border-b border-white/5">Issue ID</th>
+                      <th className="px-6 py-4 border-b border-white/5">Location</th>
+                      <th className="px-6 py-4 border-b border-white/5">Department</th>
+                      <th className="px-6 py-4 border-b border-white/5 text-center">Status</th>
+                      <th className="px-6 py-4 border-b border-white/5">Assigned To</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-white/[0.02]">
                     {issues.map((issue) => (
-                      <tr className="border-t border-slate-100" key={issue.id}>
-                        <td className="p-4 font-bold text-slate-950">
-                          {issue.id}
-                          <span className="block font-medium text-slate-500">{issue.title}</span>
+                      <tr className="group transition-colors hover:bg-white/[0.02]" key={issue.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-white">{issue.id}</span>
+                            <span className="text-xs text-slate-500 truncate max-w-[180px]">{issue.title}</span>
+                          </div>
                         </td>
-                        <td className="p-4 text-slate-700">{issue.area}</td>
-                        <td className="p-4 text-slate-700">{issue.department}</td>
-                        <td className="p-4">
-                          <span className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${statusTone(issue.status)}`}>
+                        <td className="px-6 py-4 text-slate-400 font-medium">{issue.area}</td>
+                        <td className="px-6 py-4 text-slate-400 font-medium">{issue.department}</td>
+                        <td className="px-6 py-4 text-center">
+                          <span className={`inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[11px] font-bold border transition-all ${statusTone(issue.status)}`}>
                             {issue.status}
                           </span>
                         </td>
-                        <td className="p-4 text-slate-700">{issue.assignedLabour}</td>
+                        <td className="px-6 py-4 text-slate-400 font-medium">
+                          {issue.assignedLabour || <span className="text-slate-600 italic">Unassigned</span>}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -1181,22 +1206,22 @@ function AdminDashboard({
               </div>
             </section>
 
-            <form className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft h-fit" onSubmit={onAssignmentSubmit}>
-              <h2 className="text-xl font-black text-slate-950">Update Assignment</h2>
-              <div className="mt-4 grid gap-4">
+            <form className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium h-fit" onSubmit={onAssignmentSubmit}>
+              <h2 className="text-xl font-bold text-white mb-6">Update Assignment</h2>
+              <div className="mt-4 grid gap-5">
                 <Select label="Issue" value={assignment.issueId} options={issues.map((i) => i.id)} onChange={syncSelectedAssignment} />
                 <Select label="Department" value={assignment.department} options={departmentNames} onChange={(department) => setAssignment({ ...assignment, department })} />
                 <Select label="Labour" value={assignment.assignedLabour} options={["Unassigned", ...labour.map((l) => l.name)]} onChange={(assignedLabour) => setAssignment({ ...assignment, assignedLabour })} />
                 <Select label="Status" value={assignment.status} options={statusOrder} onChange={(status) => setAssignment({ ...assignment, status })} />
                 <label className="grid gap-2">
-                  <span className="text-sm font-black text-slate-700">Update note</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Update note</span>
                   <textarea
-                    className="min-h-24 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                    className="min-h-24 w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all"
                     value={assignment.note}
                     onChange={(e) => setAssignment({ ...assignment, note: e.target.value })}
                   />
                 </label>
-                <button className="rounded-lg bg-teal-700 px-5 py-3 font-black text-white hover:bg-teal-800 transition" type="submit">
+                <button className="rounded-xl bg-teal-600 px-5 py-3.5 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20" type="submit">
                   Save update
                 </button>
               </div>
@@ -1206,29 +1231,29 @@ function AdminDashboard({
 
         {/* Labour Tab */}
         {activeTab === "labour" && (
-          <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft">
-            <div className="border-b border-slate-200 p-5">
-              <h2 className="text-xl font-black text-slate-950">Labour Teams</h2>
+          <section className="overflow-hidden rounded-2xl border border-white/5 bg-[#0f0f0f] shadow-premium">
+            <div className="border-b border-white/5 p-6 bg-white/[0.02]">
+              <h2 className="text-xl font-bold text-white">Labour Teams</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-slate-50 text-xs font-black uppercase text-slate-500">
+                <thead className="bg-white/[0.02] text-[11px] font-bold uppercase tracking-widest text-slate-500">
                   <tr>
-                    <th className="p-4">Name</th>
-                    <th className="p-4">Department</th>
-                    <th className="p-4">Availability</th>
+                    <th className="px-6 py-4 border-b border-white/5">Name</th>
+                    <th className="px-6 py-4 border-b border-white/5">Department</th>
+                    <th className="px-6 py-4 border-b border-white/5">Availability</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-white/[0.02]">
                   {labour.map((member) => (
-                    <tr className="border-t border-slate-100" key={member.id}>
-                      <td className="p-4 font-bold text-slate-900">{member.name}</td>
-                      <td className="p-4 text-slate-700">{member.department}</td>
-                      <td className="p-4">
-                        <span className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${
+                    <tr className="group transition-colors hover:bg-white/[0.02]" key={member.id}>
+                      <td className="px-6 py-4 font-bold text-white">{member.name}</td>
+                      <td className="px-6 py-4 text-slate-400 font-medium">{member.department}</td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[11px] font-bold border transition-all ${
                           member.availability_status === "Available"
-                            ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-                            : "bg-amber-50 text-amber-700 ring-amber-200"
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-400 border-amber-500/20"
                         }`}>
                           {member.availability_status}
                         </span>
@@ -1243,10 +1268,10 @@ function AdminDashboard({
 
         {/* Manage Data Tab */}
         {activeTab === "manage" && (
-          <form className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft max-w-xl" onSubmit={onEntitySubmit}>
-            <h2 className="text-xl font-black text-slate-950">Manage Master Data</h2>
-            <p className="mt-1 text-sm text-slate-500">Add new areas, departments, or labour to the system.</p>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          <form className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium max-w-2xl" onSubmit={onEntitySubmit}>
+            <h2 className="text-xl font-bold text-white">Manage Master Data</h2>
+            <p className="mt-2 text-sm text-slate-500">Add new areas, departments, or labour to the system.</p>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2">
               <Select label="Type" value={entityForm.type} options={["areas", "departments", "labour"]} onChange={(type) => setEntityForm({ ...entityForm, type })} />
               <Field label="Name" value={entityForm.name} onChange={(name) => setEntityForm({ ...entityForm, name })} required />
               <Field
@@ -1254,7 +1279,7 @@ function AdminDashboard({
                 value={entityForm.extra}
                 onChange={(extra) => setEntityForm({ ...entityForm, extra })}
               />
-              <button className="flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 font-black text-white hover:bg-slate-800 transition" type="submit">
+              <button className="flex items-center justify-center gap-2 rounded-xl bg-white text-black px-5 py-3.5 font-bold hover:bg-slate-200 transition-all active:scale-[0.98]" type="submit">
                 <Plus size={18} /> Add record
               </button>
             </div>
@@ -1263,12 +1288,12 @@ function AdminDashboard({
 
         {/* Schema Tab */}
         {activeTab === "schema" && (
-          <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
-            <h2 className="text-xl font-black text-slate-950">Database Contract</h2>
-            <p className="mt-1 text-sm text-slate-500">Live schema reference for all tables in the system.</p>
-            <div className="mt-4 grid gap-2">
+          <section className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium">
+            <h2 className="text-xl font-bold text-white">Database Contract</h2>
+            <p className="mt-2 text-sm text-slate-500">Live schema reference for all tables in the system.</p>
+            <div className="mt-6 grid gap-3">
               {schemaPreview.map((item) => (
-                <code className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-bold text-teal-100" key={item}>
+                <code className="rounded-xl bg-black px-4 py-3 text-xs font-medium text-teal-400 border border-white/5" key={item}>
                   {item}
                 </code>
               ))}
@@ -1288,53 +1313,61 @@ function CitizenDashboard({
   onRead,
 }) {
   return (
-    <section className="grid gap-6">
-      <div className="rounded-lg border border-slate-200 bg-gradient-to-r from-teal-50 to-blue-50 p-6 shadow-soft">
-        <h1 className="text-3xl font-black text-slate-950">Your Dashboard</h1>
-        <p className="mt-2 text-slate-600">
-          Track all your reported issues and updates in one place.
+    <section className="grid gap-8">
+      <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-teal-500/10 to-blue-500/10 p-8 shadow-premium relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10">
+          <LayoutDashboard size={120} />
+        </div>
+        <h1 className="text-3xl font-black text-white">Your Dashboard</h1>
+        <p className="mt-2 text-slate-400 max-w-lg">
+          Track all your reported issues and updates in one place. Real-time status updates from city administrators.
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-4">
         <StatCard label="Total Issues" value={analytics.total} tone="teal" />
         <StatCard label="Pending" value={analytics.pending} tone="amber" />
         <StatCard label="In Progress" value={analytics.active} tone="blue" />
         <StatCard label="Resolved" value={analytics.resolved} tone="emerald" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <IssueGrid title="My Issues" issues={issues} onOpen={onOpen} />
-        <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft h-fit">
-          <h2 className="text-xl font-black text-slate-950">
-            📬 Latest Updates
+        <aside className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium h-fit">
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <Bell size={20} className="text-teal-500" /> Latest Updates
           </h2>
-          <div className="mt-4 grid gap-3">
+          <div className="grid gap-4">
             {notifications.length > 0 ? (
               notifications.map((notification) => (
                 <button
-                  className={`rounded-lg border p-4 text-left text-sm transition ${
+                  className={`group rounded-xl border p-4 text-left text-sm transition-all duration-300 ${
                     notification.read
-                      ? "border-slate-200 bg-white text-slate-600"
-                      : "border-teal-200 bg-teal-50 text-slate-950 font-semibold hover:bg-teal-100"
+                      ? "border-white/5 bg-white/[0.02] text-slate-500"
+                      : "border-teal-500/20 bg-teal-500/5 text-white font-semibold hover:bg-teal-500/10"
                   }`}
                   key={notification.id}
                   type="button"
                   onClick={() => onRead(notification.id)}
                 >
-                  <strong className="block">{notification.title}</strong>
-                  <span className="mt-1 block leading-5">
+                  <strong className={`block mb-1 group-hover:text-teal-400 transition-colors ${notification.read ? "" : "text-white"}`}>
+                    {notification.title}
+                  </strong>
+                  <span className="block leading-relaxed opacity-80 font-normal">
                     {notification.body}
                   </span>
-                  <span className="mt-2 block text-xs text-slate-500">
+                  <span className="mt-3 block text-[10px] uppercase tracking-widest text-slate-600 font-bold">
                     {notification.createdAt}
                   </span>
                 </button>
               ))
             ) : (
-              <p className="text-center text-sm text-slate-500 py-4">
-                No updates yet
-              </p>
+              <div className="text-center py-12">
+                <div className="mx-auto w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-slate-600 mb-4">
+                  <Bell size={20} />
+                </div>
+                <p className="text-sm text-slate-500 font-medium">No updates yet</p>
+              </div>
             )}
           </div>
         </aside>
@@ -1346,16 +1379,27 @@ function CitizenDashboard({
 function IssueGrid({ title, issues, onOpen }) {
   return (
     <section>
-      <h1 className="mb-4 text-2xl font-black text-slate-950">{title}</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-black text-white">{title}</h1>
+        {issues.length > 0 && (
+          <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-bold text-slate-500 border border-white/5">
+            {issues.length} Items
+          </span>
+        )}
+      </div>
       {issues.length ? (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {issues.map((issue) => (
             <IssueCard issue={issue} key={issue.id} onOpen={onOpen} />
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
-          No issues found.
+        <div className="rounded-2xl border-2 border-dashed border-white/5 bg-white/[0.02] p-16 text-center">
+          <div className="mx-auto w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-slate-600 mb-6">
+            <ClipboardList size={32} />
+          </div>
+          <h3 className="text-lg font-bold text-white mb-2">No Issues Found</h3>
+          <p className="text-slate-500 max-w-xs mx-auto">We couldn't find any issues matching your current filters or account.</p>
         </div>
       )}
     </section>
@@ -1365,15 +1409,15 @@ function IssueGrid({ title, issues, onOpen }) {
 function Field({ icon, label, onChange, type = "text", value, ...props }) {
   return (
     <label className="grid gap-2">
-      <span className="text-sm font-black text-slate-700">{label}</span>
-      <span className="relative">
+      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{label}</span>
+      <span className="relative group">
         {icon ? (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-500 transition-colors">
             {icon}
           </span>
         ) : null}
         <input
-          className={`w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 ${icon ? "pl-10" : ""}`}
+          className={`w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all ${icon ? "pl-11" : ""}`}
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -1387,16 +1431,22 @@ function Field({ icon, label, onChange, type = "text", value, ...props }) {
 function Select({ label, onChange, options, placeholder, value }) {
   return (
     <label className="grid gap-2">
-      <span className="text-sm font-black text-slate-700">{label}</span>
+      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{label}</span>
       <select
-        className="w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+        className="w-full rounded-xl border border-white/10 bg-[#151515] text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all appearance-none"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         required={Boolean(placeholder)}
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 1rem center',
+          backgroundSize: '1.25rem',
+        }}
       >
-        {placeholder ? <option value="">{placeholder}</option> : null}
+        {placeholder ? <option value="" className="bg-[#151515]">{placeholder}</option> : null}
         {options.map((option) => (
-          <option key={option} value={option}>
+          <option key={option} value={option} className="bg-[#151515]">
             {option}
           </option>
         ))}

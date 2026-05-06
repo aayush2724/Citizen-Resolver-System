@@ -2,6 +2,11 @@ import pool from "../config/db.js";
 
 export const getEntireState = async (req, res, next) => {
   try {
+    const [[currentUser]] = await pool.query(
+      "SELECT id, name, email, role, city, block FROM users WHERE id = ?",
+      [req.user.id],
+    );
+
     const [users] = await pool.query("SELECT id, name, email, role, created_at FROM users");
 
     const [issues] = await pool.query(`
@@ -44,6 +49,7 @@ export const getEntireState = async (req, res, next) => {
       : await pool.query("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC", [req.user.id]);
 
     res.json({
+      currentUser,
       users,
       issues: issues.map((i) => ({
         ...i,

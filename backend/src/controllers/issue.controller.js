@@ -74,9 +74,15 @@ export const updateIssue = async (req, res, next) => {
 
     let updateResult;
     if (deptId) {
-      [updateResult] = await pool.query("UPDATE issues SET status = ?, department_id = ? WHERE id = ?", [status, deptId, actualId]);
+      [updateResult] = await pool.query(
+        "UPDATE issues SET status = COALESCE(?, status), department_id = COALESCE(?, department_id) WHERE id = ?",
+        [status || null, deptId, actualId]
+      );
     } else {
-      [updateResult] = await pool.query("UPDATE issues SET status = ? WHERE id = ?", [status, actualId]);
+      [updateResult] = await pool.query(
+        "UPDATE issues SET status = COALESCE(?, status) WHERE id = ?",
+        [status || null, actualId]
+      );
     }
 
     if (updateResult.affectedRows === 0) {

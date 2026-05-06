@@ -54,8 +54,11 @@ export const api = {
 
     if (!res.ok) throw new Error("Failed to fetch portal data");
     const data = await res.json();
+    if (data.currentUser) {
+      localStorage.setItem("citizen-user", JSON.stringify({ ...currentUser, ...data.currentUser }));
+    }
 
-    return { ...data, currentUser };
+    return { ...data, currentUser: data.currentUser || currentUser };
   },
 
   async login({ email, password }) {

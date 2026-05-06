@@ -1,17 +1,17 @@
 export default function StatCard({ label, value, detail, tone = "teal" }) {
   const tones = {
-    teal: "border-teal-500 bg-teal-50",
-    blue: "border-blue-500 bg-blue-50",
-    rose: "border-rose-500 bg-rose-50",
-    emerald: "border-emerald-500 bg-emerald-50",
-    amber: "border-amber-500 bg-amber-50",
+    teal: "text-teal-400 border-teal-500/30 bg-teal-500/5",
+    blue: "text-blue-400 border-blue-500/30 bg-blue-500/5",
+    rose: "text-rose-400 border-rose-500/30 bg-rose-500/5",
+    emerald: "text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
+    amber: "text-amber-400 border-amber-500/30 bg-amber-500/5",
   };
 
   return (
-    <article className={`rounded-lg border-l-4 ${tones[tone]} p-4 shadow-sm`}>
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      <strong className="mt-2 block text-3xl text-slate-950">{value}</strong>
-      {detail ? <span className="mt-1 block text-sm text-slate-600">{detail}</span> : null}
+    <article className={`rounded-2xl border ${tones[tone]} p-6 transition-all duration-300 hover:border-white/10 hover:bg-white/5`}>
+      <p className="text-xs font-bold uppercase tracking-widest text-slate-500">{label}</p>
+      <strong className="mt-3 block text-4xl font-black text-white">{value}</strong>
+      {detail ? <span className="mt-2 block text-xs font-medium text-slate-400">{detail}</span> : null}
     </article>
   );
 }
