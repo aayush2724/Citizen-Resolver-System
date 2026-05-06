@@ -1,97 +1,151 @@
-# Citizen-Resolver-System(CRS)
+# Citizen Resolver System (CRS)
 
-A Full-Stack civic issue reporting platform featuring a modern **Bento-grid UI** and a robust **Node.js + MySQL** backend. Citizens can submit issues, track progress, and receive notifications, while admins can manage assignments, labour, and departments.
+Citizen Resolver System is a full-stack civic issue reporting platform.
+Citizens can sign up, report local problems, and track progress. Admins can
+review, assign, and manage resolution workflows with notifications.
 
-## 🚀 Key Features
+## Features
 
-- **Modern Bento UI**: Premium dark-themed dashboard with glassmorphism and bento-grid layouts.
-- **Full-Stack Integration**: Real-time data persistence using a Node/Express backend and MySQL database.
-- **Secure Authentication**: JWT-based login/signup with hashed passwords (bcrypt).
-- **Comprehensive Reporting**: Issue submission with image support, status tracking, and priority levels.
-- **Admin Control Center**: Manage areas, departments, labour personnel, and issue assignments.
-- **Automated Notifications**: System-generated alerts for issue updates and status changes.
+- JWT-based authentication (citizen and admin)
+- Issue reporting with priority, department, location, and optional image URL
+- Admin assignment flow (department, labour, status updates, notes)
+- Citizen notification feed for report and status updates
+- Public issue board with filtering
+- Master data management (areas, departments, labour)
 
-## 🛠 Tech Stack
+## Tech Stack
 
-**Frontend:**
-- React (Vite)
-- Tailwind CSS
-- Lucide React (Icons)
-- JWT Authentication Flow
+- Frontend: React, Vite, Tailwind CSS, Lucide React
+- Backend: Node.js, Express, MySQL (mysql2/promise), bcrypt, jsonwebtoken
 
-**Backend:**
-- Node.js (ES Modules)
-- Express.js
-- MySQL (mysql2/promise)
-- JSON Web Tokens (jsonwebtoken)
-- Password Hashing (bcrypt)
-
-## 📂 Project Structure
+## Repository Layout
 
 ```text
 .
-├── backend/                # Express server and DB scripts
-│   ├── src/                # SaaS-level modular architecture
-│   │   ├── config/         # Database configuration
-│   │   ├── controllers/    # Business logic (auth, issues, state)
-│   │   ├── middlewares/    # Custom Express middlewares
-│   │   ├── routes/         # API endpoint definitions
-│   │   └── app.js          # Express app configuration
-│   ├── server.js           # API entry point
-│   ├── init_db.js          # DB initialization script
-│   ├── schema.sql          # MySQL database schema
-│   └── .env                # Backend configuration
-├── frontend/               # React application
+├── backend/
 │   ├── src/
-│   │   ├── services/api.js # Backend communication layer
-│   │   ├── components/     # UI Components (Shell, IssueCard, etc.)
-│   │   └── App.jsx         # Main application logic
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middlewares/
+│   │   ├── routes/
+│   │   └── app.js
+│   ├── server.js
+│   ├── init_db.js
+│   ├── schema.sql
+│   └── .env
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   └── App.jsx
+│   └── vite.config.js
+├── FEATURE_TESTING_GUIDE.md
+├── IMPLEMENTATION_SUMMARY.md
 └── README.md
 ```
 
-## ⚙️ Installation & Setup
+## Prerequisites
 
-### 1. Database Setup
-Ensure you have MySQL installed and running.
-1. Create a `.env` file in the `backend/` directory:
-   ```env
-   PORT=5000
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=your_password
-   DB_NAME=citizen_resolver
-   JWT_SECRET=your_random_secret_string
-   ```
-2. Initialize the database schema and dummy data:
-   ```bash
-   cd backend
-   npm install
-   node init_db.js
-   ```
+- Node.js 18+
+- npm 9+
+- MySQL 8+
 
-### 2. Start the Backend
+## Setup
+
+1. Install dependencies
+
 ```bash
-node server.js
+npm --prefix backend install
+npm --prefix frontend install
 ```
 
-### 3. Start the Frontend
-```bash
-cd frontend
-npm install
-npm run dev
+2. Configure backend environment in backend/.env
+
+```env
+PORT=5000
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=citizen_resolver
+JWT_SECRET=your_random_secret_string
 ```
 
-## 🔐 Demo Accounts
+3. Initialize database schema and seed data
 
-- **Citizen**: `aarav@example.com` (Password: `password`)
-- **Admin**: `admin@helpline.local` (Password: `password`)
+```bash
+cd backend
+node init_db.js
+```
 
-## 📝 API Endpoints
+## Run the Application
 
-- `POST /api/auth/login` - Authenticate user
-- `POST /api/auth/signup` - Register new citizen
-- `GET /api/state` - Fetch global portal state (Admin/Citizen)
-- `POST /api/issues` - Submit a new report
-- `PATCH /api/issues/:id` - Update issue status/assignment
-- `POST /api/entities/:type` - Manage master data (areas, departments, labour)
-- `PATCH /api/notifications/:id/read` - Mark notification as read
+Backend:
+
+```bash
+npm --prefix backend start
+```
+
+Frontend (Vite dev server):
+
+```bash
+npm --prefix frontend run dev
+```
+
+Frontend URL: http://127.0.0.1:5173
+Backend URL: http://localhost:5000
+
+## Build
+
+```bash
+npm --prefix frontend run build
+```
+
+## Demo Accounts
+
+- Citizen: aarav@example.com / password
+- Admin: admin@helpline.local / password
+
+## Core API Endpoints
+
+- POST /api/auth/login
+- POST /api/auth/signup
+- GET /api/state
+- POST /api/issues
+- PATCH /api/issues/:id
+- POST /api/entities/:type
+- PATCH /api/notifications/:id/read
+
+## Manual End-to-End Test Flow
+
+1. Sign up a new citizen account.
+2. Log in as that citizen.
+3. Create a new issue (with or without image URL).
+4. Log in as admin.
+5. Open Dashboard, assign department/labour, and update status.
+6. Log back in as citizen and confirm:
+    - status changed
+    - assignment note appears
+    - notification appears
+    - issue image is shown (uploaded URL or relevant fallback)
+
+## Notes and Current Behavior
+
+- Issue IDs are rendered as CHP-1001 style identifiers.
+- Areas added from Admin Manage Data are persisted in the database and visible in public filters.
+- City/block/area selection options in signup/report forms are currently driven by frontend mock location data.
+
+## Troubleshooting
+
+- Error: ENOENT Could not read package.json at repository root
+   - This repository has separate backend and frontend packages.
+   - Use npm --prefix backend ... and npm --prefix frontend ... commands.
+
+- Backend cannot connect to DB
+   - Check backend/.env credentials.
+   - Ensure MySQL is running and DB user has permission to create/use citizen_resolver.
+
+- UI shows no data after login
+   - Confirm backend is running on port 5000.
+   - Check browser devtools network calls to /api/state.
