@@ -32,6 +32,13 @@ export default function IssueCard({ issue, onOpen }) {
         <h3 className="mt-4 text-xl font-black leading-tight text-slate-950">{issue.title}</h3>
         <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{issue.description}</p>
 
+        {issue.note && (
+          <div className="mt-4 rounded-md bg-slate-50 p-3 border border-slate-200">
+            <span className="block text-xs font-black uppercase tracking-wider text-teal-800 mb-1">Latest Update</span>
+            <p className="text-sm text-slate-800 line-clamp-2">{issue.note}</p>
+          </div>
+        )}
+
         <div className="mt-5">
           <div className="h-2 overflow-hidden rounded-full bg-slate-100">
             <span

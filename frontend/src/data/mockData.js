@@ -58,6 +58,108 @@ export const locations = [
         areas: ["Civil Lines", "Model Town", "Mukherjee Nagar", "Kamla Nagar"]
       }
     ]
+  },
+  {
+    city: "Mumbai",
+    blocks: [
+      {
+        name: "Western Suburbs",
+        areas: ["Bandra", "Andheri", "Borivali", "Goregaon", "Juhu"]
+      },
+      {
+        name: "South Mumbai",
+        areas: ["Colaba", "Malabar Hill", "Nariman Point", "Fort"]
+      },
+      {
+        name: "Eastern Suburbs",
+        areas: ["Kurla", "Ghatkopar", "Powai", "Vikhroli"]
+      }
+    ]
+  },
+  {
+    city: "Chennai",
+    blocks: [
+      {
+        name: "Central Chennai",
+        areas: ["T Nagar", "Nungambakkam", "Alwarpet", "Mylapore"]
+      },
+      {
+        name: "South Chennai",
+        areas: ["Adyar", "Velachery", "Besant Nagar", "Thiruvanmiyur"]
+      },
+      {
+        name: "North Chennai",
+        areas: ["Royapuram", "Tondiarpet", "Perambur", "Washermanpet"]
+      }
+    ]
+  },
+  {
+    city: "Hyderabad",
+    blocks: [
+      {
+        name: "Cyberabad",
+        areas: ["HITEC City", "Madhapur", "Gachibowli", "Kondapur"]
+      },
+      {
+        name: "Central Zone",
+        areas: ["Banjara Hills", "Jubilee Hills", "Ameerpet", "Punjagutta"]
+      },
+      {
+        name: "Secunderabad",
+        areas: ["Begumpet", "Tarnaka", "Marredpally", "Bowenpally"]
+      }
+    ]
+  },
+  {
+    city: "Kolkata",
+    blocks: [
+      {
+        name: "South Kolkata",
+        areas: ["Ballygunge", "Alipore", "Tollygunge", "Gariahat"]
+      },
+      {
+        name: "North Kolkata",
+        areas: ["Shyam Bazar", "Bagbazar", "Dum Dum", "Cossipore"]
+      },
+      {
+        name: "Salt Lake",
+        areas: ["Sector 1", "Sector 2", "Sector 3", "Sector 5"]
+      }
+    ]
+  },
+  {
+    city: "Pune",
+    blocks: [
+      {
+        name: "West Pune",
+        areas: ["Kothrud", "Baner", "Aundh", "Hinjewadi"]
+      },
+      {
+        name: "East Pune",
+        areas: ["Koregaon Park", "Kalyani Nagar", "Viman Nagar", "Magarpatta"]
+      },
+      {
+        name: "Central Pune",
+        areas: ["Shivajinagar", "Camp", "Deccan Gymkhana", "Swargate"]
+      }
+    ]
+  },
+  {
+    city: "Ahmedabad",
+    blocks: [
+      {
+        name: "West Zone",
+        areas: ["Navrangpura", "Paldi", "Satellite", "Vastrapur"]
+      },
+      {
+        name: "East Zone",
+        areas: ["Bapunagar", "Maninagar", "Naroda", "Odhav"]
+      },
+      {
+        name: "New West Zone",
+        areas: ["SG Highway", "Bodakdev", "Thaltej", "Makarba"]
+      }
+    ]
   }
 ];
 
