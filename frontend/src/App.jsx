@@ -20,7 +20,7 @@ import NotificationBox from "./components/NotificationBox";
 import { api } from "./services/api";
 import { schemaPreview } from "./data/mockData";
 import { fallbackImage, getRelevantImage } from "./utils/image";
-import { statusOrder, statusTone } from "./utils/status";
+import { priorityTone, statusOrder, statusTone } from "./utils/status";
 
 const emptyReport = {
   title: "",
@@ -979,7 +979,7 @@ function ReportPage({ departmentNames, report, setReport, onSubmit }) {
         </div>
       </form>
 
-      <aside className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium sticky top-24">
+      <aside className="rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-premium sticky top-24">
         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-4">Live Preview</p>
         <div className="overflow-hidden rounded-xl border border-white/5 bg-black/40">
           <img
@@ -1150,7 +1150,7 @@ function AdminDashboard({
         {/* Analytics Tab */}
         {activeTab === "analytics" && (
           <div className="grid gap-6">
-            <div className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium">
+            <div className="rounded-2xl border border-white/10 bg-[#121212] p-8 shadow-premium">
               <h2 className="text-xl font-bold text-white mb-6">System Overview</h2>
               <div className="grid gap-6 md:grid-cols-4">
                 <StatCard label="Pending" value={analytics.pending} tone="amber" />
@@ -1165,7 +1165,7 @@ function AdminDashboard({
         {/* Assignments Tab */}
         {activeTab === "assignments" && (
           <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-            <section className="overflow-hidden rounded-2xl border border-white/5 bg-[#0f0f0f] shadow-premium">
+            <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#121212] shadow-premium">
               <div className="border-b border-white/5 p-6 bg-white/[0.02]">
                 <h2 className="text-xl font-bold text-white">Issue Queue</h2>
               </div>
@@ -1206,7 +1206,7 @@ function AdminDashboard({
               </div>
             </section>
 
-            <form className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium h-fit" onSubmit={onAssignmentSubmit}>
+            <form className="rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-premium h-fit" onSubmit={onAssignmentSubmit}>
               <h2 className="text-xl font-bold text-white mb-6">Update Assignment</h2>
               <div className="mt-4 grid gap-5">
                 <Select label="Issue" value={assignment.issueId} options={issues.map((i) => i.id)} onChange={syncSelectedAssignment} />
@@ -1231,7 +1231,7 @@ function AdminDashboard({
 
         {/* Labour Tab */}
         {activeTab === "labour" && (
-          <section className="overflow-hidden rounded-2xl border border-white/5 bg-[#0f0f0f] shadow-premium">
+          <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#121212] shadow-premium">
             <div className="border-b border-white/5 p-6 bg-white/[0.02]">
               <h2 className="text-xl font-bold text-white">Labour Teams</h2>
             </div>
@@ -1268,7 +1268,7 @@ function AdminDashboard({
 
         {/* Manage Data Tab */}
         {activeTab === "manage" && (
-          <form className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium max-w-2xl" onSubmit={onEntitySubmit}>
+          <form className="rounded-2xl border border-white/10 bg-[#121212] p-8 shadow-premium max-w-2xl" onSubmit={onEntitySubmit}>
             <h2 className="text-xl font-bold text-white">Manage Master Data</h2>
             <p className="mt-2 text-sm text-slate-500">Add new areas, departments, or labour to the system.</p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
@@ -1288,7 +1288,7 @@ function AdminDashboard({
 
         {/* Schema Tab */}
         {activeTab === "schema" && (
-          <section className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium">
+          <section className="rounded-2xl border border-white/10 bg-[#121212] p-8 shadow-premium">
             <h2 className="text-xl font-bold text-white">Database Contract</h2>
             <p className="mt-2 text-sm text-slate-500">Live schema reference for all tables in the system.</p>
             <div className="mt-6 grid gap-3">

@@ -6,7 +6,7 @@ export default function IssueCard({ issue, onOpen }) {
   const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department);
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/5 bg-[#0f0f0f] shadow-premium transition-all duration-300 hover:-translate-y-1.5 hover:border-white/10 hover:shadow-2xl">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#121212] shadow-premium transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-2xl">
       <div className="relative h-48 overflow-hidden">
         <img
           className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
@@ -18,7 +18,7 @@ export default function IssueCard({ issue, onOpen }) {
             event.currentTarget.src = fallbackImage;
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent opacity-60" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
           <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${priorityTone(issue.priority)}`}>
             {issue.priority}
