@@ -9,34 +9,36 @@ export default function IssueModal({ issue, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose} />
       
-      <section className="relative z-10 w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl border border-white/10 bg-[#0f0f0f] shadow-2xl animate-rise flex flex-col">
+      <section className="relative z-10 w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-[3rem] border border-black/5 bg-white shadow-2xl animate-rise flex flex-col">
         {/* Header */}
-        <header className="flex items-center justify-between border-b border-white/5 bg-white/[0.02] p-6 sm:px-8">
+        <header className="flex items-center justify-between border-b border-black/5 bg-slate-50 p-6 sm:px-10">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
-              <Shield size={24} />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white shadow-lg">
+              <Shield size={28} />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{issue.id}</p>
-              <h2 className="text-xl sm:text-2xl font-black text-white leading-tight">{issue.title}</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
+                {issue.id} • Raised on {new Date(issue.created_at).toLocaleDateString()}
+              </p>
+              <h2 className="text-xl sm:text-2xl font-black text-text-dark leading-tight tracking-tight">{issue.title}</h2>
             </div>
           </div>
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white transition-all active:scale-90"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-black/5 bg-white text-slate-400 hover:text-text-dark transition-all hover:rotate-90"
             type="button"
             onClick={onClose}
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </header>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-6 sm:p-8 space-y-8">
+          <div className="p-8 sm:p-10 space-y-10">
             {/* Image and Meta */}
-            <div className="grid gap-8 lg:grid-cols-2">
-              <div className="relative group overflow-hidden rounded-2xl border border-white/5 shadow-lg">
+            <div className="grid gap-10 lg:grid-cols-2">
+              <div className="relative group overflow-hidden rounded-[2rem] border border-black/5 shadow-xl">
                 <img
                   className="h-full w-full object-cover aspect-video transition-transform duration-700 group-hover:scale-105"
                   src={imageSrc}
@@ -46,32 +48,32 @@ export default function IssueModal({ issue, onClose }) {
                     event.currentTarget.src = fallbackImage;
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div>
-                  <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">
-                    <Info size={14} className="text-teal-500" /> Description
+                  <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4">
+                    <Info size={14} className="text-primary" /> Incident Intelligence
                   </h3>
-                  <p className="text-sm sm:text-base leading-relaxed text-slate-300 font-medium">
+                  <p className="text-base leading-relaxed text-slate-600 font-bold">
                     {issue.description}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { icon: MapPin, label: "Location", value: issue.area },
-                    { icon: Shield, label: "Department", value: issue.department },
-                    { icon: User, label: "Assigned To", value: issue.assignedLabour },
-                    { icon: Calendar, label: "SLA Deadline", value: `${issue.slaHours} Hours` },
+                    { icon: MapPin, label: "Precise Area", value: issue.area },
+                    { icon: Shield, label: "Primary Unit", value: issue.department },
+                    { icon: User, label: "Workforce", value: issue.assignedLabour },
+                    { icon: Calendar, label: "Resolution SLA", value: `${issue.slaHours} Hours` },
                   ].map(({ icon: Icon, label, value }) => (
-                    <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4 transition-colors hover:border-white/10" key={label}>
+                    <div className="rounded-2xl border border-black/5 bg-slate-50 p-5 transition-all hover:bg-slate-100" key={label}>
                       <div className="flex items-center gap-2 mb-2">
-                        <Icon size={12} className="text-teal-500" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{label}</span>
+                        <Icon size={12} className="text-primary" />
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</span>
                       </div>
-                      <p className="text-xs font-bold text-white truncate">{value}</p>
+                      <p className="text-xs font-black text-text-dark truncate">{value}</p>
                     </div>
                   ))}
                 </div>
@@ -79,19 +81,19 @@ export default function IssueModal({ issue, onClose }) {
             </div>
 
             {/* Status Timeline */}
-            <div className="rounded-2xl border border-white/5 bg-white/[0.01] p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">Resolution Status</h3>
-                <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-bold border transition-all ${statusTone(issue.status)}`}>
+            <div className="rounded-[2rem] border border-black/5 bg-slate-50/50 p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Resolution Lifecycle</h3>
+                <span className={`inline-flex items-center justify-center rounded-full px-5 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all ${statusTone(issue.status)}`}>
                   {issue.status}
                 </span>
               </div>
               
-              <div className="relative pt-2">
-                <div className="absolute left-0 top-[19px] h-1 w-full rounded-full bg-white/5" />
+              <div className="relative pt-6 px-4">
+                <div className="absolute left-4 right-4 top-[43px] h-1.5 rounded-full bg-black/5" />
                 <div 
-                  className="absolute left-0 top-[19px] h-1 rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 transition-all duration-1000"
-                  style={{ width: `${progressFor(issue.status)}%` }}
+                  className="absolute left-4 top-[43px] h-1.5 rounded-full bg-primary shadow-sm transition-all duration-1000"
+                  style={{ width: `calc(${progressFor(issue.status)}% - 32px)` }}
                 />
                 
                 <div className="relative flex justify-between">
@@ -99,11 +101,11 @@ export default function IssueModal({ issue, onClose }) {
                     const active = statusOrder.indexOf(issue.status) >= statusOrder.indexOf(status);
                     return (
                       <div className="flex flex-col items-center" key={status}>
-                        <div className={`z-10 h-10 w-10 rounded-full border-4 border-[#0f0f0f] transition-all duration-500 ${
-                          active ? "bg-teal-500" : "bg-[#1a1a1a]"
+                        <div className={`z-10 h-10 w-10 rounded-full border-4 border-white shadow-sm transition-all duration-500 ${
+                          active ? "bg-primary" : "bg-slate-200"
                         }`} />
-                        <span className={`mt-3 text-[10px] font-bold uppercase tracking-tighter sm:tracking-widest ${
-                          active ? "text-teal-400" : "text-slate-600"
+                        <span className={`mt-4 text-[10px] font-black uppercase tracking-widest ${
+                          active ? "text-primary" : "text-slate-400"
                         }`}>{status}</span>
                       </div>
                     );
@@ -114,24 +116,26 @@ export default function IssueModal({ issue, onClose }) {
 
             {/* Admin Note */}
             {issue.note && (
-              <div className="rounded-2xl border border-teal-500/10 bg-teal-500/5 p-6 border-l-4 border-l-teal-500">
-                <div className="flex items-center gap-2 mb-2">
-                  <Info size={16} className="text-teal-400" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-teal-400">Latest Admin Update</span>
+              <div className="rounded-[2rem] border border-primary/10 bg-primary/5 p-8 border-l-8 border-l-primary shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    <Info size={20} />
+                  </div>
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-primary">Official Administration Update</span>
                 </div>
-                <p className="text-sm leading-relaxed text-slate-300 font-medium">{issue.note}</p>
+                <p className="text-base leading-relaxed text-slate-700 font-bold">{issue.note}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Footer */}
-        <footer className="border-t border-white/5 bg-white/[0.02] p-6 sm:px-8 text-right">
+        <footer className="border-t border-black/5 bg-slate-50 p-8 text-center sm:text-right">
           <button
-            className="rounded-xl bg-white text-black px-6 py-2.5 text-sm font-bold hover:bg-slate-200 transition-all active:scale-95 shadow-lg shadow-white/5"
+            className="rounded-full bg-text-dark text-white px-10 py-4 text-xs font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95 shadow-xl"
             onClick={onClose}
           >
-            Close Details
+            Dismiss Analysis
           </button>
         </footer>
       </section>

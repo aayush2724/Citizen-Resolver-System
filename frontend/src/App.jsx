@@ -10,6 +10,8 @@ import {
   UsersRound,
   Wrench,
   AlertCircle,
+  ClipboardList,
+  Bell,
 } from "lucide-react";
 import IssueCard from "./components/IssueCard";
 import IssueModal from "./components/IssueModal";
@@ -200,7 +202,6 @@ export default function App() {
     event.preventDefault();
     setAuthError("");
 
-    // Client-side validation — only run the checks relevant to each mode
     if (authMode === "signup") {
       if (!authForm.name.trim()) {
         const msg = "Full name is required";
@@ -243,7 +244,6 @@ export default function App() {
         type: "success",
         message: `Welcome${authMode === "signup" ? "" : " back"}, ${user.name}!`,
       });
-      // Reset to a completely empty form — no pre-filled demo values
       setAuthForm({ name: "", email: "", password: "", city: "", block: "", area: "", role: "citizen" });
       setActivePage(user.role === "admin" ? "dashboard" : "home");
     } catch (error) {
@@ -537,7 +537,7 @@ function BugReportPage({ currentUser }) {
             Thank you for helping us improve. Our engineering team has received your report and will investigate it shortly.
           </p>
           <button
-            className="mt-8 rounded-xl bg-teal-600 px-8 py-3.5 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98]"
+            className="mt-8 rounded-xl bg-teal-600 px-8 py-3.5 font-bold text-white hover:bg-primary transition-all active:scale-[0.98]"
             type="button"
             onClick={() => setSubmitted(false)}
           >
@@ -551,7 +551,7 @@ function BugReportPage({ currentUser }) {
   return (
     <section className="grid gap-8 lg:grid-cols-[1fr_380px] items-start">
       <form className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium" onSubmit={handleSubmit}>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-teal-500 mb-3">Developer Feedback</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">Developer Feedback</p>
         <h1 className="text-3xl font-black text-white">Report a System Issue</h1>
         <p className="mt-3 text-slate-400">Found a bug or have a suggestion? Help us improve the Citizen Resolver System.</p>
 
@@ -576,7 +576,7 @@ function BugReportPage({ currentUser }) {
           <label className="grid gap-2">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Detailed Description</span>
             <textarea
-              className="min-h-40 w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all leading-relaxed"
+              className="min-h-40 w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all leading-relaxed"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="What happened? What did you expect to happen? Steps to reproduce?"
@@ -590,7 +590,7 @@ function BugReportPage({ currentUser }) {
             onChange={(email) => setForm({ ...form, email })}
             placeholder="We'll notify you here once it's fixed"
           />
-          <button className="rounded-xl bg-teal-600 px-6 py-4 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20" type="submit">
+          <button className="rounded-xl bg-teal-600 px-6 py-4 font-bold text-white hover:bg-primary transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20" type="submit">
             Send Feedback to Developers
           </button>
         </div>
@@ -615,140 +615,135 @@ function BugReportPage({ currentUser }) {
             </li>
           ))}
         </ul>
-        <div className="mt-8 rounded-xl bg-teal-500/5 border border-teal-500/10 p-5">
-          <p className="text-xs font-bold text-teal-400 flex items-center gap-2">
+        <div className="mt-8 rounded-xl bg-primary/5 border border-primary/10 p-5">
+          <p className="text-xs font-bold text-primary flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]"></span>
             Your report is confidential
           </p>
-          <p className="mt-2 text-[11px] text-teal-500/70 leading-relaxed">Reports are only visible to our core development and admin teams.</p>
+          <p className="mt-2 text-[11px] text-primary/70 leading-relaxed">Reports are only visible to our core development and admin teams.</p>
         </div>
       </aside>
     </section>
   );
 }
 
+function ProblemShowcase() {
+  const problems = [
+    { title: "Pothole Repair", img: "/images/Roads.jpg", dept: "Roads" },
+    { title: "Street Lighting", img: "/images/StreetLights.jpg", dept: "Electrical" },
+    { title: "Waste Management", img: "/images/Sanitation.jpg", dept: "Sanitation" },
+    { title: "Water Leakage", img: "/images/WaterSupply.jpg", dept: "Water Board" },
+    { title: "Park Maintenance", img: "/images/PublicParks.jpg", dept: "Gardening" },
+  ];
+
+  return (
+    <div className="relative w-full py-24 overflow-hidden bg-white/50 border-y border-black/5">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-12">
+        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Interactive Problem View</h2>
+        <h3 className="text-4xl font-black text-text-dark tracking-tight">Common Civic Challenges</h3>
+      </div>
+      
+      <div className="flex gap-4 px-4 overflow-x-auto pb-8 scrollbar-hide no-scrollbar snap-x snap-mandatory">
+        {problems.map((p, i) => (
+          <div 
+            key={i}
+            className="relative flex-none w-[350px] h-[500px] rounded-[3rem] overflow-hidden group snap-center transition-all duration-700 hover:w-[450px]"
+            style={{ 
+               transform: `skewX(${i % 2 === 0 ? '-3deg' : '3deg'})`,
+               marginLeft: i === 0 ? '0' : '-40px'
+            }}
+          >
+            <div className="absolute inset-0 transition-transform duration-1000 group-hover:scale-110" style={{ transform: `skewX(${i % 2 === 0 ? '3deg' : '-3deg'})` }}>
+              <img src={p.img} alt={p.title} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            </div>
+            
+            <div className="absolute bottom-10 left-10 right-10 z-10" style={{ transform: `skewX(${i % 2 === 0 ? '3deg' : '-3deg'})` }}>
+              <span className="inline-block px-4 py-1.5 rounded-full bg-primary text-[10px] font-black text-white uppercase tracking-widest mb-4">
+                {p.dept}
+              </span>
+              <h4 className="text-3xl font-black text-white leading-tight">
+                {p.title}
+              </h4>
+              <button className="mt-6 flex items-center gap-3 text-white/60 font-bold text-xs uppercase tracking-widest hover:text-white transition-colors">
+                Explore Issue <div className="h-0.5 w-8 bg-primary"></div>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function HomePage({ analytics, setActivePage, currentUser }) {
   return (
-    <div className="relative min-h-[calc(100vh-80px)] w-full bg-[#0a0a0a] overflow-hidden">
-      {/* Background image with overlay */}
-      <div className="absolute inset-0 z-0">
-        <img
-          className="h-full w-full object-cover opacity-30"
-          src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1600&q=80"
-          alt="City street background"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
-      </div>
-
-      <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
-        {/* Left Content */}
-        <div className="flex flex-col justify-center">
-          <div className="mb-8 inline-flex items-center gap-2 w-fit rounded-full bg-white/5 border border-white/10 px-4 py-1.5 backdrop-blur-sm">
-            <span className="h-2 w-2 rounded-full bg-[#00b87c]"></span>
-            <span className="text-xs font-bold tracking-wider text-[#00b87c]">
-              WELCOME TO CIVIC SERVICES
-            </span>
-          </div>
-          
-          <h1 className="flex flex-col w-full">
-            <span className="text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-[72px] leading-[0.9]">
+    <div className="flex flex-col w-full bg-[#f4eee0] h-[calc(100vh-80px)] overflow-hidden relative">
+      {/* Background Image - Bottom 1/3 */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-1/3 bg-[url('/images/silhouette_hands.png')] bg-contain bg-no-repeat bg-bottom opacity-40 mix-blend-multiply pointer-events-none"
+        style={{ backgroundSize: '100% auto' }}
+      ></div>
+      
+      {/* Gradient overlay for smoother blending */}
+      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[#f4eee0] to-transparent pointer-events-none z-0"></div>
+      
+      {/* Centered Hero Section */}
+      <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <div className="mb-10 inline-flex items-center gap-3 rounded-full bg-white px-6 py-2.5 border border-black/5 shadow-sm">
+          <span className="h-2 w-2 rounded-full bg-primary pulse-glow"></span>
+          <span className="text-[11px] font-[900] tracking-[0.4em] text-text-dark uppercase">
+            Official Civic Platform
+          </span>
+        </div>
+                <h1 className="flex flex-col items-center justify-center max-w-5xl">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <span className="text-6xl font-[900] tracking-tighter text-text-dark sm:text-7xl lg:text-[100px] leading-tight">
               Citizen
             </span>
-            <div className="flex items-center gap-6 w-full">
-              <span className="text-6xl font-black tracking-tight text-[#00b87c] sm:text-7xl lg:text-[88px] leading-[0.85]">
-                Resolver
-              </span>
-              <span className="hidden sm:block h-[3px] flex-1 rounded-full bg-gradient-to-r from-[#00b87c]/50 to-transparent"></span>
-            </div>
-            <div className="flex items-end gap-6 w-full mt-1">
-              <span className="text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-[72px] leading-[0.9]">
-                System
-              </span>
-              
-            </div>
-          </h1>
-          
-          <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-400">
-            Report local issues with ease. Get transparent updates on every
-            step from submission to final resolution. No phone calls, no
-            guesswork—just progress.
-          </p>
-          
-          <div className="mt-10 flex flex-wrap gap-4">
-            <button
-              className="flex items-center gap-2 rounded-xl bg-[#00b87c] px-6 py-3.5 font-bold text-white transition hover:bg-[#009665]"
-              type="button"
-              onClick={() => setActivePage(currentUser ? "report" : "auth")}
-            >
-              Report an Issue
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-            </button>
-            <button
-              className="rounded-xl border border-white/20 bg-white/5 px-6 py-3.5 font-bold text-white backdrop-blur-sm transition hover:bg-white/10"
-              type="button"
-              onClick={() => setActivePage("public")}
-            >
-              View Public Issues
-              Explore Public Map
-            </button>
+            <span className="text-6xl font-[900] tracking-tighter text-primary sm:text-7xl lg:text-[100px] leading-tight">
+              Resolver
+            </span>
           </div>
+          <span className="text-6xl font-[900] tracking-tighter text-text-dark sm:text-7xl lg:text-[100px] leading-tight -mt-4">
+            System
+          </span>
+        </h1>
+        
+        <p className="mt-8 max-w-2xl text-lg leading-relaxed text-slate-700 font-bold mx-auto px-4">
+          Bridging the gap between citizens and administration with 
+          unprecedented transparency and efficiency.
+        </p>
+        
+        <div className="mt-12 flex flex-wrap justify-center gap-6 px-4">
+          <button
+            className="btn-premium px-12 py-5 text-sm"
+            type="button"
+            onClick={() => setActivePage(currentUser ? "report" : "auth")}
+          >
+            Report an Issue
+          </button>
+          <button
+            className="rounded-full border border-black/10 bg-white px-12 py-5 text-[12px] font-black uppercase tracking-[0.2em] text-text-dark shadow-sm transition-all hover:bg-black/5 hover:scale-105 active:scale-95"
+            type="button"
+            onClick={() => setActivePage("public")}
+          >
+            Public Board
+          </button>
         </div>
 
-        {/* Analytics Section */}
-        <div className="mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/40 p-10 glass-card transition-all duration-500 hover:border-teal-500/30 group">
-            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-teal-500/10 blur-3xl transition-all duration-500 group-hover:bg-teal-500/20" />
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Global Impact</h3>
-                <div className="mt-4 flex items-baseline gap-2">
-                   <div className="text-6xl font-[900] text-white tracking-tighter">
-                     {analytics.total.toLocaleString() || "2,481"}
-                   </div>
-                </div>
-                <div className="mt-6 flex items-center gap-2 text-sm font-bold text-teal-400 bg-teal-400/10 w-fit px-3 py-1 rounded-lg">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
-                  +12% TRENDING
-                </div>
-              </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-500 text-black shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform duration-500">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="21" x2="12" y2="17"></line><line x1="8" y1="21" x2="8" y2="14"></line><line x1="16" y1="21" x2="16" y2="10"></line></svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/40 p-10 glass-card transition-all duration-500 hover:border-blue-500/30 group">
-            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-500/10 blur-3xl transition-all duration-500 group-hover:bg-blue-500/20" />
-            <div className="flex flex-col justify-between h-full">
-              <div>
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Live Resolution</h3>
-                <div className="mt-4 text-6xl font-[900] text-white tracking-tighter">{analytics.active || "142"}</div>
-                <p className="mt-2 text-xs font-bold text-blue-400">ISSUES CURRENTLY IN PROGRESS</p>
-              </div>
-              <div className="mt-8">
-                <div className="h-2 w-full overflow-hidden rounded-full bg-white/5">
-                  <div className="h-full bg-gradient-to-r from-blue-400 to-blue-600 pulse-glow" style={{ width: "60%" }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/40 p-10 glass-card transition-all duration-500 hover:border-emerald-500/30 group">
-            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl transition-all duration-500 group-hover:bg-emerald-500/20" />
-            <div className="flex flex-col justify-between h-full">
-              <div>
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Fixed for Good</h3>
-                <div className="mt-4 text-6xl font-[900] text-white tracking-tighter">{analytics.resolved || "89"}</div>
-                <p className="mt-2 text-xs font-bold text-emerald-400">RESOLVED IN THE LAST 7 DAYS</p>
-              </div>
-              <div className="mt-8">
-                <div className="h-2 w-full overflow-hidden rounded-full bg-white/5">
-                  <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]" style={{ width: "80%" }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Floating Quick Stats */}
+        <div className="mt-16 flex flex-wrap gap-4 w-full max-w-4xl justify-center px-4">
+           {[
+             { label: "Solved Cases", value: analytics.resolved || "2.4k", tone: "bg-white/70" },
+             { label: "Total Reports", value: analytics.total || "2.8k", tone: "bg-primary text-white shadow-lg shadow-primary/20" },
+             { label: "Active Tasks", value: analytics.active || "142", tone: "bg-white/70" }
+           ].map((stat, idx) => (
+             <div key={idx} className={`flex flex-col items-center px-10 py-6 rounded-[2.5rem] border border-white/80 backdrop-blur-md shadow-sm transition-transform hover:scale-105 ${stat.tone}`}>
+                <span className="text-3xl font-black">{stat.value}</span>
+                <span className={`text-[10px] font-black uppercase tracking-widest mt-1 opacity-70`}>{stat.label}</span>
+             </div>
+           ))}
         </div>
       </div>
     </div>
@@ -764,18 +759,18 @@ function AuthPage({
   onSubmit,
 }) {
   return (
-    <section className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] items-start">
-      <div className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-teal-500 mb-3">Access Portal</p>
-        <h1 className="text-3xl font-black text-white leading-tight">
+    <section className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] items-start max-w-6xl mx-auto">
+      <div className="rounded-3xl border border-black/5 bg-white p-10 shadow-premium">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-3">Access Portal</p>
+        <h1 className="text-3xl font-black text-text-dark leading-tight">
           Join the community or sign in
         </h1>
-        <p className="mt-4 leading-relaxed text-slate-400">
+        <p className="mt-4 leading-relaxed text-slate-500 font-medium">
           Use a citizen account to report and track issues. Admin accounts are managed by the department leads.
         </p>
         <div className="mt-8 grid gap-4">
           <button
-            className="group rounded-xl border border-white/5 bg-white/[0.02] p-5 text-left transition-all hover:bg-white/5 hover:border-white/10"
+            className="group rounded-2xl border border-black/5 bg-slate-50 p-6 text-left transition-all hover:bg-black/5 hover:border-black/10"
             type="button"
             onClick={() =>
               setAuthForm({
@@ -786,11 +781,11 @@ function AuthPage({
               })
             }
           >
-            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 group-hover:text-teal-400 transition-colors">Admin Demo</span>
-            <span className="block font-bold text-white">admin@helpline.local</span>
+            <span className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-hover:text-primary transition-colors">Admin Demo</span>
+            <span className="block font-bold text-text-dark text-lg">admin@helpline.local</span>
           </button>
           <button
-            className="group rounded-xl border border-white/5 bg-white/[0.02] p-5 text-left transition-all hover:bg-white/5 hover:border-white/10"
+            className="group rounded-2xl border border-black/5 bg-slate-50 p-6 text-left transition-all hover:bg-black/5 hover:border-black/10"
             type="button"
             onClick={() =>
               setAuthForm({
@@ -801,20 +796,20 @@ function AuthPage({
               })
             }
           >
-            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 group-hover:text-teal-400 transition-colors">Citizen Demo</span>
-            <span className="block font-bold text-white">aarav@example.com</span>
+            <span className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 group-hover:text-primary transition-colors">Citizen Demo</span>
+            <span className="block font-bold text-text-dark text-lg">aarav@example.com</span>
           </button>
         </div>
       </div>
 
       <form
-        className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium"
+        className="rounded-3xl border border-black/5 bg-white p-10 shadow-premium"
         onSubmit={onSubmit}
       >
-        <div className="mb-8 flex gap-3 p-1.5 bg-black rounded-xl w-fit border border-white/5">
+        <div className="mb-8 flex gap-3 p-2 bg-slate-100 rounded-2xl w-fit border border-black/5">
           {["login", "signup"].map((mode) => (
             <button
-              className={`rounded-lg px-6 py-2 text-xs font-bold transition-all ${authMode === mode ? "bg-white text-black shadow-lg" : "text-slate-500 hover:text-white"}`}
+              className={`rounded-xl px-8 py-3 text-sm font-black transition-all ${authMode === mode ? "bg-white text-text-dark shadow-sm" : "text-slate-400 hover:text-text-dark"}`}
               key={mode}
               type="button"
               onClick={() => setAuthMode(mode)}
@@ -825,11 +820,11 @@ function AuthPage({
         </div>
 
         {authError && (
-          <div className="mb-6 flex items-start gap-4 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">
-            <AlertCircle size={20} className="shrink-0" />
+          <div className="mb-8 flex items-start gap-4 rounded-2xl border border-red-500/20 bg-red-500/5 p-5 text-sm text-red-500">
+            <AlertCircle size={24} className="shrink-0" />
             <div>
-              <p className="font-bold">Authentication Error</p>
-              <p className="mt-1 opacity-80">{authError}</p>
+              <p className="font-black">Authentication Error</p>
+              <p className="mt-1 font-medium">{authError}</p>
             </div>
           </div>
         )}
@@ -877,29 +872,27 @@ function AuthPage({
               onAreaChange={(area) => setAuthForm({ ...authForm, area })}
             />
           ) : null}
-          {authMode === "signup" ? (
-            <div className="grid gap-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Account Type</span>
-              <div className="flex gap-3">
-                {["citizen", "admin"].map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    className={`flex-1 rounded-xl border py-3 text-sm font-bold capitalize transition-all ${
-                      authForm.role === r
-                        ? "border-teal-500 bg-teal-500/10 text-teal-400 shadow-[0_0_15px_rgba(20,184,166,0.1)]"
-                        : "border-white/5 bg-white/[0.02] text-slate-500 hover:border-white/10 hover:text-white"
-                    }`}
-                    onClick={() => setAuthForm({ ...authForm, role: r })}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
+          <div className="grid gap-3">
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Account Type</span>
+            <div className="flex gap-4">
+              {["citizen", "admin"].map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  className={`flex-1 rounded-2xl border-2 py-4 text-sm font-black capitalize transition-all ${
+                    authForm.role === r
+                      ? "border-primary bg-primary/5 text-primary"
+                      : "border-black/5 bg-slate-50 text-slate-400 hover:border-black/10 hover:text-text-dark"
+                  }`}
+                  onClick={() => setAuthForm({ ...authForm, role: r })}
+                >
+                  {r}
+                </button>
+              ))}
             </div>
-          ) : null}
+          </div>
           <button
-            className="mt-4 rounded-xl bg-teal-600 px-6 py-4 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20"
+            className="mt-6 btn-premium w-full"
             type="submit"
           >
             {authMode === "login" ? "Sign in to Dashboard" : "Create Citizen Account"}
@@ -914,24 +907,24 @@ function ReportPage({ departmentNames, report, setReport, onSubmit }) {
   return (
     <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start">
       <form
-        className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium"
+        className="rounded-[3.5rem] border border-black/5 bg-white p-12 shadow-premium"
         onSubmit={onSubmit}
       >
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-teal-500 mb-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-3">
           Citizen Reporting
         </p>
-        <h1 className="text-3xl font-black text-white">
-          Report New Issue
+        <h1 className="text-4xl font-black text-text-dark tracking-tight">
+          New Case Record
         </h1>
-        <div className="mt-8 grid gap-6">
+        <div className="mt-10 grid gap-8">
           <Field
-            label="Short Title"
+            label="Issue Title"
             value={report.title}
             onChange={(title) => setReport({ ...report, title })}
-            placeholder="e.g. Pothole on Main St"
+            placeholder="e.g. Major pothole on Sector 4 main road"
             required
           />
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-8 sm:grid-cols-2">
             <Select
               label="Priority Level"
               value={report.priority}
@@ -956,61 +949,61 @@ function ReportPage({ departmentNames, report, setReport, onSubmit }) {
             onBlockChange={(block) => setReport({ ...report, block, area: "" })}
             onAreaChange={(area) => setReport({ ...report, area })}
           />
-          <label className="grid gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              Detailed Description
+          <label className="grid gap-3">
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+              Description of Problem
             </span>
             <textarea
-              className="min-h-36 w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all leading-relaxed"
+              className="min-h-40 w-full rounded-[2.5rem] border border-black/5 bg-slate-50 text-text-dark px-6 py-5 outline-none focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all leading-relaxed font-medium"
               value={report.description}
               onChange={(event) =>
                 setReport({ ...report, description: event.target.value })
               }
-              placeholder="Provide as much detail as possible to help our teams resolve this faster."
+              placeholder="Please provide specific landmarks and severity details..."
               required
             />
           </label>
           <Field
-            label="Reference Image URL"
+            label="Visual Evidence URL"
             value={report.imageUrl}
             onChange={(imageUrl) => setReport({ ...report, imageUrl })}
-            placeholder="https://images.unsplash.com/..."
+            placeholder="Link to photo or video..."
             icon={<Upload size={16} />}
           />
           <button
-            className="rounded-xl bg-teal-600 px-8 py-4 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20"
+            className="btn-premium w-full"
             type="submit"
           >
-            Submit Report
+            Submit Official Report
           </button>
         </div>
       </form>
 
-      <aside className="rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-premium sticky top-24">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-4">Live Preview</p>
-        <div className="overflow-hidden rounded-xl border border-white/5 bg-black/40">
+      <aside className="rounded-[3.5rem] border border-black/5 bg-secondary/50 p-10 shadow-premium sticky top-24">
+        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-6">Case Preview</p>
+        <div className="overflow-hidden rounded-[2.5rem] border border-black/5 bg-white shadow-xl">
           <img
-            className="h-60 w-full object-cover opacity-80"
+            className="h-72 w-full object-cover"
             src={report.imageUrl || fallbackImage}
             alt=""
           />
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase border ${priorityTone(report.priority)}`}>
-                {report.priority}
+          <div className="p-8">
+            <div className="flex flex-wrap gap-2 mb-6">
+              <span className="rounded-full bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase text-primary border border-primary/20">
+                {report.priority || "Normal"}
               </span>
               {report.department && (
-                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-bold uppercase text-teal-400 border border-white/5">
+                <span className="rounded-full bg-black/5 px-4 py-1.5 text-[10px] font-black uppercase text-text-dark border border-black/5">
                   {report.department}
                 </span>
               )}
             </div>
-            <h2 className="text-xl font-bold text-white">
-              {report.title || "Issue title will appear here"}
+            <h2 className="text-2xl font-black text-text-dark leading-tight">
+              {report.title || "Report title will appear here"}
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-400">
+            <p className="mt-4 text-base leading-relaxed text-slate-500 font-medium">
               {report.description ||
-                "A detailed description helps the assigned department understand the severity and location of the issue."}
+                "Enter details to see how your report will look to the administration."}
             </p>
           </div>
         </div>
@@ -1021,25 +1014,30 @@ function ReportPage({ departmentNames, report, setReport, onSubmit }) {
 
 function MyIssuesPage({ issues, notifications, onOpen, onRead }) {
   return (
-    <section className="grid gap-8 lg:grid-cols-[1fr_360px] items-start">
-      <IssueGrid title="My Reported Issues" issues={issues} onOpen={onOpen} />
-      <aside className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium h-fit">
-        <h2 className="text-xl font-bold text-white mb-6">Notifications</h2>
+    <section className="grid gap-12 lg:grid-cols-[1fr_400px] items-start">
+      <IssueGrid title="Official Case Records" issues={issues} onOpen={onOpen} />
+      <aside className="rounded-[3rem] border border-black/5 bg-white p-10 shadow-premium h-fit sticky top-24">
+        <div className="flex items-center gap-4 mb-8">
+           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary border border-primary/20">
+             <Bell size={20} />
+           </div>
+           <h2 className="text-2xl font-black text-text-dark tracking-tight">Updates</h2>
+        </div>
         <div className="grid gap-4">
           {notifications.map((notification) => (
             <button
-              className={`rounded-xl border p-5 text-left transition-all duration-300 ${notification.read ? "border-white/5 bg-white/[0.02] opacity-60" : "border-teal-500/20 bg-teal-500/5 shadow-lg shadow-teal-500/5"}`}
+              className={`rounded-2xl border p-6 text-left transition-all duration-500 ${notification.read ? "border-black/5 bg-slate-50 opacity-60" : "border-primary/20 bg-primary/5 shadow-sm"}`}
               key={notification.id}
               type="button"
               onClick={() => onRead(notification.id)}
             >
-              <strong className={`block text-sm mb-1 ${notification.read ? "text-slate-400" : "text-white"}`}>
+              <strong className={`block text-base mb-2 font-black ${notification.read ? "text-slate-500" : "text-text-dark"}`}>
                 {notification.title}
               </strong>
-              <span className="block text-sm leading-relaxed text-slate-500">
+              <p className="text-sm leading-relaxed text-slate-500 font-medium">
                 {notification.body}
-              </span>
-              <span className="mt-4 block text-[10px] font-bold uppercase tracking-widest text-slate-600">
+              </p>
+              <span className="mt-6 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                 {notification.createdAt}
               </span>
             </button>
@@ -1059,43 +1057,43 @@ function PublicIssuesPage({
   onOpen,
 }) {
   return (
-    <section className="grid gap-8">
-      <div className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-8 shadow-premium">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 rounded-lg bg-teal-500/10 text-teal-500">
-            <Filter size={20} />
+    <section className="grid gap-12">
+      <div className="rounded-[3.5rem] border border-black/5 bg-white p-12 shadow-premium">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="p-3 rounded-full bg-primary/10 text-primary border border-primary/20">
+            <Filter size={24} />
           </div>
-          <h1 className="text-2xl font-black text-white">Public Resolution Board</h1>
+          <h1 className="text-3xl font-[900] text-text-dark tracking-tight">Board Filters</h1>
         </div>
-        <div className="grid gap-6 md:grid-cols-4">
+        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2">
           <Field
             label="Search Query"
             value={filters.q}
             onChange={(q) => setFilters({ ...filters, q })}
-            placeholder="Title, area, or ID..."
+            placeholder="Keywords..."
           />
           <Select
-            label="Filter by Area"
+            label="By Area"
             value={filters.area}
-            options={["All", ...areaNames]}
+            options={["All Areas", ...areaNames]}
             onChange={(area) => setFilters({ ...filters, area })}
           />
           <Select
-            label="Filter by Status"
+            label="By Status"
             value={filters.status}
-            options={["All", ...statusOrder]}
+            options={["All Statuses", ...statusOrder]}
             onChange={(status) => setFilters({ ...filters, status })}
           />
           <Select
-            label="Filter by Dept"
+            label="By Department"
             value={filters.department}
-            options={["All", ...departmentNames]}
+            options={["All Units", ...departmentNames]}
             onChange={(department) => setFilters({ ...filters, department })}
           />
         </div>
       </div>
       <IssueGrid
-        title={`${issues.length} Matching Reports`}
+        title={`${issues.length} Results Found`}
         issues={issues}
         onOpen={onOpen}
       />
@@ -1131,21 +1129,21 @@ function AdminDashboard({
   return (
     <section className="grid gap-6 lg:grid-cols-[240px_1fr]">
       {/* Sidebar */}
-      <aside className="rounded-lg border border-slate-200 bg-slate-950 p-5 text-white shadow-soft h-fit">
-        <h1 className="text-2xl font-black">Admin Dashboard</h1>
-        <nav className="mt-6 grid gap-2">
+      <aside className="rounded-2xl border border-black/5 bg-white p-6 shadow-premium h-fit sticky top-24">
+        <h1 className="text-xl font-black text-text-dark tracking-tight mb-8 px-2">Admin Dashboard</h1>
+        <nav className="grid gap-2">
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               type="button"
               onClick={() => setActiveTab(id)}
-              className={`flex items-center gap-3 rounded-lg p-3 text-left font-bold transition ${
+              className={`flex items-center gap-3 rounded-xl p-3.5 text-left font-black text-xs uppercase tracking-widest transition-all ${
                 activeTab === id
-                  ? "bg-[#00b87c] text-white"
-                  : "bg-white/10 text-white/80 hover:bg-white/20"
+                  ? "bg-primary text-white shadow-lg shadow-primary/20"
+                  : "bg-transparent text-slate-400 hover:bg-slate-50 hover:text-text-dark"
               }`}
             >
-              <Icon size={18} />
+              <Icon size={16} />
               {label}
             </button>
           ))}
@@ -1157,8 +1155,8 @@ function AdminDashboard({
         {/* Analytics Tab */}
         {activeTab === "analytics" && (
           <div className="grid gap-8">
-            <div className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 p-10 glass-card shadow-premium">
-              <h2 className="text-2xl font-black text-white mb-8 tracking-tight">System Performance</h2>
+            <div className="rounded-[3rem] border border-black/5 bg-white p-10 shadow-premium">
+              <h2 className="text-2xl font-black text-text-dark mb-8 tracking-tight">System Performance</h2>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard label="Pending" value={analytics.pending} tone="amber" detail="Awaiting initial review" />
                 <StatCard label="Active" value={analytics.active} tone="blue" detail="Work in progress" />
@@ -1171,34 +1169,46 @@ function AdminDashboard({
 
         {/* Assignments Tab */}
         {activeTab === "assignments" && (
-          <div className="grid gap-8 xl:grid-cols-[1fr_400px]">
-            <section className="overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 glass-card shadow-premium">
-              <div className="border-b border-white/5 p-8 bg-white/[0.02]">
-                <h2 className="text-2xl font-black text-white tracking-tight">Live Issue Queue</h2>
+          <div className="grid gap-8 xl:grid-cols-[1fr_400px] items-start">
+            <section className="overflow-hidden rounded-[3rem] border border-black/5 bg-white shadow-premium">
+              <div className="border-b border-black/5 p-8 bg-slate-50/50">
+                <h2 className="text-2xl font-black text-text-dark tracking-tight">Live Issue Queue</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[700px] text-left text-sm border-collapse">
-                  <thead className="bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  <thead className="bg-slate-50 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                     <tr>
-                      <th className="px-8 py-5 border-b border-white/5">Identifier</th>
-                      <th className="px-8 py-5 border-b border-white/5">Location Info</th>
-                      <th className="px-8 py-5 border-b border-white/5 text-center">Current Status</th>
-                      <th className="px-8 py-5 border-b border-white/5">Workforce</th>
+                      <th className="px-8 py-5 border-b border-black/5">Identifier</th>
+                      <th className="px-8 py-5 border-b border-black/5">Urgency</th>
+                      <th className="px-8 py-5 border-b border-black/5">Raised On</th>
+                      <th className="px-8 py-5 border-b border-black/5">Location Info</th>
+                      <th className="px-8 py-5 border-b border-black/5 text-center">Current Status</th>
+                      <th className="px-8 py-5 border-b border-black/5">Workforce</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.03]">
+                  <tbody className="divide-y divide-slate-100">
                     {issues.map((issue) => (
-                      <tr className="group transition-all hover:bg-white/[0.05]" key={issue.id}>
+                      <tr className="group transition-all hover:bg-slate-50/80" key={issue.id}>
                         <td className="px-8 py-6 whitespace-nowrap">
                           <div className="flex flex-col">
-                            <span className="font-black text-white group-hover:text-teal-400 transition-colors">{issue.id}</span>
-                            <span className="text-xs font-medium text-slate-500 truncate max-w-[200px]">{issue.title}</span>
+                            <span className="font-black text-text-dark group-hover:text-primary transition-colors">{issue.id}</span>
+                            <span className="text-xs font-bold text-slate-400 truncate max-w-[200px]">{issue.title}</span>
                           </div>
                         </td>
                         <td className="px-8 py-6">
+                           <span className={`inline-flex items-center justify-center rounded-lg px-3 py-1 text-[9px] font-black uppercase tracking-widest border transition-all ${priorityTone(issue.priority)}`}>
+                             {issue.priority}
+                           </span>
+                        </td>
+                        <td className="px-8 py-6">
+                           <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                             {new Date(issue.created_at).toLocaleDateString()}
+                           </span>
+                        </td>
+                        <td className="px-8 py-6">
                           <div className="flex flex-col">
-                             <span className="text-sm font-bold text-slate-300">{issue.area}</span>
-                             <span className="text-[10px] font-black uppercase text-slate-600 tracking-widest">{issue.department}</span>
+                             <span className="text-sm font-black text-slate-600">{issue.area}</span>
+                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{issue.department}</span>
                           </div>
                         </td>
                         <td className="px-8 py-6 text-center">
@@ -1208,8 +1218,8 @@ function AdminDashboard({
                         </td>
                         <td className="px-8 py-6">
                            <div className="flex items-center gap-3">
-                              <div className={`h-2 w-2 rounded-full ${issue.assignedLabour !== "Unassigned" ? "bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.5)]" : "bg-slate-600"}`} />
-                              <span className={`font-bold ${issue.assignedLabour !== "Unassigned" ? "text-slate-300" : "text-slate-600 italic"}`}>
+                              <div className={`h-2 w-2 rounded-full ${issue.assignedLabour !== "Unassigned" ? "bg-primary shadow-[0_0_8px_rgba(20,184,166,0.3)]" : "bg-slate-300"}`} />
+                              <span className={`font-black text-[11px] uppercase tracking-wider ${issue.assignedLabour !== "Unassigned" ? "text-slate-600" : "text-slate-400 italic"}`}>
                                 {issue.assignedLabour}
                               </span>
                            </div>
@@ -1221,23 +1231,34 @@ function AdminDashboard({
               </div>
             </section>
 
-            <form className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/60 p-8 glass-card shadow-premium h-fit sticky top-24" onSubmit={onAssignmentSubmit}>
-              <h2 className="text-2xl font-black text-white mb-8 tracking-tight">Assignment Control</h2>
+            <form className="rounded-[3rem] border border-black/5 bg-white p-8 shadow-premium h-fit sticky top-24" onSubmit={onAssignmentSubmit}>
+              <h2 className="text-2xl font-black text-text-dark mb-8 tracking-tight">Assignment Control</h2>
               <div className="grid gap-6">
                 <Select label="Selected Issue" value={assignment.issueId} options={issues.map((i) => i.id)} onChange={syncSelectedAssignment} />
                 <Select label="Department Unit" value={assignment.department} options={departmentNames} onChange={(department) => setAssignment({ ...assignment, department })} />
-                <Select label="Assigned Labour" value={assignment.assignedLabour} options={["Unassigned", ...labour.filter(l => !assignment.department || l.department === assignment.department).map((l) => l.name)]} onChange={(assignedLabour) => setAssignment({ ...assignment, assignedLabour })} />
+                <Select 
+                  label="Assigned Labour" 
+                  value={assignment.assignedLabour} 
+                  options={[
+                    "Unassigned", 
+                    ...Array.from(new Set(labour
+                      .filter(l => !assignment.department || l.department === assignment.department)
+                      .map(l => JSON.stringify({ value: l.name, label: `${l.name} (${l.phone || 'N/A'})` }))))
+                      .map(s => JSON.parse(s))
+                  ]} 
+                  onChange={(assignedLabour) => setAssignment({ ...assignment, assignedLabour })} 
+                />
                 <Select label="Workflow Status" value={assignment.status} options={statusOrder} onChange={(status) => setAssignment({ ...assignment, status })} />
                 <label className="grid gap-3">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Official Update Note</span>
+                  <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Official Update Note</span>
                   <textarea
-                    className="min-h-32 w-full rounded-2xl border border-white/10 bg-white/5 text-white px-5 py-4 outline-none focus:border-teal-500 focus:ring-8 focus:ring-teal-500/5 transition-all text-sm leading-relaxed"
+                    className="min-h-32 w-full rounded-2xl border border-black/5 bg-slate-50 text-text-dark px-6 py-4 outline-none focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all font-medium text-sm leading-relaxed"
                     value={assignment.note}
                     placeholder="Enter progress details for the citizen..."
                     onChange={(e) => setAssignment({ ...assignment, note: e.target.value })}
                   />
                 </label>
-                <button className="rounded-2xl bg-gradient-to-r from-teal-500 to-blue-600 px-8 py-5 text-sm font-black uppercase tracking-[0.2em] text-black transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(45,212,191,0.3)] active:scale-95 mt-4" type="submit">
+                <button className="btn-premium w-full mt-4" type="submit">
                   Dispatch Update
                 </button>
               </div>
@@ -1247,29 +1268,29 @@ function AdminDashboard({
 
         {/* Labour Tab */}
         {activeTab === "labour" && (
-          <section className="overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 glass-card shadow-premium max-w-5xl">
-            <div className="border-b border-white/5 p-8 bg-white/[0.02]">
-              <h2 className="text-2xl font-black text-white tracking-tight">Personnel Directory</h2>
+          <section className="overflow-hidden rounded-[3rem] border border-black/5 bg-white shadow-premium max-w-5xl">
+            <div className="border-b border-black/5 p-8 bg-slate-50/50">
+              <h2 className="text-2xl font-black text-text-dark tracking-tight">Personnel Directory</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm border-collapse">
-                <thead className="bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                <thead className="bg-slate-50 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                   <tr>
-                    <th className="px-8 py-5 border-b border-white/5">Full Name</th>
-                    <th className="px-8 py-5 border-b border-white/5">Department</th>
-                    <th className="px-8 py-5 border-b border-white/5 text-center">Availability</th>
+                    <th className="px-8 py-5 border-b border-black/5">Full Name</th>
+                    <th className="px-8 py-5 border-b border-black/5">Department</th>
+                    <th className="px-8 py-5 border-b border-black/5 text-center">Availability</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.03]">
+                <tbody className="divide-y divide-slate-100">
                   {labour.map((member) => (
-                    <tr className="group transition-all hover:bg-white/[0.05]" key={member.id}>
-                      <td className="px-8 py-6 font-black text-white">{member.name}</td>
-                      <td className="px-8 py-6 text-sm font-bold text-slate-400 uppercase tracking-widest">{member.department}</td>
+                    <tr className="group transition-all hover:bg-slate-50/80" key={member.id}>
+                      <td className="px-8 py-6 font-black text-text-dark">{member.name}</td>
+                      <td className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{member.department}</td>
                       <td className="px-8 py-6 text-center">
                         <span className={`inline-flex items-center justify-center rounded-xl px-4 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all ${
                           member.availability_status === "Available"
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
-                            : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                            ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-600 border-amber-500/20"
                         }`}>
                           {member.availability_status}
                         </span>
@@ -1284,9 +1305,9 @@ function AdminDashboard({
 
         {/* Manage Data Tab */}
         {activeTab === "manage" && (
-          <form className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 p-10 glass-card shadow-premium max-w-3xl" onSubmit={onEntitySubmit}>
-            <h2 className="text-2xl font-black text-white tracking-tight">System Configuration</h2>
-            <p className="mt-2 text-sm font-bold text-slate-500">Append new logistical entities to the master database.</p>
+          <form className="rounded-[3rem] border border-black/5 bg-white p-10 shadow-premium max-w-3xl" onSubmit={onEntitySubmit}>
+            <h2 className="text-2xl font-black text-text-dark tracking-tight">System Configuration</h2>
+            <p className="mt-2 text-sm font-black text-slate-400 uppercase tracking-widest">Append new logistical entities to the master database.</p>
             <div className="mt-10 grid gap-8 sm:grid-cols-2">
               <Select label="Entity Category" value={entityForm.type} options={["areas", "departments", "labour"]} onChange={(type) => setEntityForm({ ...entityForm, type })} />
               <Field label="Formal Name" value={entityForm.name} onChange={(name) => setEntityForm({ ...entityForm, name })} required />
@@ -1295,7 +1316,7 @@ function AdminDashboard({
                 value={entityForm.extra}
                 onChange={(extra) => setEntityForm({ ...entityForm, extra })}
               />
-              <button className="flex items-center justify-center gap-3 rounded-2xl bg-white text-black px-8 py-5 text-xs font-black uppercase tracking-widest hover:bg-teal-400 transition-all hover:scale-105 active:scale-95 mt-auto shadow-xl" type="submit">
+              <button className="btn-premium w-full mt-auto" type="submit">
                 <Plus size={18} /> Register Record
               </button>
             </div>
@@ -1304,13 +1325,13 @@ function AdminDashboard({
 
         {/* Schema Tab */}
         {activeTab === "schema" && (
-          <section className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 p-10 glass-card shadow-premium max-w-4xl">
-            <h2 className="text-2xl font-black text-white tracking-tight">Core Infrastructure</h2>
-            <p className="mt-2 text-sm font-bold text-slate-500">Technical specification for the integrated data layer.</p>
+          <section className="rounded-[3rem] border border-black/5 bg-white p-10 shadow-premium max-w-4xl">
+            <h2 className="text-2xl font-black text-text-dark tracking-tight">Core Infrastructure</h2>
+            <p className="mt-2 text-sm font-black text-slate-400 uppercase tracking-widest">Technical specification for the integrated data layer.</p>
             <div className="mt-10 grid gap-4">
               {schemaPreview.map((item) => (
-                <code className="rounded-2xl bg-black/60 px-6 py-4 text-xs font-bold text-teal-400 border border-white/5 group hover:border-teal-500/30 transition-colors" key={item}>
-                  <span className="text-slate-600 mr-4">DB::</span> {item}
+                <code className="rounded-2xl bg-slate-50 px-6 py-4 text-xs font-black text-primary border border-black/5 group hover:border-primary/30 transition-colors" key={item}>
+                  <span className="text-slate-400 mr-4">DB::</span> {item}
                 </code>
               ))}
             </div>
@@ -1330,12 +1351,12 @@ function CitizenDashboard({
 }) {
   return (
     <section className="grid gap-12">
-      <div className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-gradient-to-br from-teal-500/20 via-blue-500/10 to-transparent p-12 shadow-premium">
-        <div className="absolute -top-12 -right-12 h-64 w-64 rounded-full bg-teal-500/10 blur-[100px] animate-float" />
+      <div className="relative overflow-hidden rounded-[3.5rem] border border-black/5 bg-gradient-to-br from-primary/10 via-teal-50 to-white p-12 shadow-premium">
+        <div className="absolute -top-12 -right-12 h-64 w-64 rounded-full bg-primary/5 blur-[100px]" />
         <div className="relative z-10">
-           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-teal-400 mb-4">Central Portal</p>
-           <h1 className="text-5xl font-[900] text-white tracking-tighter">GREETINGS, CITIZEN</h1>
-           <p className="mt-6 text-lg font-medium text-slate-400 max-w-xl leading-relaxed">
+           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Central Portal</p>
+           <h1 className="text-5xl font-[900] text-text-dark tracking-tighter">GREETINGS, CITIZEN</h1>
+           <p className="mt-6 text-lg font-bold text-slate-500 max-w-xl leading-relaxed">
              This is your personal mission control for a cleaner, safer community. 
              Track your reports, receive official updates, and see the impact of your voice.
            </p>
@@ -1343,7 +1364,7 @@ function CitizenDashboard({
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Reports" value={analytics.total} tone="teal" detail="All time submissions" />
+        <StatCard label="Total Reports" value={analytics.total} tone="primary" detail="All time submissions" />
         <StatCard label="Pending Review" value={analytics.pending} tone="amber" detail="Awaiting processing" />
         <StatCard label="In Resolution" value={analytics.active} tone="blue" detail="Teams dispatched" />
         <StatCard label="Resolved Cases" value={analytics.resolved} tone="emerald" detail="Completed issues" />
@@ -1351,9 +1372,9 @@ function CitizenDashboard({
 
       <div className="grid gap-12 lg:grid-cols-[1fr_400px] items-start">
         <IssueGrid title="Your Active Records" issues={issues} onOpen={onOpen} />
-        <aside className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/60 p-8 glass-card shadow-premium h-fit sticky top-24">
-          <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-4 tracking-tight">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
+        <aside className="rounded-[3rem] border border-black/5 bg-white p-8 shadow-premium h-fit sticky top-24">
+          <h2 className="text-2xl font-black text-text-dark mb-8 flex items-center gap-4 tracking-tight">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20">
                <Bell size={20} />
             </div>
             Direct Updates
@@ -1362,22 +1383,22 @@ function CitizenDashboard({
             {notifications.length > 0 ? (
               notifications.map((notification) => (
                 <button
-                  className={`group rounded-xl border p-4 text-left text-sm transition-all duration-300 ${
+                  className={`group rounded-2xl border p-6 text-left transition-all duration-500 ${
                     notification.read
-                      ? "border-white/5 bg-white/[0.02] text-slate-500"
-                      : "border-teal-500/20 bg-teal-500/5 text-white font-semibold hover:bg-teal-500/10"
+                      ? "border-black/5 bg-slate-50 opacity-60"
+                      : "border-primary/20 bg-primary/5 shadow-sm"
                   }`}
                   key={notification.id}
                   type="button"
                   onClick={() => onRead(notification.id)}
                 >
-                  <strong className={`block mb-1 group-hover:text-teal-400 transition-colors ${notification.read ? "" : "text-white"}`}>
+                  <strong className={`block text-base mb-2 font-black ${notification.read ? "text-slate-500" : "text-text-dark"}`}>
                     {notification.title}
                   </strong>
-                  <span className="block leading-relaxed opacity-80 font-normal">
+                  <p className="text-sm leading-relaxed text-slate-500 font-medium">
                     {notification.body}
-                  </span>
-                  <span className="mt-3 block text-[10px] uppercase tracking-widest text-slate-600 font-bold">
+                  </p>
+                  <span className="mt-6 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                     {notification.createdAt}
                   </span>
                 </button>
@@ -1401,9 +1422,9 @@ function IssueGrid({ title, issues, onOpen }) {
   return (
     <section>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-black text-white">{title}</h1>
+        <h1 className="text-2xl font-black text-text-dark">{title}</h1>
         {issues.length > 0 && (
-          <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-bold text-slate-500 border border-white/5">
+          <span className="rounded-full bg-black/5 px-3 py-1 text-xs font-black text-slate-400 border border-black/5">
             {issues.length} Items
           </span>
         )}
@@ -1415,11 +1436,11 @@ function IssueGrid({ title, issues, onOpen }) {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border-2 border-dashed border-white/5 bg-white/[0.02] p-16 text-center">
-          <div className="mx-auto w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-slate-600 mb-6">
+        <div className="rounded-[3rem] border-2 border-dashed border-black/5 bg-white p-16 text-center">
+          <div className="mx-auto w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 mb-6">
             <ClipboardList size={32} />
           </div>
-          <h3 className="text-lg font-bold text-white mb-2">No Issues Found</h3>
+          <h3 className="text-lg font-black text-text-dark mb-2">No Issues Found</h3>
           <p className="text-slate-500 max-w-xs mx-auto">We couldn't find any issues matching your current filters or account.</p>
         </div>
       )}
@@ -1429,16 +1450,16 @@ function IssueGrid({ title, issues, onOpen }) {
 
 function Field({ icon, label, onChange, type = "text", value, ...props }) {
   return (
-    <label className="grid gap-2">
-      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{label}</span>
+    <label className="grid gap-3">
+      <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">{label}</span>
       <span className="relative group">
         {icon ? (
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-500 transition-colors">
+          <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
             {icon}
           </span>
         ) : null}
         <input
-          className={`w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all ${icon ? "pl-11" : ""}`}
+          className={`w-full rounded-full border border-black/5 bg-slate-50 text-text-dark px-6 py-4 outline-none focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all font-medium ${icon ? "pl-14" : ""}`}
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -1451,26 +1472,30 @@ function Field({ icon, label, onChange, type = "text", value, ...props }) {
 
 function Select({ label, onChange, options, placeholder, value }) {
   return (
-    <label className="grid gap-2">
-      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{label}</span>
+    <label className="grid gap-3">
+      <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">{label}</span>
       <select
-        className="w-full rounded-xl border border-white/10 bg-[#151515] text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all appearance-none"
+        className="w-full rounded-full border border-black/5 bg-slate-50 text-text-dark px-6 py-4 outline-none focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all appearance-none font-medium"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         required={Boolean(placeholder)}
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 1rem center',
-          backgroundSize: '1.25rem',
+          backgroundPosition: 'right 1.5rem center',
+          backgroundSize: '1rem',
         }}
       >
-        {placeholder ? <option value="" className="bg-[#151515]">{placeholder}</option> : null}
-        {options.map((option) => (
-          <option key={option} value={option} className="bg-[#151515]">
-            {option}
-          </option>
-        ))}
+        {placeholder ? <option value="" className="bg-white">{placeholder}</option> : null}
+        {options.map((option) => {
+          const val = typeof option === 'object' ? option.value : option;
+          const labelText = typeof option === 'object' ? option.label : option;
+          return (
+            <option key={val} value={val} className="bg-white">
+              {labelText}
+            </option>
+          );
+        })}
       </select>
     </label>
   );

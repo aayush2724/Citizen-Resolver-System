@@ -35,6 +35,20 @@ export const createIssue = async (req, res, next) => {
       ]
     );
 
+    const [adminUsers] = await pool.query("SELECT id FROM users WHERE role = 'admin'");
+    if (adminUsers.length > 0) {
+      const adminValues = adminUsers.map(admin => [
+        admin.id,
+        result.insertId,
+        `New Issue: CHP-${result.insertId + 1000}`,
+        `A new issue "${title}" has been submitted.`
+      ]);
+      await pool.query(
+        "INSERT INTO notifications (user_id, issue_id, title, body) VALUES ?",
+        [adminValues]
+      );
+    }
+
     res.json({ id: `CHP-${result.insertId + 1000}` });
   } catch (err) {
     next(err);
@@ -96,6 +110,22 @@ export const updateIssue = async (req, res, next) => {
         "INSERT INTO issue_assignments (issue_id, department_id, labour_id, assigned_by, note, assigned_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
         [actualId, finalDeptId, labourId, req.user.id, note || null]
       );
+    }
+
+    if (status === "Completed") {
+      const [issueRows] = await pool.query("SELECT citizen_id FROM issues WHERE id = ?", [actualId]);
+      if (issueRows.length > 0) {
+        await pool.query(
+          "INSERT INTO notifications (user_id, issue_id, title, body) VALUES (?, NULL, ?, ?)",
+          [
+            issueRows[0].citizen_id,
+            `CHP-${actualId + 1000} Completed`,
+            note || "Your issue has been completed and removed from the active queue.",
+          ]
+        );
+      }
+      await pool.query("DELETE FROM issues WHERE id = ?", [actualId]);
+      return res.json({ success: true, deleted: true });
     }
 
     const [issueRows] = await pool.query("SELECT citizen_id FROM issues WHERE id = ?", [actualId]);

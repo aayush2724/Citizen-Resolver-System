@@ -24,17 +24,25 @@ const navItems = [
 function Logo({ onClick }) {
   return (
     <button className="flex items-center gap-4 text-left group" type="button" onClick={onClick}>
-      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-teal-400 to-blue-600 text-white shadow-[0_0_20px_rgba(45,212,191,0.3)] transition-transform group-hover:scale-110">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white shadow-xl transition-all duration-500 group-hover:rotate-6 group-hover:scale-110">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="m9 12 2 2 4-4" />
         </svg>
-      </span>
+      </div>
       <div className="flex flex-col">
-        <strong className="text-xl font-black tracking-tight text-white leading-none">
-          CITIZEN <span className="text-teal-400">RESOLVER</span>
-        </strong>
-        <span className="mt-1 text-[10px] font-black tracking-[0.3em] text-slate-500 uppercase">
+        <div className="flex items-baseline gap-1">
+          <span className="text-2xl font-[900] tracking-tighter text-text-dark leading-none">
+            Citizen
+          </span>
+          <span className="text-2xl font-[900] tracking-tighter text-primary leading-none">
+            Resolver
+          </span>
+          <span className="text-sm font-black tracking-widest text-primary leading-none ml-1 opacity-60">
+            SYSTEM
+          </span>
+        </div>
+        <span className="mt-1 text-[10px] font-black tracking-[0.3em] text-slate-400 uppercase">
           Empowering Communities
         </span>
       </div>
@@ -59,7 +67,6 @@ export default function Shell({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close drawer on page change or resize to desktop
   useEffect(() => {
     setDrawerOpen(false);
   }, [activePage]);
@@ -72,7 +79,6 @@ export default function Shell({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Prevent body scroll when drawer is open
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -84,20 +90,20 @@ export default function Shell({
   };
 
   return (
-    <div className="min-h-screen bg-mesh text-slate-200 selection:bg-teal-500 selection:text-black">
+    <div className="min-h-screen bg-[#f4eee0] text-[#1a1a1a] selection:bg-primary/20 selection:text-primary">
       {/* ── Header ── */}
       <header 
         className={`sticky top-0 z-50 transition-all duration-500 ${
           scrolled 
-            ? "h-20 border-b border-white/10 bg-[#030303]/70 backdrop-blur-xl" 
-            : "h-24 bg-transparent"
+            ? "h-20 border-b border-black/5 bg-white/80 backdrop-blur-xl" 
+            : "h-28 bg-transparent"
         }`}
       >
-        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-8">
           <Logo onClick={() => navigate("home")} />
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-10">
+          <nav className="hidden lg:flex items-center gap-2 rounded-full bg-black/5 p-1.5 border border-black/5">
             {navItems.filter(item => {
               if (item.id === "dashboard") return currentUser?.role === "admin";
               if (item.id === "report" || item.id === "my") return currentUser?.role === "citizen";
@@ -106,22 +112,16 @@ export default function Shell({
               const active = activePage === item.id;
               return (
                 <button
-                  className={`relative py-2 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 group ${
-                    active ? "text-teal-400" : "text-slate-400 hover:text-white"
+                  className={`relative px-6 py-2.5 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 rounded-full ${
+                    active ? "bg-white text-text-dark shadow-sm" : "text-slate-500 hover:text-text-dark"
                   }`}
                   key={item.id}
                   type="button"
                   onClick={() => navigate(item.id)}
                 >
                   {item.label}
-                  {active && (
-                    <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-teal-400" />
-                  )}
-                  {!active && (
-                    <span className="absolute -bottom-1 left-0 h-0.5 w-0 rounded-full bg-teal-400 transition-all duration-300 group-hover:w-full" />
-                  )}
                   {item.id === "my" && unreadCount > 0 && (
-                    <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-teal-400 text-[10px] font-black text-black pulse-glow">
+                    <span className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-black text-white">
                       {unreadCount}
                     </span>
                   )}
@@ -130,31 +130,35 @@ export default function Shell({
             })}
           </nav>
 
-          {/* Right side: user actions + hamburger */}
-          <div className="flex items-center gap-5">
+          {/* Right side */}
+          <div className="flex items-center gap-4">
             {currentUser ? (
               <>
-                <div className="hidden sm:flex flex-col items-end">
-                  <p className="text-sm font-black text-white">{currentUser.name}</p>
-                  <p className="text-[10px] font-bold text-teal-500/70 tracking-widest uppercase">
-                    {currentUser.city}{currentUser.block ? ` • ${currentUser.block}` : ""}
-                  </p>
-                </div>
-                
                 <button
-                  className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 border border-white/5 text-slate-400 hover:text-teal-400 transition-all duration-300 hover:border-teal-500/30"
+                  className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white border border-black/5 text-slate-400 hover:text-primary transition-all duration-500 shadow-sm"
                   onClick={() => navigate("my")}
-                  aria-label="Notifications"
                 >
                   <Bell size={18} />
                   {unreadCount > 0 && (
-                    <span className="absolute top-2.5 right-2.5 block h-2.5 w-2.5 rounded-full bg-teal-400 ring-4 ring-[#030303]" />
+                    <span className="absolute top-3 right-3 block h-2 w-2 rounded-full bg-primary" />
                   )}
                 </button>
 
                 <button
-                  className="hidden lg:flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 border border-white/5 text-slate-400 hover:text-rose-400 transition-all duration-300 hover:border-rose-500/30 group"
-                  title="Sign Out"
+                  className="hidden sm:flex items-center gap-3 rounded-full bg-white pl-2 pr-5 py-2 border border-black/5 shadow-sm hover:border-primary/30 transition-all"
+                  onClick={() => navigate("dashboard")}
+                >
+                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-black text-xs">
+                    {currentUser.name?.[0]?.toUpperCase()}
+                  </div>
+                  <div className="text-left">
+                     <p className="text-[10px] font-black text-text-dark leading-none">{currentUser.name}</p>
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">{currentUser.role}</p>
+                  </div>
+                </button>
+                
+                <button
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-white border border-black/5 text-slate-400 hover:text-red-500 transition-all shadow-sm"
                   onClick={onLogout}
                 >
                   <LogOut size={18} />
@@ -162,18 +166,16 @@ export default function Shell({
               </>
             ) : (
               <button
-                className="hidden lg:block rounded-2xl bg-gradient-to-r from-teal-400 to-blue-500 px-8 py-3 text-xs font-black uppercase tracking-widest text-black transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(45,212,191,0.4)] active:scale-95"
+                className="btn-premium px-8 py-3.5"
                 onClick={() => navigate("auth")}
               >
                 Sign In
               </button>
             )}
 
-            {/* Hamburger — mobile only */}
             <button
-              className="lg:hidden flex h-11 w-11 items-center justify-center rounded-2xl border border-white/5 bg-white/5 text-slate-300 hover:text-teal-400 transition-all duration-300"
+              className="lg:hidden flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white text-text-dark shadow-sm"
               onClick={() => setDrawerOpen(true)}
-              aria-label="Open menu"
             >
               <Menu size={20} />
             </button>
@@ -181,97 +183,70 @@ export default function Shell({
         </div>
       </header>
 
-      {/* ── Mobile drawer backdrop ── */}
+      {/* ── Mobile drawer ── */}
       {drawerOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-md lg:hidden"
+          className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm lg:hidden"
           onClick={() => setDrawerOpen(false)}
-          aria-hidden="true"
         />
       )}
 
-      {/* ── Mobile drawer panel ── */}
       <div
-        className={`fixed top-0 right-0 z-[70] h-full w-80 bg-[#050505] border-l border-white/10 flex flex-col shadow-2xl transition-transform duration-500 ease-out lg:hidden ${
+        className={`fixed top-0 right-0 z-[70] h-full w-80 bg-white border-l border-black/5 flex flex-col shadow-2xl transition-transform duration-500 ${
           drawerOpen ? "translate-x-0" : "translate-x-full"
         }`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Navigation menu"
       >
-        <div className="flex items-center justify-between px-6 py-7 border-b border-white/5">
+        <div className="flex items-center justify-between px-8 py-8">
           <Logo onClick={() => navigate("home")} />
           <button
-            className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-300"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-slate-400 hover:text-text-dark hover:bg-black/5"
             onClick={() => setDrawerOpen(false)}
-            aria-label="Close menu"
           >
             <X size={20} />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 py-8 flex flex-col gap-2">
+        <nav className="flex-1 px-6 py-6 flex flex-col gap-2">
           {navItems.filter(item => {
             if (item.id === "dashboard") return currentUser?.role === "admin";
             if (item.id === "report" || item.id === "my") return currentUser?.role === "citizen";
             return true;
           }).map((item) => {
             const active = activePage === item.id;
-            const Icon = item.icon;
             return (
               <button
                 key={item.id}
-                type="button"
-                className={`w-full flex items-center gap-4 rounded-2xl px-5 py-4 text-xs font-black uppercase tracking-widest transition-all duration-300 ${
-                  active
-                    ? "bg-teal-500/10 text-teal-400 border border-teal-500/20"
-                    : "text-slate-400 hover:bg-white/5 hover:text-white border border-transparent"
+                className={`w-full flex items-center gap-4 rounded-2xl px-6 py-4 text-[12px] font-black uppercase tracking-[0.1em] transition-all ${
+                  active ? "bg-primary text-white" : "text-slate-500 hover:bg-black/5 hover:text-text-dark"
                 }`}
                 onClick={() => navigate(item.id)}
               >
-                <Icon size={18} className={`shrink-0 ${active ? "text-teal-400" : "text-slate-500"}`} />
-                <span className="flex-1">{item.label}</span>
-                {item.id === "my" && unreadCount > 0 && (
-                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-teal-400 text-[10px] font-black text-black">
-                    {unreadCount}
-                  </span>
-                )}
+                <item.icon size={18} />
+                {item.label}
               </button>
             );
           })}
         </nav>
 
-        <div className="px-6 py-8 border-t border-white/5">
+        <div className="px-8 py-8 border-t border-black/5">
           {currentUser ? (
-            <div className="flex items-center gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-blue-500 text-black text-sm font-black">
-                {currentUser.name?.[0]?.toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-black text-white truncate">{currentUser.name}</p>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{currentUser.role}</p>
-              </div>
-              <button
-                className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-400 hover:text-rose-400 hover:bg-white/5 transition-all duration-300"
-                title="Sign Out"
-                onClick={() => { setDrawerOpen(false); onLogout(); }}
-              >
-                <LogOut size={18} />
-              </button>
-            </div>
+             <button className="w-full flex items-center gap-4 text-left" onClick={onLogout}>
+                <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white font-black">
+                   {currentUser.name?.[0]?.toUpperCase()}
+                </div>
+                <div className="flex-1">
+                   <p className="font-black text-text-dark">{currentUser.name}</p>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sign Out</p>
+                </div>
+                <LogOut size={18} className="text-slate-300" />
+             </button>
           ) : (
-            <button
-              className="w-full rounded-2xl bg-gradient-to-r from-teal-400 to-blue-500 py-4 text-xs font-black uppercase tracking-widest text-black transition-all duration-300 active:scale-95"
-              onClick={() => navigate("auth")}
-            >
-              Sign In
-            </button>
+            <button className="w-full btn-premium" onClick={() => navigate("auth")}>Sign In</button>
           )}
         </div>
       </div>
 
-      {/* ── Page content ── */}
-      <main className={activePage === "home" ? "" : "mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8"}>
+      <main className={activePage === "home" ? "" : "mx-auto max-w-7xl px-6 py-16 lg:px-8"}>
         {children}
       </main>
     </div>

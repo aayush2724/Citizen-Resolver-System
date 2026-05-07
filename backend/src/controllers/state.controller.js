@@ -35,13 +35,14 @@ export const getEntireState = async (req, res, next) => {
       LEFT JOIN users u ON i.citizen_id = u.id
       LEFT JOIN areas a ON i.area_id = a.id
       LEFT JOIN departments d ON i.department_id = d.id
+      ORDER BY i.created_at DESC
     `);
 
     import('fs').then(fs => fs.writeFileSync('debug_issue.json', JSON.stringify(issues.find(i => i.id === 7), null, 2)));
     const [areas] = await pool.query("SELECT * FROM areas");
     const [departments] = await pool.query("SELECT * FROM departments");
     const [labour] = await pool.query(`
-      SELECT l.id, l.name, l.availability_status, d.name as department 
+      SELECT l.id, l.name, l.phone, l.availability_status, d.name as department 
       FROM labour l 
       LEFT JOIN departments d ON l.department_id = d.id
     `);

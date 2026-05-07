@@ -3,12 +3,18 @@ export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
+      colors: {
+        primary: "#00c87c",
+        "primary-hover": "#00a86b",
+        secondary: "#e8dfc9",
+        "text-dark": "#1a1a1a",
+      },
       boxShadow: {
         soft: "0 18px 50px rgba(15, 23, 42, 0.10)",
         lift: "0 12px 32px rgba(30, 64, 175, 0.16)",
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "Segoe UI", "Arial", "sans-serif"],
+        sans: ["Outfit", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       keyframes: {
         rise: {
