@@ -6,10 +6,12 @@ export default function IssueCard({ issue, onOpen }) {
   const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department);
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#121212] shadow-premium transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-2xl">
-      <div className="relative h-48 overflow-hidden">
+    <article 
+      className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/5 bg-[#0f0f0f]/40 glass-card shadow-premium transition-all duration-500 hover:-translate-y-2 hover:border-white/20 hover:shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6)]"
+    >
+      <div className="relative h-52 overflow-hidden">
         <img
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+          className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
           src={imageSrc}
           alt=""
           loading="lazy"
@@ -18,62 +20,77 @@ export default function IssueCard({ issue, onOpen }) {
             event.currentTarget.src = fallbackImage;
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent opacity-60" />
-        <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${priorityTone(issue.priority)}`}>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent opacity-80" />
+        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+          <span className={`rounded-xl backdrop-blur-md px-3 py-1 text-[10px] font-black uppercase tracking-widest border ${priorityTone(issue.priority)}`}>
             {issue.priority}
           </span>
-          <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${statusTone(issue.status)}`}>
+          <span className={`rounded-xl backdrop-blur-md px-3 py-1 text-[10px] font-black uppercase tracking-widest border ${statusTone(issue.status)}`}>
             {issue.status}
           </span>
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-6">
+      <div className="flex flex-1 flex-col p-7">
         <div className="flex items-center justify-between gap-3">
-          <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-teal-400">
+          <span className="rounded-full bg-teal-500/10 border border-teal-500/20 px-4 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-teal-400">
             {issue.department}
           </span>
-          <span className="text-[10px] font-bold text-slate-500 tracking-widest">{issue.id}</span>
+          <span className="text-[10px] font-bold text-slate-600 tracking-widest">{issue.id}</span>
         </div>
 
-        <h3 className="mt-4 text-lg font-bold leading-tight text-white transition-colors group-hover:text-teal-400">{issue.title}</h3>
-        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-400">{issue.description}</p>
+        <h3 className="mt-5 text-xl font-black leading-tight text-white transition-colors group-hover:text-teal-400">
+          {issue.title}
+        </h3>
+        <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-slate-400 group-hover:text-slate-300 transition-colors">
+          {issue.description}
+        </p>
 
         {issue.note && (
-          <div className="mt-4 rounded-xl bg-white/5 p-4 border border-white/5">
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-teal-500 mb-1.5">Latest Update</span>
-            <p className="text-sm text-slate-300 line-clamp-2 leading-relaxed">{issue.note}</p>
+          <div className="mt-5 rounded-2xl bg-white/[0.03] p-5 border border-white/5 transition-colors group-hover:bg-white/[0.05]">
+            <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-teal-500 mb-2">Latest Update</span>
+            <p className="text-sm text-slate-300 italic leading-relaxed">
+              "{issue.note}"
+            </p>
           </div>
         )}
 
-        <div className="mt-6">
+        <div className="mt-8">
           <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
             <span
-              className="block h-full rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 shadow-[0_0_10px_rgba(20,184,166,0.5)] transition-all duration-700 ease-out"
+              className="block h-full rounded-full bg-gradient-to-r from-teal-400 via-cyan-500 to-blue-500 shadow-[0_0_15px_rgba(45,212,191,0.5)] transition-all duration-1000 ease-out"
               style={{ width: `${progressFor(issue.status)}%` }}
             />
           </div>
-          <div className="mt-4 grid gap-2.5 text-xs text-slate-500">
-            <span className="flex items-center gap-2.5">
-              <MapPin size={14} className="text-teal-500/70" /> {issue.area}
-            </span>
-            <span className="flex items-center gap-2.5">
-              <UserRound size={14} className="text-teal-500/70" /> {issue.assignedLabour}
-            </span>
-            <span className="flex items-center gap-2.5">
-              <CalendarDays size={14} className="text-teal-500/70" /> Updated {issue.updatedAt}
-            </span>
+          
+          <div className="mt-6 grid grid-cols-2 gap-4 text-[11px] font-bold">
+            <div className="flex items-center gap-3 text-slate-500 group-hover:text-slate-400 transition-colors">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-teal-500">
+                <MapPin size={14} />
+              </div>
+              <span className="truncate">{issue.area}</span>
+            </div>
+            <div className="flex items-center gap-3 text-slate-500 group-hover:text-slate-400 transition-colors">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-teal-500">
+                <UserRound size={14} />
+              </div>
+              <span className="truncate">{issue.assignedLabour}</span>
+            </div>
+          </div>
+          
+          <div className="mt-4 flex items-center gap-3 text-[10px] font-bold text-slate-600">
+             <CalendarDays size={14} />
+             <span>UPDATED {issue.updatedAt?.toUpperCase()}</span>
           </div>
         </div>
 
         <button
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-white transition-all duration-300 hover:bg-white/10 hover:border-white/20 active:scale-[0.98]"
+          className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/5 bg-white/5 px-6 py-4 text-xs font-black uppercase tracking-widest text-white transition-all duration-300 hover:bg-teal-500 hover:text-black hover:border-teal-500 active:scale-[0.98] shadow-lg hover:shadow-teal-500/20"
           type="button"
           onClick={() => onOpen(issue)}
         >
           View Full Details
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
         </button>
       </div>
     </article>

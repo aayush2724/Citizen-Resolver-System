@@ -37,6 +37,7 @@ export const getEntireState = async (req, res, next) => {
       LEFT JOIN departments d ON i.department_id = d.id
     `);
 
+    import('fs').then(fs => fs.writeFileSync('debug_issue.json', JSON.stringify(issues.find(i => i.id === 7), null, 2)));
     const [areas] = await pool.query("SELECT * FROM areas");
     const [departments] = await pool.query("SELECT * FROM departments");
     const [labour] = await pool.query(`

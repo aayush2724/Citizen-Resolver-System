@@ -1,17 +1,25 @@
 export default function StatCard({ label, value, detail, tone = "teal" }) {
   const tones = {
-    teal: "text-teal-400 border-teal-500/30 bg-teal-500/5",
-    blue: "text-blue-400 border-blue-500/30 bg-blue-500/5",
-    rose: "text-rose-400 border-rose-500/30 bg-rose-500/5",
-    emerald: "text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
-    amber: "text-amber-400 border-amber-500/30 bg-amber-500/5",
+    teal: "from-teal-500/10 to-transparent border-teal-500/20 text-teal-400",
+    blue: "from-blue-500/10 to-transparent border-blue-500/20 text-blue-400",
+    rose: "from-rose-500/10 to-transparent border-rose-500/20 text-rose-400",
+    emerald: "from-emerald-500/10 to-transparent border-emerald-500/20 text-emerald-400",
+    amber: "from-amber-500/10 to-transparent border-amber-500/20 text-amber-400",
   };
 
   return (
-    <article className={`rounded-2xl border ${tones[tone]} p-6 transition-all duration-300 hover:border-white/10 hover:bg-white/5`}>
-      <p className="text-xs font-bold uppercase tracking-widest text-slate-500">{label}</p>
-      <strong className="mt-3 block text-4xl font-black text-white">{value}</strong>
-      {detail ? <span className="mt-2 block text-xs font-medium text-slate-400">{detail}</span> : null}
+    <article className={`group relative overflow-hidden rounded-3xl border bg-gradient-to-br ${tones[tone]} p-8 glass-card transition-all duration-300 hover:-translate-y-1 hover:border-white/10`}>
+      <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/[0.02] transition-transform duration-500 group-hover:scale-150" />
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{label}</p>
+      <div className="mt-4 flex items-baseline gap-2">
+        <strong className="text-5xl font-black tracking-tight text-white">{value}</strong>
+      </div>
+      {detail ? (
+        <span className="mt-3 block text-xs font-bold text-slate-400 flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-current opacity-50" />
+          {detail}
+        </span>
+      ) : null}
     </article>
   );
 }

@@ -690,54 +690,61 @@ function HomePage({ analytics, setActivePage, currentUser }) {
               onClick={() => setActivePage("public")}
             >
               View Public Issues
+              Explore Public Map
             </button>
           </div>
         </div>
 
-        {/* Right Content - Bento Grid */}
-        <div className="flex flex-col justify-center gap-4">
-          {/* Big Card */}
-          <div className="rounded-3xl border border-white/10 bg-[#141414]/80 p-8 backdrop-blur-md">
+        {/* Analytics Section */}
+        <div className="mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/40 p-10 glass-card transition-all duration-500 hover:border-teal-500/30 group">
+            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-teal-500/10 blur-3xl transition-all duration-500 group-hover:bg-teal-500/20" />
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-slate-400">Total Reported Issues</h3>
-                <div className="mt-2 text-5xl font-black text-white sm:text-6xl">
-                  {analytics.total.toLocaleString() || "2,481"}
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Global Impact</h3>
+                <div className="mt-4 flex items-baseline gap-2">
+                   <div className="text-6xl font-[900] text-white tracking-tighter">
+                     {analytics.total.toLocaleString() || "2,481"}
+                   </div>
                 </div>
-                <div className="mt-3 flex items-center gap-1 text-sm font-bold text-[#00b87c]">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
-                  +12% from last month
+                <div className="mt-6 flex items-center gap-2 text-sm font-bold text-teal-400 bg-teal-400/10 w-fit px-3 py-1 rounded-lg">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+                  +12% TRENDING
                 </div>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-[#00b87c]">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="21" x2="12" y2="17"></line><line x1="8" y1="21" x2="8" y2="14"></line><line x1="16" y1="21" x2="16" y2="10"></line></svg>
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-500 text-black shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform duration-500">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="21" x2="12" y2="17"></line><line x1="8" y1="21" x2="8" y2="14"></line><line x1="16" y1="21" x2="16" y2="10"></line></svg>
               </div>
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {/* Small Card 1 */}
-            <div className="flex flex-col justify-between rounded-3xl border border-white/10 bg-[#141414]/80 p-6 backdrop-blur-md">
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/40 p-10 glass-card transition-all duration-500 hover:border-blue-500/30 group">
+            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-500/10 blur-3xl transition-all duration-500 group-hover:bg-blue-500/20" />
+            <div className="flex flex-col justify-between h-full">
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">ACTIVE WORK</h3>
-                <div className="mt-2 text-4xl font-black text-white">{analytics.active || "142"}</div>
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Live Resolution</h3>
+                <div className="mt-4 text-6xl font-[900] text-white tracking-tighter">{analytics.active || "142"}</div>
+                <p className="mt-2 text-xs font-bold text-blue-400">ISSUES CURRENTLY IN PROGRESS</p>
               </div>
               <div className="mt-8">
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full bg-[#00b87c]" style={{ width: "60%" }}></div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-white/5">
+                  <div className="h-full bg-gradient-to-r from-blue-400 to-blue-600 pulse-glow" style={{ width: "60%" }}></div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Small Card 2 */}
-            <div className="flex flex-col justify-between rounded-3xl border border-white/10 bg-[#141414]/80 p-6 backdrop-blur-md">
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/40 p-10 glass-card transition-all duration-500 hover:border-emerald-500/30 group">
+            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl transition-all duration-500 group-hover:bg-emerald-500/20" />
+            <div className="flex flex-col justify-between h-full">
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">RESOLVED THIS WEEK</h3>
-                <div className="mt-2 text-4xl font-black text-white">{analytics.resolved || "89"}</div>
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Fixed for Good</h3>
+                <div className="mt-4 text-6xl font-[900] text-white tracking-tighter">{analytics.resolved || "89"}</div>
+                <p className="mt-2 text-xs font-bold text-emerald-400">RESOLVED IN THE LAST 7 DAYS</p>
               </div>
               <div className="mt-8">
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full bg-[#00b87c]" style={{ width: "80%" }}></div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-white/5">
+                  <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]" style={{ width: "80%" }}></div>
                 </div>
               </div>
             </div>
@@ -1146,17 +1153,17 @@ function AdminDashboard({
       </aside>
 
       {/* Main Panel */}
-      <div className="grid gap-6 content-start">
+      <div className="grid gap-8 content-start">
         {/* Analytics Tab */}
         {activeTab === "analytics" && (
-          <div className="grid gap-6">
-            <div className="rounded-2xl border border-white/10 bg-[#121212] p-8 shadow-premium">
-              <h2 className="text-xl font-bold text-white mb-6">System Overview</h2>
-              <div className="grid gap-6 md:grid-cols-4">
-                <StatCard label="Pending" value={analytics.pending} tone="amber" />
-                <StatCard label="Active" value={analytics.active} tone="blue" />
-                <StatCard label="Resolved" value={analytics.resolved} tone="emerald" />
-                <StatCard label="Urgent" value={analytics.urgent} tone="rose" />
+          <div className="grid gap-8">
+            <div className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 p-10 glass-card shadow-premium">
+              <h2 className="text-2xl font-black text-white mb-8 tracking-tight">System Performance</h2>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <StatCard label="Pending" value={analytics.pending} tone="amber" detail="Awaiting initial review" />
+                <StatCard label="Active" value={analytics.active} tone="blue" detail="Work in progress" />
+                <StatCard label="Resolved" value={analytics.resolved} tone="emerald" detail="Completed successfully" />
+                <StatCard label="Urgent" value={analytics.urgent} tone="rose" detail="Immediate attention required" />
               </div>
             </div>
           </div>
@@ -1164,40 +1171,48 @@ function AdminDashboard({
 
         {/* Assignments Tab */}
         {activeTab === "assignments" && (
-          <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-            <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#121212] shadow-premium">
-              <div className="border-b border-white/5 p-6 bg-white/[0.02]">
-                <h2 className="text-xl font-bold text-white">Issue Queue</h2>
+          <div className="grid gap-8 xl:grid-cols-[1fr_400px]">
+            <section className="overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 glass-card shadow-premium">
+              <div className="border-b border-white/5 p-8 bg-white/[0.02]">
+                <h2 className="text-2xl font-black text-white tracking-tight">Live Issue Queue</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[700px] text-left text-sm border-collapse">
-                  <thead className="bg-white/[0.02] text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                  <thead className="bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
                     <tr>
-                      <th className="px-6 py-4 border-b border-white/5">Issue ID</th>
-                      <th className="px-6 py-4 border-b border-white/5">Location</th>
-                      <th className="px-6 py-4 border-b border-white/5">Department</th>
-                      <th className="px-6 py-4 border-b border-white/5 text-center">Status</th>
-                      <th className="px-6 py-4 border-b border-white/5">Assigned To</th>
+                      <th className="px-8 py-5 border-b border-white/5">Identifier</th>
+                      <th className="px-8 py-5 border-b border-white/5">Location Info</th>
+                      <th className="px-8 py-5 border-b border-white/5 text-center">Current Status</th>
+                      <th className="px-8 py-5 border-b border-white/5">Workforce</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.02]">
+                  <tbody className="divide-y divide-white/[0.03]">
                     {issues.map((issue) => (
-                      <tr className="group transition-colors hover:bg-white/[0.02]" key={issue.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                      <tr className="group transition-all hover:bg-white/[0.05]" key={issue.id}>
+                        <td className="px-8 py-6 whitespace-nowrap">
                           <div className="flex flex-col">
-                            <span className="font-bold text-white">{issue.id}</span>
-                            <span className="text-xs text-slate-500 truncate max-w-[180px]">{issue.title}</span>
+                            <span className="font-black text-white group-hover:text-teal-400 transition-colors">{issue.id}</span>
+                            <span className="text-xs font-medium text-slate-500 truncate max-w-[200px]">{issue.title}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-slate-400 font-medium">{issue.area}</td>
-                        <td className="px-6 py-4 text-slate-400 font-medium">{issue.department}</td>
-                        <td className="px-6 py-4 text-center">
-                          <span className={`inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[11px] font-bold border transition-all ${statusTone(issue.status)}`}>
+                        <td className="px-8 py-6">
+                          <div className="flex flex-col">
+                             <span className="text-sm font-bold text-slate-300">{issue.area}</span>
+                             <span className="text-[10px] font-black uppercase text-slate-600 tracking-widest">{issue.department}</span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6 text-center">
+                          <span className={`inline-flex items-center justify-center rounded-xl px-4 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all ${statusTone(issue.status)}`}>
                             {issue.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-slate-400 font-medium">
-                          {issue.assignedLabour || <span className="text-slate-600 italic">Unassigned</span>}
+                        <td className="px-8 py-6">
+                           <div className="flex items-center gap-3">
+                              <div className={`h-2 w-2 rounded-full ${issue.assignedLabour !== "Unassigned" ? "bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.5)]" : "bg-slate-600"}`} />
+                              <span className={`font-bold ${issue.assignedLabour !== "Unassigned" ? "text-slate-300" : "text-slate-600 italic"}`}>
+                                {issue.assignedLabour}
+                              </span>
+                           </div>
                         </td>
                       </tr>
                     ))}
@@ -1206,23 +1221,24 @@ function AdminDashboard({
               </div>
             </section>
 
-            <form className="rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-premium h-fit" onSubmit={onAssignmentSubmit}>
-              <h2 className="text-xl font-bold text-white mb-6">Update Assignment</h2>
-              <div className="mt-4 grid gap-5">
-                <Select label="Issue" value={assignment.issueId} options={issues.map((i) => i.id)} onChange={syncSelectedAssignment} />
-                <Select label="Department" value={assignment.department} options={departmentNames} onChange={(department) => setAssignment({ ...assignment, department })} />
-                <Select label="Labour" value={assignment.assignedLabour} options={["Unassigned", ...labour.filter(l => !assignment.department || l.department === assignment.department).map((l) => l.name)]} onChange={(assignedLabour) => setAssignment({ ...assignment, assignedLabour })} />
-                <Select label="Status" value={assignment.status} options={statusOrder} onChange={(status) => setAssignment({ ...assignment, status })} />
-                <label className="grid gap-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Update note</span>
+            <form className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/60 p-8 glass-card shadow-premium h-fit sticky top-24" onSubmit={onAssignmentSubmit}>
+              <h2 className="text-2xl font-black text-white mb-8 tracking-tight">Assignment Control</h2>
+              <div className="grid gap-6">
+                <Select label="Selected Issue" value={assignment.issueId} options={issues.map((i) => i.id)} onChange={syncSelectedAssignment} />
+                <Select label="Department Unit" value={assignment.department} options={departmentNames} onChange={(department) => setAssignment({ ...assignment, department })} />
+                <Select label="Assigned Labour" value={assignment.assignedLabour} options={["Unassigned", ...labour.filter(l => !assignment.department || l.department === assignment.department).map((l) => l.name)]} onChange={(assignedLabour) => setAssignment({ ...assignment, assignedLabour })} />
+                <Select label="Workflow Status" value={assignment.status} options={statusOrder} onChange={(status) => setAssignment({ ...assignment, status })} />
+                <label className="grid gap-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Official Update Note</span>
                   <textarea
-                    className="min-h-24 w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all"
+                    className="min-h-32 w-full rounded-2xl border border-white/10 bg-white/5 text-white px-5 py-4 outline-none focus:border-teal-500 focus:ring-8 focus:ring-teal-500/5 transition-all text-sm leading-relaxed"
                     value={assignment.note}
+                    placeholder="Enter progress details for the citizen..."
                     onChange={(e) => setAssignment({ ...assignment, note: e.target.value })}
                   />
                 </label>
-                <button className="rounded-xl bg-teal-600 px-5 py-3.5 font-bold text-white hover:bg-teal-500 transition-all active:scale-[0.98] shadow-lg shadow-teal-500/20" type="submit">
-                  Save update
+                <button className="rounded-2xl bg-gradient-to-r from-teal-500 to-blue-600 px-8 py-5 text-sm font-black uppercase tracking-[0.2em] text-black transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(45,212,191,0.3)] active:scale-95 mt-4" type="submit">
+                  Dispatch Update
                 </button>
               </div>
             </form>
@@ -1231,28 +1247,28 @@ function AdminDashboard({
 
         {/* Labour Tab */}
         {activeTab === "labour" && (
-          <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#121212] shadow-premium">
-            <div className="border-b border-white/5 p-6 bg-white/[0.02]">
-              <h2 className="text-xl font-bold text-white">Labour Teams</h2>
+          <section className="overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 glass-card shadow-premium max-w-5xl">
+            <div className="border-b border-white/5 p-8 bg-white/[0.02]">
+              <h2 className="text-2xl font-black text-white tracking-tight">Personnel Directory</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-white/[0.02] text-[11px] font-bold uppercase tracking-widest text-slate-500">
+              <table className="w-full text-left text-sm border-collapse">
+                <thead className="bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
                   <tr>
-                    <th className="px-6 py-4 border-b border-white/5">Name</th>
-                    <th className="px-6 py-4 border-b border-white/5">Department</th>
-                    <th className="px-6 py-4 border-b border-white/5">Availability</th>
+                    <th className="px-8 py-5 border-b border-white/5">Full Name</th>
+                    <th className="px-8 py-5 border-b border-white/5">Department</th>
+                    <th className="px-8 py-5 border-b border-white/5 text-center">Availability</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.02]">
+                <tbody className="divide-y divide-white/[0.03]">
                   {labour.map((member) => (
-                    <tr className="group transition-colors hover:bg-white/[0.02]" key={member.id}>
-                      <td className="px-6 py-4 font-bold text-white">{member.name}</td>
-                      <td className="px-6 py-4 text-slate-400 font-medium">{member.department}</td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[11px] font-bold border transition-all ${
+                    <tr className="group transition-all hover:bg-white/[0.05]" key={member.id}>
+                      <td className="px-8 py-6 font-black text-white">{member.name}</td>
+                      <td className="px-8 py-6 text-sm font-bold text-slate-400 uppercase tracking-widest">{member.department}</td>
+                      <td className="px-8 py-6 text-center">
+                        <span className={`inline-flex items-center justify-center rounded-xl px-4 py-1.5 text-[10px] font-black uppercase tracking-widest border transition-all ${
                           member.availability_status === "Available"
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
                             : "bg-amber-500/10 text-amber-400 border-amber-500/20"
                         }`}>
                           {member.availability_status}
@@ -1268,19 +1284,19 @@ function AdminDashboard({
 
         {/* Manage Data Tab */}
         {activeTab === "manage" && (
-          <form className="rounded-2xl border border-white/10 bg-[#121212] p-8 shadow-premium max-w-2xl" onSubmit={onEntitySubmit}>
-            <h2 className="text-xl font-bold text-white">Manage Master Data</h2>
-            <p className="mt-2 text-sm text-slate-500">Add new areas, departments, or labour to the system.</p>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              <Select label="Type" value={entityForm.type} options={["areas", "departments", "labour"]} onChange={(type) => setEntityForm({ ...entityForm, type })} />
-              <Field label="Name" value={entityForm.name} onChange={(name) => setEntityForm({ ...entityForm, name })} required />
+          <form className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 p-10 glass-card shadow-premium max-w-3xl" onSubmit={onEntitySubmit}>
+            <h2 className="text-2xl font-black text-white tracking-tight">System Configuration</h2>
+            <p className="mt-2 text-sm font-bold text-slate-500">Append new logistical entities to the master database.</p>
+            <div className="mt-10 grid gap-8 sm:grid-cols-2">
+              <Select label="Entity Category" value={entityForm.type} options={["areas", "departments", "labour"]} onChange={(type) => setEntityForm({ ...entityForm, type })} />
+              <Field label="Formal Name" value={entityForm.name} onChange={(name) => setEntityForm({ ...entityForm, name })} required />
               <Field
-                label={entityForm.type === "areas" ? "Zone" : entityForm.type === "departments" ? "Lead" : "Department"}
+                label={entityForm.type === "areas" ? "Zone Identifier" : entityForm.type === "departments" ? "Lead Coordinator" : "Department Link"}
                 value={entityForm.extra}
                 onChange={(extra) => setEntityForm({ ...entityForm, extra })}
               />
-              <button className="flex items-center justify-center gap-2 rounded-xl bg-white text-black px-5 py-3.5 font-bold hover:bg-slate-200 transition-all active:scale-[0.98]" type="submit">
-                <Plus size={18} /> Add record
+              <button className="flex items-center justify-center gap-3 rounded-2xl bg-white text-black px-8 py-5 text-xs font-black uppercase tracking-widest hover:bg-teal-400 transition-all hover:scale-105 active:scale-95 mt-auto shadow-xl" type="submit">
+                <Plus size={18} /> Register Record
               </button>
             </div>
           </form>
@@ -1288,13 +1304,13 @@ function AdminDashboard({
 
         {/* Schema Tab */}
         {activeTab === "schema" && (
-          <section className="rounded-2xl border border-white/10 bg-[#121212] p-8 shadow-premium">
-            <h2 className="text-xl font-bold text-white">Database Contract</h2>
-            <p className="mt-2 text-sm text-slate-500">Live schema reference for all tables in the system.</p>
-            <div className="mt-6 grid gap-3">
+          <section className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/40 p-10 glass-card shadow-premium max-w-4xl">
+            <h2 className="text-2xl font-black text-white tracking-tight">Core Infrastructure</h2>
+            <p className="mt-2 text-sm font-bold text-slate-500">Technical specification for the integrated data layer.</p>
+            <div className="mt-10 grid gap-4">
               {schemaPreview.map((item) => (
-                <code className="rounded-xl bg-black px-4 py-3 text-xs font-medium text-teal-400 border border-white/5" key={item}>
-                  {item}
+                <code className="rounded-2xl bg-black/60 px-6 py-4 text-xs font-bold text-teal-400 border border-white/5 group hover:border-teal-500/30 transition-colors" key={item}>
+                  <span className="text-slate-600 mr-4">DB::</span> {item}
                 </code>
               ))}
             </div>
@@ -1313,29 +1329,34 @@ function CitizenDashboard({
   onRead,
 }) {
   return (
-    <section className="grid gap-8">
-      <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-teal-500/10 to-blue-500/10 p-8 shadow-premium relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-10">
-          <LayoutDashboard size={120} />
+    <section className="grid gap-12">
+      <div className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-gradient-to-br from-teal-500/20 via-blue-500/10 to-transparent p-12 shadow-premium">
+        <div className="absolute -top-12 -right-12 h-64 w-64 rounded-full bg-teal-500/10 blur-[100px] animate-float" />
+        <div className="relative z-10">
+           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-teal-400 mb-4">Central Portal</p>
+           <h1 className="text-5xl font-[900] text-white tracking-tighter">GREETINGS, CITIZEN</h1>
+           <p className="mt-6 text-lg font-medium text-slate-400 max-w-xl leading-relaxed">
+             This is your personal mission control for a cleaner, safer community. 
+             Track your reports, receive official updates, and see the impact of your voice.
+           </p>
         </div>
-        <h1 className="text-3xl font-black text-white">Your Dashboard</h1>
-        <p className="mt-2 text-slate-400 max-w-lg">
-          Track all your reported issues and updates in one place. Real-time status updates from city administrators.
-        </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-4">
-        <StatCard label="Total Issues" value={analytics.total} tone="teal" />
-        <StatCard label="Pending" value={analytics.pending} tone="amber" />
-        <StatCard label="In Progress" value={analytics.active} tone="blue" />
-        <StatCard label="Resolved" value={analytics.resolved} tone="emerald" />
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Total Reports" value={analytics.total} tone="teal" detail="All time submissions" />
+        <StatCard label="Pending Review" value={analytics.pending} tone="amber" detail="Awaiting processing" />
+        <StatCard label="In Resolution" value={analytics.active} tone="blue" detail="Teams dispatched" />
+        <StatCard label="Resolved Cases" value={analytics.resolved} tone="emerald" detail="Completed issues" />
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        <IssueGrid title="My Issues" issues={issues} onOpen={onOpen} />
-        <aside className="rounded-2xl border border-white/5 bg-[#0f0f0f] p-6 shadow-premium h-fit">
-          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <Bell size={20} className="text-teal-500" /> Latest Updates
+      <div className="grid gap-12 lg:grid-cols-[1fr_400px] items-start">
+        <IssueGrid title="Your Active Records" issues={issues} onOpen={onOpen} />
+        <aside className="rounded-[2.5rem] border border-white/5 bg-[#0f0f0f]/60 p-8 glass-card shadow-premium h-fit sticky top-24">
+          <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-4 tracking-tight">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
+               <Bell size={20} />
+            </div>
+            Direct Updates
           </h2>
           <div className="grid gap-4">
             {notifications.length > 0 ? (
