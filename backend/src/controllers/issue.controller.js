@@ -61,12 +61,8 @@ export const updateIssue = async (req, res, next) => {
     }
 
     let labourId = null;
-    if (assignedLabour) {
-      const labourQuery = deptId
-        ? "SELECT id FROM labour WHERE name = ? AND department_id = ?"
-        : "SELECT id FROM labour WHERE name = ?";
-      const labourParams = deptId ? [assignedLabour, deptId] : [assignedLabour];
-      const [labourRows] = await pool.query(labourQuery, labourParams);
+    if (assignedLabour && assignedLabour !== "Unassigned") {
+      const [labourRows] = await pool.query("SELECT id FROM labour WHERE name = ?", [assignedLabour]);
       if (labourRows.length > 0) {
         labourId = labourRows[0].id;
       }
@@ -89,10 +85,16 @@ export const updateIssue = async (req, res, next) => {
       return res.status(404).json({ error: `Issue ${issueIdStr} not found` });
     }
 
-    if (labourId && deptId) {
+    let finalDeptId = deptId;
+    if (!finalDeptId) {
+      const [existingIssue] = await pool.query("SELECT department_id FROM issues WHERE id = ?", [actualId]);
+      if (existingIssue.length > 0) finalDeptId = existingIssue[0].department_id;
+    }
+
+    if (finalDeptId) {
       await pool.query(
         "INSERT INTO issue_assignments (issue_id, department_id, labour_id, assigned_by, note, assigned_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
-        [actualId, deptId, labourId, req.user.id, note || null]
+        [actualId, finalDeptId, labourId, req.user.id, note || null]
       );
     }
 

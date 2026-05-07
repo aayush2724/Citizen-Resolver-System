@@ -19,7 +19,7 @@ export const getEntireState = async (req, res, next) => {
         COALESCE((
           SELECT l.name 
           FROM issue_assignments ia 
-          JOIN labour l ON ia.labour_id = l.id 
+          LEFT JOIN labour l ON ia.labour_id = l.id 
           WHERE ia.issue_id = i.id 
           ORDER BY ia.assigned_at DESC 
           LIMIT 1

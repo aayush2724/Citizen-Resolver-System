@@ -1211,7 +1211,7 @@ function AdminDashboard({
               <div className="mt-4 grid gap-5">
                 <Select label="Issue" value={assignment.issueId} options={issues.map((i) => i.id)} onChange={syncSelectedAssignment} />
                 <Select label="Department" value={assignment.department} options={departmentNames} onChange={(department) => setAssignment({ ...assignment, department })} />
-                <Select label="Labour" value={assignment.assignedLabour} options={["Unassigned", ...labour.map((l) => l.name)]} onChange={(assignedLabour) => setAssignment({ ...assignment, assignedLabour })} />
+                <Select label="Labour" value={assignment.assignedLabour} options={["Unassigned", ...labour.filter(l => !assignment.department || l.department === assignment.department).map((l) => l.name)]} onChange={(assignedLabour) => setAssignment({ ...assignment, assignedLabour })} />
                 <Select label="Status" value={assignment.status} options={statusOrder} onChange={(status) => setAssignment({ ...assignment, status })} />
                 <label className="grid gap-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Update note</span>
