@@ -61,6 +61,37 @@ export const api = {
     return { ...data, currentUser: data.currentUser || currentUser };
   },
 
+  getSessions() {
+    return JSON.parse(localStorage.getItem("citizen-sessions") || "[]");
+  },
+
+  switchAccount(token) {
+    const sessions = this.getSessions();
+    const user = sessions.find(s => s.token === token);
+    if (user) {
+      localStorage.setItem("citizen-user", JSON.stringify(user));
+      window.dispatchEvent(new Event("portal-state-change"));
+    }
+  },
+
+  _saveSession(user) {
+    localStorage.setItem("citizen-user", JSON.stringify(user));
+    const sessions = this.getSessions();
+    const existingIndex = sessions.findIndex(s => s.email === user.email);
+    if (existingIndex >= 0) {
+      sessions[existingIndex] = user;
+    } else {
+      sessions.push(user);
+    }
+    localStorage.setItem("citizen-sessions", JSON.stringify(sessions));
+  },
+
+  logoutAll() {
+    localStorage.removeItem("citizen-user");
+    localStorage.removeItem("citizen-sessions");
+    window.dispatchEvent(new Event("portal-state-change"));
+  },
+
   async login({ email, password, role }) {
     // FIX: was only sending { email }, password was never sent to the backend
     const res = await fetch(`${BASE_URL}/auth/login`, {
@@ -72,7 +103,7 @@ export const api = {
     if (!res.ok) throw await parseError(res, "Invalid email or password");
 
     const user = await res.json();
-    localStorage.setItem("citizen-user", JSON.stringify(user));
+    this._saveSession(user);
     window.dispatchEvent(new Event("portal-state-change"));
     return user;
   },
@@ -88,7 +119,7 @@ export const api = {
       throw await parseError(res, "Signup failed. Please try again.");
 
     const user = await res.json();
-    localStorage.setItem("citizen-user", JSON.stringify(user));
+    this._saveSession(user);
     window.dispatchEvent(new Event("portal-state-change"));
     return user;
   },

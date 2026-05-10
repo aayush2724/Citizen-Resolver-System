@@ -59,23 +59,72 @@ const Header = ({ currentUser, onLogout }) => {
         </button>
         
         {currentUser && (
-          <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-full shadow-sm border border-[#bbcac1]/30">
-            <div className="w-8 h-8 rounded-full bg-[#00c896] flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-[#00c896]/20">
-              {currentUser.name?.[0].toUpperCase() || 'U'}
-            </div>
-            <div className="hidden lg:flex flex-col">
-              <span className="text-[10px] font-bold text-[#161d1a] leading-tight">{currentUser.name}</span>
-              <span className="text-[8px] uppercase text-[#6c7a72] font-bold">{currentUser.role || 'Citizen'}</span>
+          <div className="relative group">
+            <button className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-full shadow-sm border border-[#bbcac1]/30 hover:bg-[#eef6ef] transition-all">
+              <div className="w-8 h-8 rounded-full bg-[#00c896] flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-[#00c896]/20">
+                {currentUser.name?.[0].toUpperCase() || 'U'}
+              </div>
+              <div className="hidden lg:flex flex-col items-start text-left">
+                <span className="text-[10px] font-bold text-[#161d1a] leading-tight">{currentUser.name}</span>
+                <span className="text-[8px] uppercase text-[#6c7a72] font-bold">{currentUser.role || 'Citizen'}</span>
+              </div>
+              <span className="material-symbols-outlined text-[#bbcac1] text-sm ml-1 group-hover:text-[#006c4f]">expand_more</span>
+            </button>
+
+            {/* Dropdown Menu */}
+            <div className="absolute right-0 top-full mt-2 w-64 bg-white/95 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 flex flex-col overflow-hidden z-50">
+              <div className="px-4 py-3 bg-[#eef6ef]/50 border-b border-[#bbcac1]/20">
+                <p className="text-[10px] font-bold text-[#3c4a43] uppercase tracking-wider">Active Accounts</p>
+              </div>
+              
+              <div className="max-h-48 overflow-y-auto">
+                {(api.getSessions() || []).map(session => (
+                  <button
+                    key={session.email}
+                    onClick={() => api.switchAccount(session.token)}
+                    className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${
+                      session.email === currentUser.email 
+                        ? 'bg-[#006c4f]/5 cursor-default' 
+                        : 'hover:bg-[#f3fbf5] cursor-pointer'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                      session.role === 'admin' ? 'bg-[#161d1a] text-white' : 'bg-[#00c896] text-white'
+                    }`}>
+                      {session.name?.[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-[12px] font-bold truncate ${session.email === currentUser.email ? 'text-[#006c4f]' : 'text-[#161d1a]'}`}>
+                        {session.name}
+                      </p>
+                      <p className="text-[10px] text-[#6c7a72] truncate">{session.email}</p>
+                    </div>
+                    {session.email === currentUser.email && (
+                      <span className="material-symbols-outlined text-[#00c896] text-sm">check_circle</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="border-t border-[#bbcac1]/20 p-2">
+                <button
+                  onClick={() => window.dispatchEvent(new Event("trigger-add-account"))}
+                  className="w-full text-left px-3 py-2 text-[12px] font-bold text-[#161d1a] hover:bg-[#eef6ef] rounded-xl flex items-center gap-2 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">person_add</span>
+                  Add Another Account
+                </button>
+                <button 
+                  onClick={onLogout}
+                  className="w-full text-left px-3 py-2 text-[12px] font-bold text-error hover:bg-error-container rounded-xl flex items-center gap-2 transition-colors mt-1"
+                >
+                  <span className="material-symbols-outlined text-[16px]">logout</span>
+                  Sign Out All
+                </button>
+              </div>
             </div>
           </div>
         )}
-
-        <button 
-          onClick={onLogout}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm text-error hover:bg-error-container transition-all border border-error/20"
-        >
-          <span className="material-symbols-outlined text-xl">logout</span>
-        </button>
       </div>
     </header>
   );
@@ -115,6 +164,7 @@ const Footer = () => (
 
 const ParallaxBackground = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -848,20 +898,29 @@ export default function App() {
   });
 
   const [selectedIssue, setSelectedIssue] = useState(null);
+  const [isAddingAccount, setIsAddingAccount] = useState(false);
 
   useEffect(() => {
     const fetchState = async () => {
       try {
         const data = await api.getState();
         setPortalState({ ...data, loading: false, error: null });
+        setIsAddingAccount(false);
       } catch (err) {
         setPortalState(prev => ({ ...prev, loading: false, error: err.message }));
       }
     };
 
+    const handleAddAccount = () => setIsAddingAccount(true);
+
     fetchState();
     window.addEventListener("portal-state-change", fetchState);
-    return () => window.removeEventListener("portal-state-change", fetchState);
+    window.addEventListener("trigger-add-account", handleAddAccount);
+    
+    return () => {
+      window.removeEventListener("portal-state-change", fetchState);
+      window.removeEventListener("trigger-add-account", handleAddAccount);
+    };
   }, []);
 
   if (portalState.loading) {
@@ -896,8 +955,7 @@ export default function App() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("citizen-user");
-    window.dispatchEvent(new Event("portal-state-change"));
+    api.logoutAll();
   };
 
   return (
@@ -916,8 +974,17 @@ export default function App() {
             <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA85rjydlD00ZZ8FfqEqYrLakMG5AMdQBuwSQ28FdGcpo-e1LT9sznh2yjoM6VgJLS7GeEZo9UC8QnFbPXv4_8AxWu7LN0bwkLJJHM7CBmP1v87p7MwwOmGVYJkN031sdLFOS5dlSE9CWI3QnRxvmUyGBQxqxD9jfer7wCh30QuEKc4lWCgG6WIUPs1UYNd2nZeGNWqx1Shu4D8VvJgM6v6G0P7DeD5kRlGEhFLq25zXnl8q9viewg2RwPcQv2bF7U7ZO0svLd0ozo"/>
           </div>
 
-          {!portalState.currentUser ? (
-            <div className="max-w-container-max mx-auto px-margin-desktop">
+          {!portalState.currentUser || isAddingAccount ? (
+            <div className="max-w-container-max mx-auto px-margin-desktop relative z-20">
+              {isAddingAccount && (
+                <button 
+                  onClick={() => setIsAddingAccount(false)}
+                  className="absolute -top-12 left-margin-desktop flex items-center gap-2 text-[#3c4a43] hover:text-[#006c4f] font-bold text-sm transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+                  Back to Dashboard
+                </button>
+              )}
               <Login />
             </div>
           ) : (
@@ -1158,7 +1225,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
   const [assignForm, setAssignForm] = useState({ labourId: '', note: '' });
   const [updating, setUpdating] = useState(false);
 
-  const statuses = ['All', 'Pending', 'In Progress', 'Resolved', 'Rejected'];
+  const statuses = ['All', 'Pending', 'In Progress', 'Resolved', 'Completed', 'Rejected'];
 
   const filtered = issues.filter(i => {
     const matchStatus = filterStatus === 'All' || i.status === filterStatus;
@@ -1179,6 +1246,9 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
     setUpdating(true);
     try {
       await api.updateIssue(issueId, { status });
+      if (status === 'Completed') {
+        setSelectedIssue(null);
+      }
     } catch (err) {
       alert(err.message);
     } finally {
@@ -1367,7 +1437,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
                       defaultValue={selectedIssue.status}
                       className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#006c4f]"
                     >
-                      {['Pending', 'In Progress', 'Resolved', 'Rejected'].map(s => (
+                      {['Pending', 'In Progress', 'Resolved', 'Completed', 'Rejected'].map(s => (
                         <option key={s} value={s}>{s}</option>
                       ))}
                     </select>

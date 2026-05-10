@@ -15,14 +15,14 @@ review, assign, and manage resolution workflows with notifications.
 
 ## Tech Stack
 
-- Frontend: React, Vite, Tailwind CSS, Lucide React
-- Backend: Node.js, Express, MySQL (mysql2/promise), bcrypt, jsonwebtoken
+- Client: React, Vite, Tailwind CSS, Lucide React
+- Server: Node.js, Express, MySQL (mysql2/promise), bcrypt, jsonwebtoken
 
 ## Repository Layout
 
 ```text
 .
-├── backend/
+├── server/
 │   ├── src/
 │   │   ├── config/
 │   │   ├── controllers/
@@ -33,7 +33,7 @@ review, assign, and manage resolution workflows with notifications.
 │   ├── init_db.js
 │   ├── schema.sql
 │   └── .env
-├── frontend/
+├── client/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── services/
@@ -56,11 +56,11 @@ review, assign, and manage resolution workflows with notifications.
 1. Install dependencies
 
 ```bash
-npm --prefix backend install
-npm --prefix frontend install
+npm --prefix server install
+npm --prefix client install
 ```
 
-2. Configure backend environment in backend/.env
+2. Configure server environment in server/.env
 
 ```env
 PORT=5000
@@ -75,31 +75,31 @@ JWT_SECRET=your_random_secret_string
 3. Initialize database schema and seed data
 
 ```bash
-cd backend
+cd server
 node init_db.js
 ```
 
 ## Run the Application
 
-Backend:
+Server:
 
 ```bash
-npm --prefix backend start
+npm --prefix server start
 ```
 
-Frontend (Vite dev server):
+Client (Vite dev server):
 
 ```bash
-npm --prefix frontend run dev
+npm --prefix client run dev
 ```
 
-Frontend URL: http://127.0.0.1:5173
-Backend URL: http://localhost:5000
+Client URL: http://127.0.0.1:5173
+Server URL: http://localhost:5000
 
 ## Build
 
 ```bash
-npm --prefix frontend run build
+npm --prefix client run build
 ```
 
 ## Demo Accounts
@@ -134,18 +134,18 @@ npm --prefix frontend run build
 
 - Issue IDs are rendered as CHP-1001 style identifiers.
 - Areas added from Admin Manage Data are persisted in the database and visible in public filters.
-- City/block/area selection options in signup/report forms are currently driven by frontend mock location data.
+- City/block/area selection options in signup/report forms are currently driven by client mock location data.
 
 ## Troubleshooting
 
 - Error: ENOENT Could not read package.json at repository root
-   - This repository has separate backend and frontend packages.
-   - Use npm --prefix backend ... and npm --prefix frontend ... commands.
+   - This repository has separate server and client packages.
+  - Use npm --prefix server ... and npm --prefix client ... commands.
 
-- Backend cannot connect to DB
-   - Check backend/.env credentials.
+- Server cannot connect to DB
+   - Check server/.env credentials.
    - Ensure MySQL is running and DB user has permission to create/use citizen_resolver.
 
 - UI shows no data after login
-   - Confirm backend is running on port 5000.
+   - Confirm server is running on port 5000.
    - Check browser devtools network calls to /api/state.
