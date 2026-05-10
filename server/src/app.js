@@ -7,6 +7,7 @@ import entityRoutes from "./routes/entity.routes.js";
 import stateRoutes from "./routes/state.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import bugReportRoutes from "./routes/bugreport.routes.js";
+import messageRoutes from "./routes/message.routes.js";
 import { apiErrorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use("/api/entities", entityRoutes);
 app.use("/api/state", stateRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.use(apiErrorHandler);
 

@@ -15,27 +15,23 @@ export const getEntireState = async (req, res, next) => {
         i.sla_hours as slaHours, i.citizen_id as citizenId,
         u.name as citizenName,
         a.name as area,
-        d.name as department,
-        COALESCE((
-          SELECT l.name 
-          FROM issue_assignments ia 
-          LEFT JOIN labour l ON ia.labour_id = l.id 
-          WHERE ia.issue_id = i.id 
-          ORDER BY ia.assigned_at DESC 
-          LIMIT 1
-        ), 'Unassigned') as assignedLabour,
-        COALESCE((
-          SELECT note 
-          FROM issue_assignments 
-          WHERE issue_id = i.id 
-          ORDER BY assigned_at DESC 
-          LIMIT 1
-        ), 'Issue received. Waiting for admin review.') as note
+        d.name as department
       FROM issues i
       LEFT JOIN users u ON i.citizen_id = u.id
       LEFT JOIN areas a ON i.area_id = a.id
       LEFT JOIN departments d ON i.department_id = d.id
       ORDER BY i.created_at DESC
+    `);
+
+    // Fetch all assignments for all issues to build history
+    const [assignments] = await pool.query(`
+      SELECT 
+        ia.issue_id, ia.assigned_at, ia.note, 
+        l.name as labourName, l.phone as labourPhone, u.name as adminName
+      FROM issue_assignments ia
+      LEFT JOIN labour l ON ia.labour_id = l.id
+      LEFT JOIN users u ON ia.assigned_by = u.id
+      ORDER BY ia.assigned_at DESC
     `);
 
     import('fs').then(fs => fs.writeFileSync('debug_issue.json', JSON.stringify(issues.find(i => i.id === 7), null, 2)));
@@ -53,11 +49,18 @@ export const getEntireState = async (req, res, next) => {
     res.json({
       currentUser,
       users,
-      issues: issues.map((i) => ({
-        ...i,
-        id: `CHP-${i.id + 1000}`,
-        originalId: i.id,
-      })),
+      issues: issues.map((i) => {
+        const history = assignments.filter(a => a.issue_id === i.id);
+        const latest = history[0] || {};
+        return {
+          ...i,
+          id: `CHP-${i.id + 1000}`,
+          originalId: i.id,
+          assignedLabour: latest.labourName || 'Unassigned',
+          note: latest.note || 'Issue received. Waiting for admin review.',
+          history: history
+        };
+      }),
       areas,
       departments,
       labour,

@@ -1,8 +1,44 @@
-import { X, Calendar, MapPin, User, Shield, Info } from "lucide-react";
+import { X, Calendar, MapPin, User, Shield, Info, Send } from "lucide-react";
 import { progressFor, statusOrder, statusTone } from "../utils/status";
 import { fallbackImage, getRelevantImage } from "../utils/image";
+import { useState, useEffect } from "react";
+import { api } from "../services/api";
 
 export default function IssueModal({ issue, onClose }) {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (issue) {
+      const fetchMessages = async () => {
+        try {
+          const data = await api.getMessages(issue.id);
+          setMessages(data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchMessages();
+    }
+  }, [issue]);
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+    setLoading(true);
+    try {
+      const sent = await api.sendMessage(issue.id, newMessage);
+      const user = JSON.parse(localStorage.getItem("citizen-user") || "{}");
+      setMessages(prev => [...prev, { ...sent, senderName: user.name, sender_id: user.id }]);
+      setNewMessage("");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!issue) return null;
 
   const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department);
@@ -20,7 +56,7 @@ export default function IssueModal({ issue, onClose }) {
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.25em] text-outline mb-1.5">
-                #CR-{issue.id.toString().padStart(4, '0')} • {issue.created_at ? new Date(issue.created_at).toLocaleDateString() : "Recent"}
+                #CR-{issue.id.toString().replace("CHP-", "").padStart(4, '0')} • {issue.created_at ? new Date(issue.created_at).toLocaleDateString() : "Recent"}
               </p>
               <h2 className="text-2xl sm:text-3xl font-black text-primary leading-tight tracking-tighter">{issue.title}</h2>
             </div>
@@ -115,18 +151,68 @@ export default function IssueModal({ issue, onClose }) {
               </div>
             </div>
 
-            {/* Admin Note */}
-            {issue.note && (
-              <div className="rounded-[2.5rem] border border-secondary/20 bg-secondary/5 p-10 border-l-[12px] border-l-secondary shadow-sm">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 rounded-2xl bg-secondary text-white shadow-lg">
-                    <Info size={24} />
+            {/* Conversation Section */}
+            <div className="grid lg:grid-cols-2 gap-12">
+              {/* Admin Note (Legacy) */}
+              {issue.note && (
+                <div className="rounded-[2.5rem] border border-secondary/20 bg-secondary/5 p-10 border-l-[12px] border-l-secondary shadow-sm">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="p-3 rounded-2xl bg-secondary text-white shadow-lg">
+                      <Info size={24} />
+                    </div>
+                    <span className="text-[12px] font-black uppercase tracking-[0.25em] text-secondary">Official Administration Update</span>
                   </div>
-                  <span className="text-[12px] font-black uppercase tracking-[0.25em] text-secondary">Official Administration Update</span>
+                  <p className="text-lg leading-relaxed text-primary font-black tracking-tight">{issue.note}</p>
                 </div>
-                <p className="text-lg leading-relaxed text-primary font-black tracking-tight">{issue.note}</p>
+              )}
+
+              {/* Chat Thread */}
+              <div className="rounded-[2.5rem] border border-outline-variant/20 bg-white shadow-premium flex flex-col h-[450px]">
+                <div className="px-8 py-6 border-b border-outline-variant/10 bg-surface-container-lowest rounded-t-[2.5rem] flex items-center justify-between">
+                  <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-primary">Live Chat Thread</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                    <span className="text-[9px] font-black text-secondary uppercase">Connected</span>
+                  </div>
+                </div>
+                <div className="flex-1 overflow-y-auto p-8 space-y-4 custom-scrollbar">
+                  {messages.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center opacity-30">
+                      <Send size={48} />
+                      <p className="text-[10px] font-black uppercase mt-4">No messages yet</p>
+                    </div>
+                  ) : messages.map((m, idx) => (
+                    <div key={idx} className={`flex flex-col ${m.sender_id.toString() === JSON.parse(localStorage.getItem("citizen-user") || "{}").id?.toString() ? 'items-end' : 'items-start'}`}>
+                      <div className={`max-w-[85%] p-4 rounded-[1.5rem] text-sm font-bold ${
+                        m.sender_id.toString() === JSON.parse(localStorage.getItem("citizen-user") || "{}").id?.toString() 
+                          ? 'bg-primary text-white rounded-tr-none' 
+                          : 'bg-surface-container-low text-primary rounded-tl-none border border-outline-variant/20'
+                      }`}>
+                        {m.message}
+                      </div>
+                      <span className="text-[9px] font-black text-outline uppercase mt-2 px-1">
+                        {m.senderName} • {new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <form onSubmit={handleSend} className="p-6 bg-surface-container-lowest rounded-b-[2.5rem] border-t border-outline-variant/10 relative">
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type your response here..."
+                    className="w-full bg-white border border-outline-variant/30 rounded-2xl py-4 pl-6 pr-14 text-sm font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                  />
+                  <button 
+                    disabled={loading}
+                    className="absolute right-9 top-1/2 -translate-y-1/2 h-10 w-10 bg-primary text-white rounded-xl flex items-center justify-center hover:shadow-lg active:scale-90 transition-all disabled:opacity-50"
+                  >
+                    <Send size={20} />
+                  </button>
+                </form>
               </div>
-            )}
+            </div>
           </div>
         </div>
 

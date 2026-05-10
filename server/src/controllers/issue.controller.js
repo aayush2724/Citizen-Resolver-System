@@ -64,7 +64,8 @@ export const updateIssue = async (req, res, next) => {
       return res.status(400).json({ error: `Invalid issue ID: ${issueIdStr}` });
     }
 
-    const { status, department, assignedLabour, note } = req.body;
+    const { status, department, assignedLabour, labourId: incomingLabourId, note, adminNote } = req.body;
+    const finalNote = note || adminNote;
 
     let deptId = null;
     if (department) {
@@ -74,8 +75,8 @@ export const updateIssue = async (req, res, next) => {
       }
     }
 
-    let labourId = null;
-    if (assignedLabour && assignedLabour !== "Unassigned") {
+    let labourId = incomingLabourId || null;
+    if (!labourId && assignedLabour && assignedLabour !== "Unassigned") {
       const [labourRows] = await pool.query("SELECT id FROM labour WHERE name = ?", [assignedLabour]);
       if (labourRows.length > 0) {
         labourId = labourRows[0].id;
@@ -108,7 +109,7 @@ export const updateIssue = async (req, res, next) => {
     if (finalDeptId) {
       await pool.query(
         "INSERT INTO issue_assignments (issue_id, department_id, labour_id, assigned_by, note, assigned_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
-        [actualId, finalDeptId, labourId, req.user.id, note || null]
+        [actualId, finalDeptId, labourId, req.user.id, finalNote || null]
       );
     }
 
@@ -120,7 +121,7 @@ export const updateIssue = async (req, res, next) => {
           [
             issueRows[0].citizen_id,
             `CHP-${actualId + 1000} Completed`,
-            note || "Your issue has been completed and removed from the active queue.",
+            finalNote || "Your issue has been completed and removed from the active queue.",
           ]
         );
       }
@@ -136,7 +137,7 @@ export const updateIssue = async (req, res, next) => {
           issueRows[0].citizen_id,
           actualId,
           `CHP-${actualId + 1000} updated`,
-          note || `Status changed to ${status}`,
+          finalNote || `Status changed to ${status}`,
         ]
       );
     }

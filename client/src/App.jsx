@@ -4,6 +4,7 @@ import { api } from './services/api';
 import IssueCard from './components/IssueCard';
 import IssueModal from './components/IssueModal';
 import { Shield, MapPin, Search, Filter } from 'lucide-react';
+import { getRelevantImage } from './utils/image';
 
 // --- Global Styles ---
 const globalStyles = `
@@ -904,7 +905,14 @@ export default function App() {
     const fetchState = async () => {
       try {
         const data = await api.getState();
-        setPortalState({ ...data, loading: false, error: null });
+        // Multi-level sort: Priority (Urgent > High > Normal) then Date (Latest First)
+        const priorityMap = { 'Urgent': 3, 'High': 2, 'Normal': 1 };
+        const sortedIssues = (data.issues || []).sort((a, b) => {
+          const priorityDiff = (priorityMap[b.priority] || 0) - (priorityMap[a.priority] || 0);
+          if (priorityDiff !== 0) return priorityDiff;
+          return new Date(b.created_at) - new Date(a.created_at);
+        });
+        setPortalState({ ...data, issues: sortedIssues, loading: false, error: null });
         setIsAddingAccount(false);
       } catch (err) {
         setPortalState(prev => ({ ...prev, loading: false, error: err.message }));
@@ -1224,6 +1232,51 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
   const [searchTerm, setSearchTerm] = useState('');
   const [assignForm, setAssignForm] = useState({ labourId: '', note: '' });
   const [updating, setUpdating] = useState(false);
+  const [activeTab, setActiveTab] = useState('assign'); // 'assign' | 'history' | 'chat'
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [loadingChat, setLoadingChat] = useState(false);
+
+  useEffect(() => {
+    if (selectedIssue && activeTab === 'chat') {
+      const fetchMessages = async () => {
+        setLoadingChat(true);
+        try {
+          const data = await api.getMessages(selectedIssue.id);
+          setMessages(data);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setLoadingChat(false);
+        }
+      };
+      fetchMessages();
+    }
+  }, [selectedIssue, activeTab]);
+
+  const handleNotificationClick = async (n) => {
+    try {
+      if (!n.read) await api.markNotificationRead(n.id);
+      if (n.issue_id) {
+        const issue = issues.find(i => i.originalId === n.issue_id);
+        if (issue) setSelectedIssue(issue);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedIssue) return;
+    try {
+      const sent = await api.sendMessage(selectedIssue.id, newMessage);
+      setMessages(prev => [...prev, { ...sent, senderName: currentUser.name, senderRole: currentUser.role }]);
+      setNewMessage('');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   const statuses = ['All', 'Pending', 'In Progress', 'Resolved', 'Completed', 'Rejected'];
 
@@ -1370,9 +1423,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
                 className={`p-5 flex items-start gap-4 cursor-pointer hover:bg-[#f3fbf5] transition-all ${selectedIssue?.id === issue.id ? 'bg-[#eef6ef]' : ''}`}
               >
                 <div className="w-10 h-10 rounded-xl bg-[#eef6ef] flex-shrink-0 overflow-hidden">
-                  {issue.imageUrl
-                    ? <img src={issue.imageUrl} alt="" className="w-full h-full object-cover" />
-                    : <span className="material-symbols-outlined text-[#006c4f] text-xl m-auto flex items-center justify-center h-full">report_problem</span>}
+                  <img src={issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department)} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-[#161d1a] text-sm truncate">{issue.title}</p>
@@ -1397,66 +1448,127 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
               Assign Labour
             </h2>
             {selectedIssue ? (
-              <form onSubmit={handleAssign} className="space-y-4">
-                <div className="bg-[#eef6ef] rounded-2xl p-4">
-                  <p className="font-bold text-[#161d1a] text-sm line-clamp-2">{selectedIssue.title}</p>
-                  <p className="text-[11px] text-[#6c7a72] mt-1">{selectedIssue.area} · {selectedIssue.department}</p>
+              <div className="space-y-4">
+                <div className="flex bg-[#eef6ef] rounded-xl p-1">
+                  <button onClick={() => setActiveTab('assign')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'assign' ? 'bg-white text-[#006c4f] shadow-sm' : 'text-[#6c7a72]'}`}>Update Status</button>
+                  <button onClick={() => setActiveTab('history')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'history' ? 'bg-white text-[#006c4f] shadow-sm' : 'text-[#6c7a72]'}`}>Audit Trail</button>
+                  <button onClick={() => setActiveTab('chat')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'chat' ? 'bg-white text-[#006c4f] shadow-sm' : 'text-[#6c7a72]'}`}>Conversation</button>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Assign Worker</label>
-                  <div className="relative">
-                    <select
-                      required
-                      value={assignForm.labourId}
-                      onChange={e => setAssignForm(p => ({ ...p, labourId: e.target.value }))}
-                      className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#006c4f]"
-                    >
-                      <option value="">Select worker...</option>
-                      {(labour || []).map(l => (
-                        <option key={l.id} value={l.id}>{l.name} — {l.department}</option>
+
+                {activeTab === 'assign' ? (
+                  <form onSubmit={handleAssign} className="space-y-4">
+                    <div className="bg-[#eef6ef] rounded-2xl p-4">
+                      <p className="font-bold text-[#161d1a] text-sm line-clamp-2">{selectedIssue.title}</p>
+                      <p className="text-[11px] text-[#6c7a72] mt-1">{selectedIssue.area} · {selectedIssue.department}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Assign Worker</label>
+                      <div className="relative">
+                        <select
+                          required
+                          value={assignForm.labourId}
+                          onChange={e => setAssignForm(p => ({ ...p, labourId: e.target.value }))}
+                          className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#006c4f]"
+                        >
+                          <option value="">Select worker...</option>
+                          {(labour || []).map(l => (
+                            <option key={l.id} value={l.id}>{l.name} {l.phone ? `(${l.phone})` : ''} — {l.department}</option>
+                          ))}
+                        </select>
+                        <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a] text-sm">expand_more</span>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Admin Note</label>
+                      <textarea
+                        rows="3"
+                        value={assignForm.note}
+                        onChange={e => setAssignForm(p => ({ ...p, note: e.target.value }))}
+                        className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm resize-none focus:ring-2 focus:ring-[#006c4f]"
+                        placeholder="Add a note for the field worker..."
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Quick Status Update</label>
+                      <div className="relative">
+                        <select
+                          onChange={e => handleStatusUpdate(selectedIssue.id, e.target.value)}
+                          value={selectedIssue.status}
+                          className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#006c4f]"
+                        >
+                          {['Pending', 'In Progress', 'Resolved', 'Completed', 'Rejected'].map(s => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                        </select>
+                        <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a] text-sm">expand_more</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={() => setSelectedIssue(null)} className="flex-1 py-3 rounded-xl border border-[#bbcac1] text-[#3c4a43] text-sm font-bold hover:bg-[#f3fbf5] transition-all">Cancel</button>
+                      <button type="submit" disabled={updating} className="flex-1 py-3 rounded-xl bg-[#006c4f] text-white text-sm font-bold hover:bg-[#005040] transition-all disabled:opacity-50">{updating ? 'Saving...' : 'Assign & Save'}</button>
+                    </div>
+                  </form>
+                ) : activeTab === 'history' ? (
+                  <div className="space-y-4">
+                    <div className="max-h-[300px] overflow-y-auto pr-2 space-y-4">
+                      {(selectedIssue.history || []).length === 0 ? (
+                        <div className="py-8 text-center text-[#bbcac1]">
+                          <span className="material-symbols-outlined text-3xl block mb-2">history</span>
+                          <p className="text-[11px] font-bold">No assignment history yet</p>
+                        </div>
+                      ) : selectedIssue.history.map((h, idx) => (
+                        <div key={idx} className="relative pl-6 pb-4 border-l-2 border-[#eef6ef] last:pb-0">
+                          <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-[#00c896]"></div>
+                          <p className="text-[10px] font-bold text-[#006c4f] uppercase tracking-wider leading-none">{new Date(h.assigned_at).toLocaleString()}</p>
+                          <p className="text-[12px] font-bold text-[#161d1a] mt-1">
+                            {h.labourName ? `Assigned to ${h.labourName}` : 'Status Changed'}
+                            {h.labourPhone && <span className="ml-2 text-[#006c4f] font-normal text-[11px]">— {h.labourPhone}</span>}
+                          </p>
+                          <p className="text-[11px] text-[#6c7a72] mt-1 italic">"{h.note}"</p>
+                          <p className="text-[9px] text-[#bbcac1] mt-1">Updated by {h.adminName}</p>
+                        </div>
                       ))}
-                    </select>
-                    <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a] text-sm">expand_more</span>
+                    </div>
+                    <button onClick={() => setActiveTab('assign')} className="w-full py-3 rounded-xl border border-[#006c4f] text-[#006c4f] text-sm font-bold hover:bg-[#eef6ef] transition-all">Back to Actions</button>
                   </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Admin Note</label>
-                  <textarea
-                    rows="3"
-                    value={assignForm.note}
-                    onChange={e => setAssignForm(p => ({ ...p, note: e.target.value }))}
-                    className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm resize-none focus:ring-2 focus:ring-[#006c4f]"
-                    placeholder="Add a note for the field worker..."
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Update Status</label>
-                  <div className="relative">
-                    <select
-                      onChange={e => handleStatusUpdate(selectedIssue.id, e.target.value)}
-                      defaultValue={selectedIssue.status}
-                      className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#006c4f]"
-                    >
-                      {['Pending', 'In Progress', 'Resolved', 'Completed', 'Rejected'].map(s => (
-                        <option key={s} value={s}>{s}</option>
+                ) : (
+                  <div className="space-y-4 flex flex-col h-[400px]">
+                    <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin">
+                      {loadingChat ? (
+                        <p className="text-center text-[#bbcac1] py-10 text-[11px] animate-pulse">Loading conversation...</p>
+                      ) : messages.length === 0 ? (
+                        <div className="py-12 text-center text-[#bbcac1]">
+                          <span className="material-symbols-outlined text-4xl block mb-2">forum</span>
+                          <p className="text-[11px] font-bold">No messages yet. Start the conversation!</p>
+                        </div>
+                      ) : messages.map((m, idx) => (
+                        <div key={idx} className={`flex flex-col ${m.sender_id === currentUser.id ? 'items-end' : 'items-start'}`}>
+                          <div className={`max-w-[85%] p-3 rounded-2xl text-[12px] ${
+                            m.sender_id === currentUser.id ? 'bg-[#006c4f] text-white rounded-tr-none' : 'bg-[#eef6ef] text-[#161d1a] rounded-tl-none'
+                          }`}>
+                            <p className="font-medium leading-relaxed">{m.message}</p>
+                          </div>
+                          <p className="text-[9px] text-[#bbcac1] mt-1 px-1">
+                            {m.sender_id === currentUser.id ? 'You' : m.senderName} · {new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                          </p>
+                        </div>
                       ))}
-                    </select>
-                    <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a] text-sm">expand_more</span>
+                    </div>
+                    <form onSubmit={handleSendMessage} className="relative mt-2">
+                      <input
+                        type="text"
+                        value={newMessage}
+                        onChange={e => setNewMessage(e.target.value)}
+                        placeholder="Type a message..."
+                        className="w-full bg-[#eef6ef] border-none rounded-2xl pl-4 pr-12 py-3.5 text-sm focus:ring-2 focus:ring-[#006c4f] outline-none"
+                      />
+                      <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#006c4f] text-white rounded-xl flex items-center justify-center hover:bg-[#005040] transition-all shadow-sm">
+                        <span className="material-symbols-outlined text-[18px]">send</span>
+                      </button>
+                    </form>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedIssue(null)}
-                    className="flex-1 py-3 rounded-xl border border-[#bbcac1] text-[#3c4a43] text-sm font-bold hover:bg-[#f3fbf5] transition-all"
-                  >Cancel</button>
-                  <button
-                    type="submit"
-                    disabled={updating}
-                    className="flex-1 py-3 rounded-xl bg-[#006c4f] text-white text-sm font-bold hover:bg-[#005040] transition-all disabled:opacity-50"
-                  >{updating ? 'Saving...' : 'Assign & Save'}</button>
-                </div>
-              </form>
+                )}
+              </div>
             ) : (
               <div className="text-center py-10 text-[#bbcac1]">
                 <span className="material-symbols-outlined text-4xl block mb-2">touch_app</span>
@@ -1478,13 +1590,17 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
               {(notifications || []).length === 0 ? (
                 <p className="text-center text-[#bbcac1] text-sm py-6">No notifications</p>
               ) : notifications.slice(0, 8).map(n => (
-                <div key={n.id} className={`flex items-start gap-3 p-3 rounded-xl ${n.read ? 'opacity-50' : 'bg-[#eef6ef]'}`}>
+                <button
+                  key={n.id}
+                  onClick={() => handleNotificationClick(n)}
+                  className={`w-full text-left flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-white hover:shadow-sm group ${n.read ? 'opacity-50' : 'bg-[#eef6ef]'}`}
+                >
                   <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? 'bg-[#bbcac1]' : 'bg-[#00c896]'}`}></span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[12px] font-bold text-[#161d1a] truncate">{n.title || 'New Issue Submitted'}</p>
+                    <p className="text-[12px] font-bold text-[#161d1a] truncate group-hover:text-[#006c4f]">{n.title || 'New Issue Submitted'}</p>
                     <p className="text-[11px] text-[#6c7a72] mt-0.5">{n.message || n.body || ''}</p>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>

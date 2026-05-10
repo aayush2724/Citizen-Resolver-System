@@ -184,4 +184,18 @@ export const api = {
     if (!res.ok) throw await parseError(res, "Failed to submit bug report");
     return res.json();
   },
+  async getMessages(issueId) {
+    const res = await fetch(`${BASE_URL}/messages/${issueId}`, { headers: getHeaders() });
+    if (!res.ok) throw await parseError(res, "Failed to fetch messages");
+    return res.json();
+  },
+  async sendMessage(issueId, message) {
+    const res = await fetch(`${BASE_URL}/messages/${issueId}`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ message }),
+    });
+    if (!res.ok) throw await parseError(res, "Failed to send message");
+    return res.json();
+  },
 };
