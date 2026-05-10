@@ -5,158 +5,202 @@ import IssueCard from './components/IssueCard';
 import IssueModal from './components/IssueModal';
 import { Shield, MapPin, Search, Filter } from 'lucide-react';
 
+// --- Global Styles ---
+const globalStyles = `
+  select {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: none !important;
+  }
+  select::-ms-expand {
+    display: none !important;
+  }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+  }
+`;
+
 // --- Components ---
 
 const Header = ({ currentUser, onLogout }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-gutter py-unit max-w-container-max mx-auto bg-surface-container-low dark:bg-surface-dim rounded-full mt-4 w-[95%] shadow-sm">
-      <div className="font-display-lg text-headline-md font-extrabold text-on-surface dark:text-inverse-on-surface ml-6">
-        Citizen Resolver System
-      </div>
-      <nav className="hidden md:flex items-center space-x-2">
-        <NavLink 
-          to="/" 
-          className={({ isActive }) => 
-            `px-6 py-2 transition-colors font-label-bold text-label-md rounded-full ${isActive ? 'bg-primary text-white' : 'text-on-surface-variant hover:text-primary'}`
-          }
-        >
-          Home
-        </NavLink>
-        <NavLink 
-          to="/report" 
-          className={({ isActive }) => 
-            `px-6 py-2 transition-colors font-label-bold text-label-md rounded-full ${isActive ? 'bg-primary text-white' : 'text-on-surface-variant hover:text-primary'}`
-          }
-        >
-          Report Issue
-        </NavLink>
-        <NavLink 
-          to="/my-issues" 
-          className={({ isActive }) => 
-            `px-6 py-2 transition-colors font-label-bold text-label-md rounded-full ${isActive ? 'bg-primary text-white' : 'text-on-surface-variant hover:text-primary'}`
-          }
-        >
-          My Issues
-        </NavLink>
-        <NavLink 
-          to="/public-issues" 
-          className={({ isActive }) => 
-            `px-6 py-2 transition-colors font-label-bold text-label-md rounded-full ${isActive ? 'bg-primary text-white' : 'text-on-surface-variant hover:text-primary'}`
-          }
-        >
-          Public Issues
-        </NavLink>
-        <NavLink 
-          to="/report-bug" 
-          className={({ isActive }) => 
-            `px-6 py-2 transition-colors font-label-bold text-label-md rounded-full ${isActive ? 'bg-primary text-white' : 'text-on-surface-variant hover:text-primary'}`
-          }
-        >
-          Report Bug
-        </NavLink>
-      </nav>
-      <div className="flex items-center gap-4 mr-6">
-        {currentUser && (
-          <button 
-            onClick={onLogout}
-            className="material-symbols-outlined text-on-surface-variant hover:text-error transition-all p-2 rounded-full"
-            title="Logout"
-          >
-            logout
-          </button>
-        )}
-        <div className="w-10 h-10 rounded-full bg-surface-container-highest border-2 border-primary overflow-hidden flex items-center justify-center">
-          {currentUser?.avatar ? (
-            <img alt="User Avatar" src={currentUser.avatar} />
-          ) : (
-            <span className="material-symbols-outlined text-primary">person</span>
-          )}
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-3 max-w-container-max mx-auto bg-white/80 backdrop-blur-md dark:bg-surface-dim rounded-full mt-4 w-[95%] shadow-sm flex-shrink-0 border border-[#bbcac1]/30">
+      <div className="flex items-center gap-3">
+        <div className="bg-[#00c896] p-2 rounded-xl flex items-center justify-center shadow-sm shadow-[#00c896]/20">
+          <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
         </div>
+        <div className="flex flex-col">
+          <span className="text-lg md:text-xl font-display-lg font-extrabold text-[#161d1a] leading-none">Citizen Resolver</span>
+          <span className="text-[9px] uppercase tracking-widest font-bold text-[#006c4f] opacity-80">Empowering Communities</span>
+        </div>
+      </div>
+      <nav className="hidden md:flex items-center bg-[#e8f0e9]/50 rounded-full p-1 ml-4">
+        <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Home</NavLink>
+        <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Report Issue</NavLink>
+        <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>My Issues</NavLink>
+        <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Public Issues</NavLink>
+        <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Report Bug</NavLink>
+      </nav>
+
+      <div className="flex items-center gap-3">
+        <button className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white shadow-sm hover:bg-[#eef6ef] transition-all border border-[#bbcac1]/20">
+          <span className="material-symbols-outlined text-[#3c4a43] text-xl">notifications</span>
+        </button>
+        
+        {currentUser && (
+          <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-full shadow-sm border border-[#bbcac1]/30">
+            <div className="w-8 h-8 rounded-full bg-[#00c896] flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-[#00c896]/20">
+              {currentUser.name?.[0].toUpperCase() || 'U'}
+            </div>
+            <div className="hidden lg:flex flex-col">
+              <span className="text-[10px] font-bold text-[#161d1a] leading-tight">{currentUser.name}</span>
+              <span className="text-[8px] uppercase text-[#6c7a72] font-bold">{currentUser.role || 'Citizen'}</span>
+            </div>
+          </div>
+        )}
+
+        <button 
+          onClick={onLogout}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm text-error hover:bg-error-container transition-all border border-error/20"
+        >
+          <span className="material-symbols-outlined text-xl">logout</span>
+        </button>
       </div>
     </header>
   );
 };
 
-const Footer = ({ onLogout }) => (
-  <footer className="fixed bottom-0 left-0 right-0 z-50 bg-surface-container-low dark:bg-surface-dim border-t border-outline-variant dark:border-outline py-4">
+const Footer = () => (
+  <footer className="relative z-50 bg-[#eef6ef]/50 backdrop-blur-md border-t border-[#bbcac1]/30 py-6 mt-auto">
     <div className="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center px-margin-desktop">
-      <p className="font-body-md text-body-md text-on-surface-variant">© 2024 Citizen Resolver System. Empowering communities through transparency.</p>
-      <div className="flex gap-8">
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Privacy Policy</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Terms of Service</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Contact Support</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="/admin">Admin Portal</a>
+      <div className="flex items-center gap-4 mb-4 md:mb-0">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-[#00c896] flex items-center justify-center rounded">
+            <span className="material-symbols-outlined text-white text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>shield_person</span>
+          </div>
+          <span className="font-bold text-[#006c4f] text-sm">Citizen Resolver</span>
+        </div>
+        <span className="hidden md:inline text-[11px] text-[#3c4a43] opacity-60">© 2024 Citizen Resolver System</span>
+      </div>
+      
+      <div className="flex items-center gap-6">
+        <div className="flex gap-4">
+          <a className="text-[#3c4a43] hover:text-[#006c4f] transition-colors font-label-bold text-[11px]" href="#">Privacy</a>
+          <a className="text-[#3c4a43] hover:text-[#006c4f] transition-colors font-label-bold text-[11px]" href="#">Terms</a>
+          <a className="text-[#3c4a43] hover:text-[#006c4f] transition-colors font-label-bold text-[11px]" href="#">Support</a>
+        </div>
+        <div className="flex gap-2">
+          <a className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-[#00c896] hover:text-white transition-all shadow-sm" href="#">
+            <span className="material-symbols-outlined text-sm">public</span>
+          </a>
+          <a className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-[#00c896] hover:text-white transition-all shadow-sm" href="#">
+            <span className="material-symbols-outlined text-sm">mail</span>
+          </a>
+        </div>
       </div>
     </div>
   </footer>
 );
 
-const Home = ({ issues = [] }) => {
-  const stats = {
-    total: issues.length,
-    resolved: issues.filter(i => i.status === 'Resolved' || i.status === 'Completed').length,
-    pending: issues.filter(i => i.status === 'Pending').length,
-    urgent: issues.filter(i => i.priority === 'Urgent').length
-  };
-
+const ParallaxBackground = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      setMousePos({
-        x: (window.innerWidth / 2 - e.pageX) / 50,
-        y: (window.innerHeight / 2 - e.pageY) / 50,
-      });
+      setMousePos({ x: e.clientX, y: e.clientY });
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   const getParallaxStyle = (depth) => ({
-    transform: `translate3d(${mousePos.x * depth * 12}px, ${mousePos.y * depth * 12}px, 0)`,
-    transition: 'transform 0.1s ease-out'
+    transform: `translate3d(${(window.innerWidth / 2 - mousePos.x) * depth * 0.1}px, ${(window.innerHeight / 2 - mousePos.y) * depth * 0.1}px, 0)`,
+    transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)'
   });
 
   return (
-    <div className="relative w-full h-full min-h-[calc(100vh-120px)] md:min-h-[calc(100vh-160px)] flex flex-col items-center justify-center overflow-hidden bg-[#F9F7F2] font-body-md py-12 md:py-20">
-      {/* Parallax Background Layers - Hidden/Simplified on Mobile for Performance/UX */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.08] md:opacity-[0.12]" style={getParallaxStyle(0.1)}>
-          <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern height="60" id="hero-grid" patternUnits="userSpaceOnUse" width="60">
-                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#006c4f" strokeWidth="1.5"></path>
-              </pattern>
-            </defs>
-            <rect fill="url(#hero-grid)" height="100%" width="100%"></rect>
-          </svg>
-        </div>
-        
-        {/* Decorative Blobs */}
-        <div className="absolute top-1/4 left-10 w-32 md:w-40 h-32 md:h-40 rounded-full bg-[#00c896]/15 md:bg-[#00c896]/25 blur-xl" style={getParallaxStyle(0.6)}></div>
-        <div className="absolute top-2/3 right-20 w-40 md:w-56 h-40 md:h-56 rounded-full bg-[#00c896]/10 md:bg-[#00c896]/20 blur-2xl" style={getParallaxStyle(0.3)}></div>
-        <div className="absolute hidden lg:block top-1/3 right-1/4 w-32 h-32 border-4 border-[#00c896]/30 rounded-full" style={getParallaxStyle(0.8)}></div>
-
-        {/* Tilted Photographic Accents - Spread to edges */}
-        <div className="absolute top-[10%] -right-12 md:right-4 lg:right-12 w-48 md:w-80 h-36 md:h-60 rounded-xl overflow-hidden shadow-2xl border-4 border-white/50 rotate-6 opacity-40 md:opacity-80" style={getParallaxStyle(0.4)}>
-          <img alt="Urban" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ug1b_le1O_J_vMNkoWJEIq2D5YegOVbio-fqDb9Rba16z3Ptn8ihTIAvKtEF9emCTs_m7h5uR5oOaiQAhD_8CISIB0JOXWgMu84iDdbddmdqipfSOHgx9p-9zTdZ37WMZE2krcgZECM6CfFN0PBKlKf0Gok2JilFdRKHhRqfu5Jq2KN4d3WvK8S28TOwIA4ojzESriHeTmY9C6Vg_zNIz49UdESJEBMnzVa__XjRv347HwmCceGvd5iMZ4"/>
-        </div>
-        <div className="absolute bottom-[10%] -left-12 md:left-4 lg:left-12 w-40 md:w-72 h-28 md:h-48 rounded-xl overflow-hidden shadow-2xl border-4 border-white/50 -rotate-12 opacity-40 md:opacity-80" style={getParallaxStyle(0.5)}>
-          <img alt="City" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNWJKQ5ezgjD9-L54EIS7IMRA0mkM9xb_TThZ1HlUBtRbs7AXEpzbtdtcQTREczSitTIA0SnrGoK1WfqrRgU3N2e7_Qnf6QFAzULEH2SuRVPhypvkqGrQxAcfc_AMaOgmdoJhwGQkk4n9NGFgKKp2sMC8H3sFrGTYFVshV3W1v1NsERhPC5E3qpYrt7fTl9xR9IxnWRccdTXTm-Z1sPrabMKNLSBqG6vn4xUHNmBdE85tH4zpcLiV56UkW8f1W31sjMC3Y8YO2dFc"/>
-        </div>
-        <div className="absolute hidden xl:block top-[40%] -left-[2%] w-48 h-64 rounded-xl overflow-hidden shadow-2xl border-4 border-white/50 -rotate-3 opacity-60" style={getParallaxStyle(0.2)}>
-          <img alt="Garden" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiu-OEPpSTjAZ2YHDYT-gQk9hJfOnycrXrIkaRxliUD80ty1LPtcA2asX4EiGbYe6Ol49akv2hbezVEsY6e3aI_xXeRL9oHkrTJojr6E91z0LG_kTJ2XFvImYSNl-Ud9aKnVoApsw7FJe-Qfib7pqoYS_K5-1Gr5geXvM0h97VjiLtRBCcAfFiELO8pYqYXGYQ7lKVkfi_v_on0W5jCPzudbsJwCQwEeF_y4Ojy6doHhm08J-nn6ortZWDPtr16pBkN9K_NQQWrs4"/>
-        </div>
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+      <div className="absolute inset-0 opacity-[0.12]" style={getParallaxStyle(0.1)}>
+        <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern height="60" id="hero-grid" patternUnits="userSpaceOnUse" width="60">
+              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#006c4f" strokeWidth="1.5"></path>
+            </pattern>
+          </defs>
+          <rect fill="url(#hero-grid)" height="100%" width="100%"></rect>
+        </svg>
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 w-full max-w-5xl overflow-y-auto max-h-full no-scrollbar">
+      <div className="absolute top-1/4 left-10 w-40 h-40 rounded-full bg-[#00c896]/20 blur-xl" style={getParallaxStyle(0.6)}></div>
+      <div className="absolute top-2/3 right-20 w-56 h-56 rounded-full bg-[#00c896]/15 blur-2xl" style={getParallaxStyle(0.3)}></div>
+      <div className="absolute hidden lg:block top-1/3 right-1/4 w-32 h-32 border-4 border-[#00c896]/20 rounded-full" style={getParallaxStyle(0.8)}></div>
+
+      {/* ── Scattered Photo Collage ── */}
+
+      {/* Top-right: tilted strongly clockwise */}
+      <div className="absolute top-[6%] right-[5%] w-80 h-56 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white rotate-[14deg] opacity-75 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.45)}>
+        <img alt="Sanitation" className="w-full h-full object-cover" src="/images/Sanitation.jpg"/>
+      </div>
+
+
+
+      {/* Top-left: counter-clockwise lean */}
+      <div className="absolute top-[12%] left-[3%] w-72 h-52 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white -rotate-[10deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.6)}>
+        <img alt="Urban Roads" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ug1b_le1O_J_vMNkoWJEIq2D5YegOVbio-fqDb9Rba16z3Ptn8ihTIAvKtEF9emCTs_m7h5uR5oOaiQAhD_8CISIB0JOXWgMu84iDdbddmdqipfSOHgx9p-9zTdZ37WMZE2krcgZECM6CfFN0PBKlKf0Gok2JilFdRKHhRqfu5Jq2KN4d3WvK8S28TOwIA4ojzESriHeTmY9C6Vg_zNIz49UdESJEBMnzVa__XjRv347HwmCceGvd5iMZ4"/>
+      </div>
+
+      {/* Mid-left: slightly tilted, peeking from bottom-left edge */}
+      <div className="absolute bottom-[42%] -left-[4%] w-72 h-52 rounded-2xl overflow-hidden shadow-xl border-[5px] border-white -rotate-[8deg] opacity-65 hidden lg:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.7)}>
+        <img alt="Drainage" className="w-full h-full object-cover" src="/images/Drainage.jpg"/>
+      </div>
+
+      {/* Mid-right: steep tilt going left */}
+      <div className="absolute top-[38%] right-[2%] w-64 h-48 rounded-2xl overflow-hidden shadow-xl border-[5px] border-white -rotate-[18deg] opacity-65 hidden lg:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.5)}>
+        <img alt="Public Parks" className="w-full h-full object-cover" src="/images/PublicParks.jpg"/>
+      </div>
+
+      {/* Bottom-left: large, gently rotated */}
+      <div className="absolute bottom-[8%] left-[4%] w-96 h-64 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white -rotate-[8deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.55)}>
+        <img alt="City" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNWJKQ5ezgjD9-L54EIS7IMRA0mkM9xb_TThZ1HlUBtRbs7AXEpzbtdtcQTREczSitTIA0SnrGoK1WfqrRgU3N2e7_Qnf6QFAzULEH2SuRVPhypvkqGrQxAcfc_AMaOgmdoJhwGQkk4n9NGFgKKp2sMC8H3sFrGTYFVshV3W1v1NsERhPC5E3qpYrt7fTl9xR9IxnWRccdTXTm-Z1sPrabMKNLSBqG6vn4xUHNmBdE85tH4zpcLiV56UkW8f1W31sjMC3Y8YO2dFc"/>
+      </div>
+
+      {/* Bottom-right: punchy tilt right */}
+      <div className="absolute bottom-[10%] right-[3%] w-80 h-56 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white rotate-[12deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.4)}>
+        <img alt="Street Lights" className="w-full h-full object-cover" src="/images/StreetLights.jpg"/>
+      </div>
+
+      {/* Center-bottom: subtle tilt, slowest depth for depth layering */}
+      <div className="absolute bottom-[22%] left-[38%] w-64 h-44 rounded-2xl overflow-hidden shadow-lg border-[5px] border-white -rotate-[4deg] opacity-50 hidden lg:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.25)}>
+        <img alt="Water Supply" className="w-full h-full object-cover" src="/images/WaterSupply.jpg"/>
+      </div>
+
+    </div>
+  );
+};
+
+const Home = ({ issues = [] }) => {
+  const stats = {
+    total: issues.length,
+    resolved: issues.filter(i => i.status === 'Resolved' || i.status === 'Completed').length
+  };
+
+  return (
+    <div className="relative w-full h-full min-h-[calc(100vh-120px)] md:min-h-[calc(100vh-160px)] flex flex-col items-center justify-center overflow-hidden font-body-md py-12 md:py-20 animate-fade-in">
+      <div className="relative z-10 flex flex-col items-center text-center px-6 w-full max-w-5xl">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#e8f0e9] border border-[#6c7a72]/50 mb-4 md:mb-6 scale-75 md:scale-90">
           <span className="w-2 h-2 rounded-full bg-[#00c896] animate-pulse"></span>
           <span className="font-label-bold text-xs md:text-[14px] uppercase tracking-widest text-[#3c4a43]">Official Civic Platform</span>
         </div>
 
-        <h1 className="font-display-lg text-[40px] md:text-[56px] lg:text-[80px] leading-[1.05] mb-4 md:mb-6 font-extrabold text-[#161d1a] animate-fade-in-up px-4">
+        <h1 className="font-display-lg text-[40px] md:text-[56px] lg:text-[80px] leading-[1.05] mb-4 md:mb-6 font-extrabold text-[#161d1a] px-4">
           Citizen <span className="text-[#00c896]">Resolver</span> System
         </h1>
 
@@ -165,9 +209,9 @@ const Home = ({ issues = [] }) => {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 md:mb-12 w-full px-4">
-          <NavLink to="/report" className="w-full sm:w-auto bg-[#00c896] text-[#004d38] font-label-bold text-sm md:text-[14px] px-8 md:px-10 py-4 md:py-5 rounded-full hover:shadow-lg hover:scale-105 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 hover:-translate-y-1">
+          <NavLink to="/report" className="w-full sm:w-auto bg-[#00c896] text-[#004d38] font-label-bold text-sm md:text-[14px] px-8 md:px-10 py-4 md:py-5 rounded-full hover:shadow-lg hover:scale-105 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group">
             REPORT AN ISSUE
-            <span className="material-symbols-outlined">arrow_forward</span>
+            <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </NavLink>
           <NavLink to="/public-issues" className="w-full sm:w-auto bg-white text-[#161d1a] font-label-bold text-sm md:text-[14px] px-8 md:px-10 py-4 md:py-5 rounded-full hover:shadow-md border border-[#6c7a72]/30 transition-all active:scale-95 hover:-translate-y-1 hover:bg-[#e2eae4]">
             PUBLIC BOARD
@@ -203,24 +247,63 @@ const Home = ({ issues = [] }) => {
   );
 };
 
-const ReportIssue = ({ areas, departments, currentUser }) => {
+const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'Normal',
-    area: '',
-    department: '',
-    city: currentUser?.city || '',
-    block: currentUser?.block || '',
-    imageUrl: ''
+    title: "",
+    description: "",
+    priority: "Normal",
+    department: "",
+    area: "",
+    city: currentUser?.city || "",
+    block: currentUser?.block || "",
+    imageUrl: ""
   });
-
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const departmentImages = {
+    "Roads": "/images/Roads.jpg",
+    "Sanitation": "/images/Sanitation.jpg",
+    "Street Lights": "/images/StreetLights.jpg",
+    "Water Supply": "/images/WaterSupply.jpg",
+    "Drainage": "/images/Drainage.jpg",
+    "Public Parks": "/images/PublicParks.jpg"
+  };
+
+  const getDepartmentImageUrl = (department, title, description) => {
+    if (department && departmentImages[department]) {
+      const text = `${title} ${description}`.toLowerCase();
+      if (department === "Roads" && text.includes("pothole")) {
+        return "/images/Potholes.jpg";
+      }
+      return departmentImages[department];
+    }
+    return "";
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+      const newData = { ...prev, [name]: value };
+      
+      if (name === 'city') {
+        newData.block = "";
+        newData.area = "";
+      } else if (name === 'block') {
+        newData.area = "";
+      }
+      
+      if (name === 'department' || name === 'title' || name === 'description') {
+        const autoImage = getDepartmentImageUrl(newData.department, newData.title, newData.description);
+        if (autoImage) {
+          newData.imageUrl = autoImage;
+        } else if (`${newData.title} ${newData.description}`.toLowerCase().includes("pothole")) {
+          newData.imageUrl = "/images/Potholes.jpg";
+        }
+      }
+      
+      return newData;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -228,187 +311,315 @@ const ReportIssue = ({ areas, departments, currentUser }) => {
     setLoading(true);
     try {
       await api.createIssue(formData);
-      alert('Issue reported successfully!');
-      navigate('/my-issues');
+      setSubmitted(true);
+      window.dispatchEvent(new Event("portal-state-change"));
     } catch (err) {
-      alert(err.message || 'Failed to report issue');
+      alert(err.message || "Failed to report issue");
     } finally {
       setLoading(false);
     }
   };
 
+  if (submitted) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
+        <div className="w-24 h-24 bg-[#00c896] text-white rounded-full flex items-center justify-center mb-8 shadow-lg shadow-[#00c896]/20">
+          <span className="material-symbols-outlined text-5xl">check</span>
+        </div>
+        <h2 className="text-display-lg text-[#161d1a] mb-4">Report Submitted!</h2>
+        <p className="text-body-lg text-[#3c4a43] max-w-md mx-auto mb-10 opacity-70">
+          Your case has been recorded. Our team will review and assign it to the appropriate department shortly.
+        </p>
+        <div className="flex gap-4">
+          <button onClick={() => setSubmitted(false)} className="bg-[#e8f0e9] text-[#006c4f] px-10 py-4 rounded-full font-label-bold hover:bg-[#00c896] hover:text-white transition-all">
+            Submit Another
+          </button>
+          <button onClick={() => navigate('/my-issues')} className="bg-[#006c4f] text-white px-10 py-4 rounded-full font-label-bold hover:shadow-lg transition-all">
+            View My Issues
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const locationData = {
+    "Bengaluru": {
+      "North Bengaluru": ["Hebbal", "Yelahanka", "RT Nagar", "Sadahalli", "Jakkur"],
+      "South Bengaluru": ["Jayanagar", "JP Nagar", "BTM Layout", "Banashankari", "Hulimavu"],
+      "East Bengaluru": ["Whitefield", "Indiranagar", "Marathahalli", "KR Puram", "Domlur"],
+      "West Bengaluru": ["Rajajinagar", "Vijayanagar", "Malleshwaram", "Magadi Road", "Yeshwanthpur"],
+      "Central Bengaluru": ["MG Road", "Brigade Road", "Shivajinagar", "Cubbon Park", "Ulsoor"]
+    },
+    "Mysore": {
+      "North Mysore": ["Hebbal", "Hootagalli", "Bogadi", "Vijayanagar 1st Stage", "Srirampura"],
+      "South Mysore": ["Yadavagiri", "Kuvempunagar", "JP Nagar", "Chamundipuram", "Rajendranagar"],
+      "East Mysore": ["Jayalakshmipuram", "Vidyaranyapuram", "Saraswathipuram", "Ramakrishnanagar", "Lakshmipuram"],
+      "West Mysore": ["Hebbal Industrial Area", "Nanjangud Road", "Bannimantap", "Metagalli", "Ashokapuram"],
+      "Central Mysore": ["Devaraja", "Nazarbad", "Krishnamurthypuram", "Gokulam", "Vontikoppal"]
+    },
+    "Mumbai": {
+      "South Mumbai": ["Colaba", "Malabar Hill", "Worli", "Churchgate", "Nariman Point"],
+      "Western Suburbs": ["Andheri", "Bandra", "Borivali", "Goregaon", "Malad", "Kandivali"],
+      "Eastern Suburbs": ["Powai", "Ghatkopar", "Mulund", "Vikhroli", "Kurla", "Chembur"],
+      "Navi Mumbai": ["Vashi", "Nerul", "Belapur", "Kharghar", "Panvel"]
+    },
+    "Delhi": {
+      "North Delhi": ["Civil Lines", "Rohini", "Model Town", "Pitampura", "Burari"],
+      "South Delhi": ["Saket", "Hauz Khas", "Greater Kailash", "Vasant Kunj", "Mehrauli"],
+      "East Delhi": ["Laxmi Nagar", "Mayur Vihar", "Preet Vihar", "Vivek Vihar", "Shahdara"],
+      "West Delhi": ["Dwarka", "Janakpuri", "Punjabi Bagh", "Tilak Nagar", "Palam"],
+      "Central Delhi": ["Connaught Place", "Karol Bagh", "Paharganj", "Daryaganj", "Chandni Chowk"]
+    },
+    "Hyderabad": {
+      "Secunderabad": ["Trimulgherry", "Marredpally", "Begumpet", "Bowenpally", "Karkhana"],
+      "Cyberabad": ["Gachibowli", "Madhapur", "Kondapur", "Hitech City", "Nanakramguda"],
+      "Old City": ["Charminar", "Falaknuma", "Mehdipatnam", "Malakpet", "Santoshnagar"],
+      "East Hyderabad": ["LB Nagar", "Uppal", "Nacharam", "Hayathnagar", "Vanasthalipuram"]
+    },
+    "Chennai": {
+      "North Chennai": ["Tondiarpet", "Perambur", "Kolathur", "Villivakkam", "Sembiam"],
+      "South Chennai": ["Adyar", "Velachery", "Sholinganallur", "Perungudi", "Thoraipakkam"],
+      "Central Chennai": ["T. Nagar", "Nungambakkam", "Anna Nagar", "Kilpauk", "Egmore"],
+      "West Chennai": ["Porur", "Valasaravakkam", "Ramapuram", "Virugambakkam", "Ashok Nagar"]
+    },
+    "Pune": {
+      "Central Pune": ["Shivajinagar", "Deccan", "FC Road", "Camp", "Koregaon Park"],
+      "East Pune": ["Viman Nagar", "Kalyani Nagar", "Kharadi", "Hadapsar", "Magarpatta"],
+      "West Pune": ["Baner", "Balewadi", "Aundh", "Wakad", "Pimple Saudagar"],
+      "South Pune": ["Katraj", "Kondhwa", "Bibwewadi", "Sinhagad Road", "Dhayari"]
+    }
+  };
+
+  const cities = Object.keys(locationData);
+  const blocks = formData.city ? Object.keys(locationData[formData.city] || {}) : [];
+  const areasList = (formData.city && formData.block) ? (locationData[formData.city][formData.block] || []) : [];
+
   return (
-    <div className="grid grid-cols-12 gap-gutter w-full h-full max-h-[800px] relative z-10">
-      <div className="col-span-12 lg:col-span-7 bg-white rounded-lg shadow-sm p-8 overflow-y-auto max-h-full scrollbar-hide">
-        <div className="flex items-center gap-4 mb-6">
-          <span className="bg-primary-container text-on-primary-container px-4 py-1 rounded-full font-label-bold text-label-md">Report</span>
-          <h1 className="font-display-lg text-headline-lg text-on-surface">Submit New Issue</h1>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-start animate-fade-in-up">
+      {/* Form Section */}
+      <section className="lg:col-span-7 bg-white/95 backdrop-blur-md rounded-[2.5rem] p-8 md:p-12 shadow-premium border border-white/50">
+        <div className="mb-8">
+          <span className="text-[#006c4f] font-label-bold text-[12px] uppercase tracking-widest mb-1 block">Citizen Reporting</span>
+          <h1 className="font-display-lg text-[32px] md:text-[40px] text-[#161d1a]">New Case Record</h1>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label className="block font-label-bold text-label-sm text-on-surface mb-1">Issue Title</label>
-              <input 
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface" 
-                placeholder="e.g., Pothole on Maple Street" 
-              />
-            </div>
-            
-            <div>
-              <label className="block font-label-bold text-label-sm text-on-surface mb-1">Urgency / Priority</label>
-              <select 
-                name="priority"
-                value={formData.priority}
-                onChange={handleChange}
-                className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-              >
-                <option value="Normal">Normal</option>
-                <option value="High">High</option>
-                <option value="Urgent">Urgent</option>
-              </select>
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Issue Title */}
+          <div className="space-y-1">
+            <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Issue Title</label>
+            <input 
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md placeholder:text-[#bbcac1] transition-all"
+              placeholder="e.g. Major pothole on Sector 4 main road"
+            />
+          </div>
 
-            <div>
-              <label className="block font-label-bold text-label-sm text-on-surface mb-1">Department</label>
-              <select 
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-              >
-                <option value="">Select Department</option>
-                {departments.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
-              </select>
+          {/* Priority & Department */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1">
+              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Priority Level</label>
+              <div className="relative">
+                <select 
+                  name="priority"
+                  value={formData.priority}
+                  onChange={handleChange}
+                  className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12"
+                >
+                  <option value="Normal">Normal</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
+              </div>
             </div>
-
-            <div>
-              <label className="block font-label-bold text-label-sm text-on-surface mb-1">City</label>
-              <input 
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-                placeholder="City name"
-              />
+            <div className="space-y-1">
+              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Department</label>
+              <div className="relative">
+                <select 
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12"
+                >
+                  <option value="">Select department</option>
+                  {departments.map(d => <option key={d.id || d._id} value={d.name}>{d.name}</option>)}
+                </select>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
+              </div>
             </div>
+          </div>
 
-            <div>
-              <label className="block font-label-bold text-label-sm text-on-surface mb-1">Block / Sector</label>
-              <input 
-                name="block"
-                value={formData.block}
-                onChange={handleChange}
-                className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-                placeholder="Block or Sector"
-              />
+          {/* Location Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-1">
+              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">City</label>
+              <div className="relative">
+                <select 
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-[#161d1a] text-white border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12"
+                >
+                  <option value="">Select city</option>
+                  {cities.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a] brightness-200">expand_more</span>
+              </div>
             </div>
-
-            <div className="col-span-2">
-              <label className="block font-label-bold text-label-sm text-on-surface mb-1">Area</label>
-              <select 
-                name="area"
-                value={formData.area}
-                onChange={handleChange}
-                required
-                className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-              >
-                <option value="">Select Area</option>
-                {areas.map(a => <option key={a.id} value={a.name}>{a.name}</option>)}
-              </select>
+            <div className="space-y-1">
+              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Block</label>
+              <div className="relative">
+                <select 
+                  name="block"
+                  value={formData.block}
+                  onChange={handleChange}
+                  required
+                  disabled={!formData.city}
+                  className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12 disabled:opacity-50"
+                >
+                  <option value="">Select block</option>
+                  {blocks.map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
+              </div>
             </div>
-
-            <div className="col-span-2">
-              <label className="block font-label-bold text-label-sm text-on-surface mb-1">Description</label>
-              <textarea 
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                rows="3"
-                className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-                placeholder="Describe the issue in detail..."
-              ></textarea>
+            <div className="space-y-1">
+              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Area</label>
+              <div className="relative">
+                <select 
+                  name="area"
+                  value={formData.area}
+                  onChange={handleChange}
+                  required
+                  disabled={!formData.block}
+                  className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12 disabled:opacity-50"
+                >
+                  <option value="">Select area</option>
+                  {areasList.map(a => <option key={a} value={a}>{a}</option>)}
+                </select>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
+              </div>
             </div>
+          </div>
 
-            <div className="col-span-2">
-              <label className="block font-label-bold text-label-sm text-on-surface mb-1">Image URL (Optional)</label>
+          {/* Description */}
+          <div className="space-y-1">
+            <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Description of Problem</label>
+            <textarea 
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              rows="4"
+              className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md placeholder:text-[#bbcac1] resize-none transition-all"
+              placeholder="Please provide specific landmarks and severity details..."
+            ></textarea>
+          </div>
+
+          {/* Visual Evidence */}
+          <div className="space-y-1">
+            <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Visual Evidence URL</label>
+            <div className="relative">
               <input 
                 name="imageUrl"
                 value={formData.imageUrl}
                 onChange={handleChange}
-                className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-                placeholder="https://example.com/image.jpg"
+                className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12"
+                placeholder="https://image-url.com/photo.jpg"
               />
+              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#bbcac1]">link</span>
             </div>
           </div>
 
-          <div className="flex justify-end pt-4">
+          <div className="pt-6 border-t border-[#bbcac1]/30 flex flex-col sm:flex-row justify-end gap-4">
             <button 
-              type="submit"
-              disabled={loading}
-              className="bg-primary hover:bg-primary-container text-white hover:text-on-primary-container px-10 py-3 rounded-full font-label-bold text-label-md shadow-md transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50"
+              type="button" 
+              onClick={() => navigate('/')}
+              className="px-8 py-4 rounded-full border border-[#6c7a72] text-[#3c4a43] font-label-bold hover:bg-[#f3fbf5] transition-all"
             >
-              {loading ? 'Submitting...' : 'Submit Report'}
-              <span className="material-symbols-outlined">send</span>
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="px-10 py-4 rounded-full bg-[#00c896] text-[#004d38] font-label-bold hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {loading ? "Submitting..." : "Submit Report"}
+              <span className="material-symbols-outlined text-lg">send</span>
             </button>
           </div>
         </form>
-      </div>
+      </section>
 
-      {/* Preview Card */}
-      <div className="hidden lg:flex col-span-5 flex-col gap-gutter">
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col h-full border border-outline-variant/30">
-          <div className="h-40 relative bg-surface-container-highest">
-            {formData.imageUrl ? (
-              <img className="w-full h-full object-cover" src={formData.imageUrl} alt="Preview" />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-on-surface-variant">
-                <span className="material-symbols-outlined text-4xl">image</span>
-                <span className="text-label-sm">Image Preview</span>
-              </div>
-            )}
-            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
-              <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-              <span className="font-label-bold text-label-sm text-primary uppercase">Live Preview</span>
+      {/* Preview Section */}
+      <aside className="lg:col-span-5 flex flex-col gap-8 h-full">
+        <div className="bg-[#e8f0e9]/80 backdrop-blur-md rounded-[2.5rem] p-8 md:p-10 border border-white shadow-premium flex flex-col h-full">
+          <div className="mb-6 flex justify-between items-center">
+            <span className="text-[#3c4a43] font-label-bold text-[12px] uppercase tracking-widest">Case Preview</span>
+            <div className="flex gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-[#006c4f]/20"></div>
+              <div className="w-2 h-2 rounded-full bg-[#006c4f]"></div>
+              <div className="w-2 h-2 rounded-full bg-[#006c4f]/20"></div>
             </div>
           </div>
 
-          <div className="p-6 flex-1 flex flex-col">
-            <h3 className="font-headline-md text-headline-sm text-on-surface truncate">{formData.title || 'Issue Title'}</h3>
-            <div className="flex items-center gap-2 text-on-surface-variant font-label-sm mt-1">
-              <span className="material-symbols-outlined text-[16px]">location_on</span>
-              {formData.area ? `${formData.area}, ${formData.block}, ${formData.city}` : 'Select an area...'}
-            </div>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className={`px-3 py-1 rounded-full font-label-bold text-[10px] uppercase ${
-                formData.priority === 'Urgent' ? 'bg-error-container text-on-error-container' : 
-                formData.priority === 'High' ? 'bg-warning-container text-on-warning-container' : 
-                'bg-primary-container text-on-primary-container'
-              }`}>
-                {formData.priority}
-              </span>
-              {formData.department && (
-                <span className="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-bold text-[10px] uppercase">
-                  {formData.department}
-                </span>
+          {/* Preview Card */}
+          <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl flex flex-col flex-grow">
+            <div className="relative h-48 w-full bg-[#eef6ef] flex items-center justify-center overflow-hidden">
+              {formData.imageUrl ? (
+                <img className="w-full h-full object-cover" src={formData.imageUrl} alt="Preview" />
+              ) : (
+                <div className="flex flex-col items-center text-[#bbcac1]">
+                  <span className="material-symbols-outlined text-6xl">image</span>
+                  <span className="text-[10px] uppercase font-bold mt-2">No Image Provided</span>
+                </div>
               )}
+              <div className="absolute top-4 left-4">
+                <span className={`backdrop-blur-md text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest ${
+                  formData.priority === 'Urgent' ? 'bg-error/90' : formData.priority === 'High' ? 'bg-orange-500/90' : 'bg-[#00c896]/90'
+                }`}>
+                  {formData.priority}
+                </span>
+              </div>
             </div>
-
-            <div className="mt-4 p-4 bg-surface-container-low rounded-lg flex-1">
-              <span className="block font-label-bold text-[10px] text-on-surface-variant uppercase mb-1">Description</span>
-              <p className="text-body-sm text-on-surface line-clamp-4">
-                {formData.description || 'Provide a description to see it here...'}
+            <div className="p-8 space-y-4 flex-grow flex flex-col">
+              <h3 className="font-display-lg text-2xl text-[#161d1a] leading-tight line-clamp-2">
+                {formData.title || "Report title will appear here"}
+              </h3>
+              <p className="text-[#3c4a43] text-sm leading-relaxed line-clamp-4 opacity-70 flex-grow">
+                {formData.description || "Enter details to see how your report will look to the administration."}
               </p>
+              <div className="pt-6 border-t border-[#bbcac1]/20 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#eef6ef] flex items-center justify-center">
+                    <span className="material-symbols-outlined text-lg text-[#006c4f]">location_on</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-[#6c7a72] uppercase tracking-wider">
+                    {formData.city || "Location Pending"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#00c896] animate-pulse"></span>
+                  <span className="text-[10px] font-bold text-[#00c896] uppercase tracking-wider text-right">Draft</span>
+                </div>
+              </div>
             </div>
+          </div>
+
+          {/* Tip */}
+          <div className="mt-8 p-6 bg-white/40 rounded-2xl border border-dashed border-[#bbcac1] flex items-start gap-4">
+            <span className="material-symbols-outlined text-[#006c4f] text-2xl">lightbulb</span>
+            <p className="text-[13px] text-[#3c4a43] leading-relaxed">
+              Adding a clear photo and precise location helps local authorities resolve your issue up to <b className="text-[#006c4f]">40% faster</b>.
+            </p>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
   );
 };
@@ -538,16 +749,18 @@ export default function App() {
 
   return (
     <Router>
+      <style>{globalStyles}</style>
       <div className="font-body-md text-on-surface bg-[#F9F7F2] min-h-screen flex flex-col">
         <Header currentUser={portalState.currentUser} onLogout={handleLogout} />
 
         <main className="relative flex-1 pt-24 md:pt-32 pb-24 w-full overflow-x-hidden">
+          <ParallaxBackground />
           {/* Decorative Background Elements */}
-          <div className="fixed top-[20%] -left-20 w-64 h-80 bg-white rounded-lg shadow-xl -rotate-12 -z-10 overflow-hidden border-8 border-white opacity-20 pointer-events-none">
-            <img className="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHIZtu-aKcB1SQ6PWtrUkHzkIdKY7NJVj75rlIF_qM-9qzPAHR99u7REhz3e10163dZ3HuY7gj6y6Buea0Lza7Jd_Df5PfEGmghkaDpVl1EqRpVDhStXlCT3by2nZcxKV52NuV59_FmZUIKSQRroxyodmXhtJ9YO4MvGHNJB9pfsIV97WfbRlhU_N85GkT0CmhpCAiwx-tXKNbRHLizqQSWB95lx4hrsdxSIYJRFS1CLldSc5HnCvirCPKY7hPxG_W3QL7hA95O74"/>
+          <div className="fixed top-[20%] -left-20 w-64 h-80 bg-white rounded-lg shadow-xl -rotate-12 -z-10 overflow-hidden border-8 border-white opacity-40 pointer-events-none">
+            <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHIZtu-aKcB1SQ6PWtrUkHzkIdKY7NJVj75rlIF_qM-9qzPAHR99u7REhz3e10163dZ3HuY7gj6y6Buea0Lza7Jd_Df5PfEGmghkaDpVl1EqRpVDhStXlCT3by2nZcxKV52NuV59_FmZUIKSQRroxyodmXhtJ9YO4MvGHNJB9pfsIV97WfbRlhU_N85GkT0CmhpCAiwx-tXKNbRHLizqQSWB95lx4hrsdxSIYJRFS1CLldSc5HnCvirCPKY7hPxG_W3QL7hA95O74"/>
           </div>
-          <div className="fixed bottom-[10%] -right-16 w-72 h-56 bg-white rounded-lg shadow-xl rotate-6 -z-10 overflow-hidden border-8 border-white opacity-20 pointer-events-none">
-            <img className="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA85rjydlD00ZZ8FfqEqYrLakMG5AMdQBuwSQ28FdGcpo-e1LT9sznh2yjoM6VgJLS7GeEZo9UC8QnFbPXv4_8AxWu7LN0bwkLJJHM7CBmP1v87p7MwwOmGVYJkN031sdLFOS5dlSE9CWI3QnRxvmUyGBQxqxD9jfer7wCh30QuEKc4lWCgG6WIUPs1UYNd2nZeGNWqx1Shu4D8VvJgM6v6G0P7DeD5kRlGEhFLq25zXnl8q9viewg2RwPcQv2bF7U7ZO0svLd0ozo"/>
+          <div className="fixed bottom-[10%] -right-16 w-72 h-56 bg-white rounded-lg shadow-xl rotate-6 -z-10 overflow-hidden border-8 border-white opacity-40 pointer-events-none">
+            <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA85rjydlD00ZZ8FfqEqYrLakMG5AMdQBuwSQ28FdGcpo-e1LT9sznh2yjoM6VgJLS7GeEZo9UC8QnFbPXv4_8AxWu7LN0bwkLJJHM7CBmP1v87p7MwwOmGVYJkN031sdLFOS5dlSE9CWI3QnRxvmUyGBQxqxD9jfer7wCh30QuEKc4lWCgG6WIUPs1UYNd2nZeGNWqx1Shu4D8VvJgM6v6G0P7DeD5kRlGEhFLq25zXnl8q9viewg2RwPcQv2bF7U7ZO0svLd0ozo"/>
           </div>
 
           {!portalState.currentUser ? (
@@ -723,7 +936,7 @@ const ReportBug = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-[2.5rem] shadow-premium border border-outline-variant/20 overflow-hidden">
+    <div className="max-w-3xl mx-auto bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-outline-variant/20 overflow-hidden">
       <div className="bg-primary p-10 text-white">
         <h2 className="text-headline-md font-display-lg tracking-tight">Report a System Bug</h2>
         <p className="opacity-80 font-body-md">Encountered a technical issue? Let us know and we'll squash it.</p>
