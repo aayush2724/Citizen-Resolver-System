@@ -47,6 +47,9 @@ const Header = ({ currentUser, onLogout }) => {
         <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Report Issue</NavLink>
         <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>My Issues</NavLink>
         <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Public Issues</NavLink>
+        {currentUser?.role === 'admin' && (
+          <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Dashboard</NavLink>
+        )}
         <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Report Bug</NavLink>
       </nav>
 
@@ -177,10 +180,7 @@ const ParallaxBackground = () => {
         <img alt="Street Lights" className="w-full h-full object-cover" src="/images/StreetLights.jpg"/>
       </div>
 
-      {/* Center-bottom: subtle tilt, slowest depth for depth layering */}
-      <div className="absolute bottom-[22%] left-[38%] w-64 h-44 rounded-2xl overflow-hidden shadow-lg border-[5px] border-white -rotate-[4deg] opacity-50 hidden lg:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.25)}>
-        <img alt="Water Supply" className="w-full h-full object-cover" src="/images/WaterSupply.jpg"/>
-      </div>
+
 
     </div>
   );
@@ -625,57 +625,210 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
 };
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: '', email: '', password: '', confirmPassword: '', role: 'citizen', phone: ''
+  });
+
+  const handleChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (mode === 'signup' && form.password !== form.confirmPassword) {
+      alert('Passwords do not match.'); return;
+    }
     setLoading(true);
     try {
-      await api.login({ email, password, role: 'citizen' });
-      // The portal-state-change event will trigger a refetch in App
+      if (mode === 'login') {
+        await api.login({ email: form.email, password: form.password, role: form.role });
+      } else {
+        await api.signup({ name: form.name, email: form.email, password: form.password, role: form.role, phone: form.phone });
+      }
     } catch (err) {
-      alert(err.message || 'Login failed');
+      alert(err.message || 'Authentication failed');
     } finally {
       setLoading(false);
     }
   };
 
+  const inputClass = "w-full bg-[#eef6ef] border-none rounded-2xl px-4 py-3.5 text-[14px] text-[#161d1a] placeholder:text-[#bbcac1] focus:ring-2 focus:ring-[#006c4f] transition-all outline-none";
+  const labelClass = "block text-[11px] font-bold text-[#3c4a43] uppercase tracking-wider mb-1.5 px-1";
+
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm p-8 mt-12">
-      <h2 className="text-headline-md font-display-lg text-on-surface mb-6 text-center">Sign In</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-label-bold text-label-sm text-on-surface mb-1">Email</label>
-          <input 
-            type="email" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-            placeholder="your@email.com"
-          />
+    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
+      <div className="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-white/60 overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+
+        {/* Left Branding Panel */}
+        <div className="bg-[#006c4f] p-10 lg:p-14 flex flex-col justify-between relative overflow-hidden hidden lg:flex">
+          {/* Decorative circles */}
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white/5"></div>
+          <div className="absolute bottom-10 -left-10 w-48 h-48 rounded-full bg-white/5"></div>
+          <div className="absolute top-1/2 right-4 w-24 h-24 rounded-full bg-[#00c896]/20"></div>
+
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-10">
+              <div className="w-10 h-10 bg-[#00c896] rounded-xl flex items-center justify-center">
+                <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>shield_person</span>
+              </div>
+              <div>
+                <p className="text-white font-extrabold text-lg leading-none">Citizen Resolver</p>
+                <p className="text-white/60 text-[10px] uppercase tracking-widest font-bold">Official Civic Platform</p>
+              </div>
+            </div>
+
+            <h2 className="text-white font-display-lg text-[36px] leading-tight font-extrabold mb-4">
+              Empowering<br/>Communities<br/><span className="text-[#00c896]">Together.</span>
+            </h2>
+            <p className="text-white/70 text-[14px] leading-relaxed">
+              Report civic issues, track resolutions, and hold authorities accountable — all in one place.
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div className="relative z-10 grid grid-cols-2 gap-4 mt-10">
+            {[
+              { value: '2.4k+', label: 'Issues Resolved' },
+              { value: '98%', label: 'Satisfaction Rate' },
+              { value: '7', label: 'Departments' },
+              { value: '24h', label: 'Avg. Response' },
+            ].map(s => (
+              <div key={s.label} className="bg-white/10 rounded-2xl p-4">
+                <p className="text-[#00c896] font-extrabold text-[22px] leading-none">{s.value}</p>
+                <p className="text-white/60 text-[10px] uppercase tracking-wide font-bold mt-1">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div>
-          <label className="block font-label-bold text-label-sm text-on-surface mb-1">Password</label>
-          <input 
-            type="password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full bg-surface-container-low border-none rounded-lg p-3 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface"
-            placeholder="••••••••"
-          />
+
+        {/* Right Form Panel */}
+        <div className="p-8 lg:p-12 flex flex-col justify-center">
+          {/* Logo for mobile */}
+          <div className="flex items-center gap-2 mb-8 lg:hidden">
+            <div className="w-8 h-8 bg-[#006c4f] rounded-lg flex items-center justify-center">
+              <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>shield_person</span>
+            </div>
+            <span className="font-extrabold text-[#006c4f]">Citizen Resolver</span>
+          </div>
+
+          {/* Tab Toggle */}
+          <div className="flex bg-[#eef6ef] rounded-2xl p-1 mb-8">
+            <button
+              type="button"
+              onClick={() => setMode('login')}
+              className={`flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all ${mode === 'login' ? 'bg-white text-[#006c4f] shadow-sm' : 'text-[#6c7a72] hover:text-[#006c4f]'}`}
+            >Sign In</button>
+            <button
+              type="button"
+              onClick={() => setMode('signup')}
+              className={`flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all ${mode === 'signup' ? 'bg-white text-[#006c4f] shadow-sm' : 'text-[#6c7a72] hover:text-[#006c4f]'}`}
+            >Create Account</button>
+          </div>
+
+          <div className="mb-6">
+            <h3 className="font-display-lg text-[26px] text-[#161d1a] font-extrabold">
+              {mode === 'login' ? 'Welcome back' : 'Join the platform'}
+            </h3>
+            <p className="text-[#6c7a72] text-[13px] mt-1">
+              {mode === 'login' ? 'Sign in to your account to continue.' : 'Create your account to start reporting issues.'}
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Role Selector */}
+            <div>
+              <label className={labelClass}>Account Type</label>
+              <div className="grid grid-cols-2 gap-3">
+                {['citizen', 'admin'].map(r => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setForm(p => ({ ...p, role: r }))}
+                    className={`flex items-center gap-2 p-3 rounded-2xl border-2 text-[13px] font-bold transition-all ${
+                      form.role === r
+                        ? 'border-[#006c4f] bg-[#eef6ef] text-[#006c4f]'
+                        : 'border-[#e0ebe3] text-[#6c7a72] hover:border-[#006c4f]/40'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: `'FILL' ${form.role === r ? 1 : 0}` }}>
+                      {r === 'citizen' ? 'person' : 'admin_panel_settings'}
+                    </span>
+                    {r === 'citizen' ? 'Citizen' : 'Administrator'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Name — signup only */}
+            {mode === 'signup' && (
+              <div>
+                <label className={labelClass}>Full Name</label>
+                <input name="name" type="text" value={form.name} onChange={handleChange} required
+                  className={inputClass} placeholder="John Doe" />
+              </div>
+            )}
+
+            {/* Email */}
+            <div>
+              <label className={labelClass}>Email Address</label>
+              <input name="email" type="email" value={form.email} onChange={handleChange} required
+                className={inputClass} placeholder="your@email.com" />
+            </div>
+
+            {/* Phone — signup only */}
+            {mode === 'signup' && (
+              <div>
+                <label className={labelClass}>Phone Number <span className="text-[#bbcac1] normal-case font-normal">(optional)</span></label>
+                <input name="phone" type="tel" value={form.phone} onChange={handleChange}
+                  className={inputClass} placeholder="+91 98765 43210" />
+              </div>
+            )}
+
+            {/* Password */}
+            <div>
+              <label className={labelClass}>Password</label>
+              <div className="relative">
+                <input name="password" type={showPassword ? 'text' : 'password'} value={form.password}
+                  onChange={handleChange} required className={`${inputClass} pr-12`} placeholder="••••••••" />
+                <button type="button" onClick={() => setShowPassword(p => !p)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#bbcac1] hover:text-[#006c4f] transition-colors">
+                  <span className="material-symbols-outlined text-lg">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Password — signup only */}
+            {mode === 'signup' && (
+              <div>
+                <label className={labelClass}>Confirm Password</label>
+                <input name="confirmPassword" type={showPassword ? 'text' : 'password'} value={form.confirmPassword}
+                  onChange={handleChange} required className={inputClass} placeholder="••••••••" />
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#006c4f] hover:bg-[#005040] text-white py-4 rounded-2xl font-bold text-[14px] shadow-lg hover:shadow-xl active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+            >
+              {loading ? (
+                <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Processing...</>
+              ) : (
+                <>{mode === 'login' ? 'Sign In' : 'Create Account'}<span className="material-symbols-outlined text-lg">arrow_forward</span></>
+              )}
+            </button>
+
+            <p className="text-center text-[12px] text-[#6c7a72] pt-2">
+              {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
+              <button type="button" onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+                className="text-[#006c4f] font-bold hover:underline">
+                {mode === 'login' ? 'Create one' : 'Sign in'}
+              </button>
+            </p>
+          </form>
         </div>
-        <button 
-          type="submit"
-          disabled={loading}
-          className="w-full bg-primary hover:bg-primary-container text-white hover:text-on-primary-container py-3 rounded-full font-label-bold text-label-md shadow-md transition-all active:scale-95 disabled:opacity-50"
-        >
-          {loading ? 'Signing in...' : 'Sign In'}
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
@@ -810,6 +963,19 @@ export default function App() {
                   <ReportBug />
                 </div>
               } />
+              {portalState.currentUser?.role === 'admin' && (
+                <Route path="/admin" element={
+                  <div className="max-w-container-max mx-auto px-margin-desktop">
+                    <AdminDashboard
+                      issues={portalState.issues}
+                      departments={portalState.departments}
+                      labour={portalState.labour}
+                      notifications={portalState.notifications}
+                      currentUser={portalState.currentUser}
+                    />
+                  </div>
+                } />
+              )}
             </Routes>
           )}
         </main>
@@ -979,6 +1145,281 @@ const ReportBug = () => {
           Submit Bug Report
         </button>
       </form>
+    </div>
+  );
+};
+
+// ─── Admin Dashboard ──────────────────────────────────────────────────────────
+
+const AdminDashboard = ({ issues, departments, labour, notifications, currentUser }) => {
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [assignForm, setAssignForm] = useState({ labourId: '', note: '' });
+  const [updating, setUpdating] = useState(false);
+
+  const statuses = ['All', 'Pending', 'In Progress', 'Resolved', 'Rejected'];
+
+  const filtered = issues.filter(i => {
+    const matchStatus = filterStatus === 'All' || i.status === filterStatus;
+    const matchSearch = i.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      i.area?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      i.department?.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchStatus && matchSearch;
+  });
+
+  const stats = {
+    total: issues.length,
+    pending: issues.filter(i => i.status === 'Pending').length,
+    inProgress: issues.filter(i => i.status === 'In Progress').length,
+    resolved: issues.filter(i => i.status === 'Resolved' || i.status === 'Completed').length,
+  };
+
+  const handleStatusUpdate = async (issueId, status) => {
+    setUpdating(true);
+    try {
+      await api.updateIssue(issueId, { status });
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleAssign = async (e) => {
+    e.preventDefault();
+    if (!selectedIssue) return;
+    setUpdating(true);
+    try {
+      await api.updateIssue(selectedIssue.id, {
+        labourId: assignForm.labourId,
+        adminNote: assignForm.note,
+        status: 'In Progress',
+      });
+      setAssignForm({ labourId: '', note: '' });
+      setSelectedIssue(null);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const statusColor = (status) => {
+    if (status === 'Resolved' || status === 'Completed') return 'bg-[#00c896]/15 text-[#006c4f]';
+    if (status === 'In Progress') return 'bg-blue-100 text-blue-700';
+    if (status === 'Rejected') return 'bg-red-100 text-red-700';
+    return 'bg-[#eef6ef] text-[#3c4a43]';
+  };
+
+  const priorityColor = (p) => {
+    if (p === 'Urgent') return 'text-red-600 bg-red-50';
+    if (p === 'High') return 'text-orange-600 bg-orange-50';
+    return 'text-[#006c4f] bg-[#eef6ef]';
+  };
+
+  return (
+    <div className="space-y-8 animate-fade-in-up">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span className="text-[#006c4f] font-label-bold text-[11px] uppercase tracking-widest block mb-1">Administration</span>
+          <h1 className="font-display-lg text-[32px] md:text-[40px] text-[#161d1a] leading-tight">Admin Dashboard</h1>
+          <p className="text-[#3c4a43] text-sm opacity-70 mt-1">Manage civic issues, assign labour, and monitor resolutions.</p>
+        </div>
+        <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-[#bbcac1]/30 shadow-sm">
+          <div className="w-8 h-8 rounded-full bg-[#006c4f] flex items-center justify-center text-white font-bold text-xs">
+            {currentUser?.name?.[0]?.toUpperCase()}
+          </div>
+          <div>
+            <p className="text-[12px] font-bold text-[#161d1a] leading-none">{currentUser?.name}</p>
+            <p className="text-[10px] text-[#006c4f] font-bold uppercase tracking-wider">Administrator</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Total Reports', value: stats.total, icon: 'folder_open', color: 'text-[#006c4f]', bg: 'bg-[#eef6ef]' },
+          { label: 'Pending', value: stats.pending, icon: 'schedule', color: 'text-orange-600', bg: 'bg-orange-50' },
+          { label: 'In Progress', value: stats.inProgress, icon: 'engineering', color: 'text-blue-600', bg: 'bg-blue-50' },
+          { label: 'Resolved', value: stats.resolved, icon: 'check_circle', color: 'text-[#00c896]', bg: 'bg-[#00c896]/10' },
+        ].map(s => (
+          <div key={s.label} className="bg-white/90 backdrop-blur-md rounded-[1.75rem] p-6 shadow-sm border border-white/60 hover:shadow-lg transition-all group">
+            <div className={`w-11 h-11 ${s.bg} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+              <span className={`material-symbols-outlined ${s.color} text-xl`}>{s.icon}</span>
+            </div>
+            <p className="text-[36px] font-display-lg font-extrabold text-[#161d1a] leading-none">{s.value}</p>
+            <p className="text-[11px] font-bold text-[#6c7a72] uppercase tracking-widest mt-1">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+        {/* Issues Table */}
+        <div className="xl:col-span-2 bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 overflow-hidden">
+          <div className="p-6 border-b border-[#eef6ef] flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+            <h2 className="font-display-lg text-[18px] text-[#161d1a] font-bold">Issue Reports</h2>
+            <div className="flex gap-3 flex-wrap">
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#bbcac1] text-sm">search</span>
+                <input
+                  type="text"
+                  placeholder="Search issues..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="bg-[#eef6ef] border-none rounded-xl pl-9 pr-4 py-2 text-sm text-[#161d1a] focus:ring-2 focus:ring-[#006c4f] w-48"
+                />
+              </div>
+              <div className="relative">
+                <select
+                  value={filterStatus}
+                  onChange={e => setFilterStatus(e.target.value)}
+                  className="bg-[#eef6ef] border-none rounded-xl px-4 py-2 text-sm text-[#161d1a] pr-8 focus:ring-2 focus:ring-[#006c4f]"
+                >
+                  {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a] text-sm">expand_more</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="divide-y divide-[#eef6ef] max-h-[520px] overflow-y-auto">
+            {filtered.length === 0 ? (
+              <div className="py-16 text-center text-[#bbcac1]">
+                <span className="material-symbols-outlined text-5xl block mb-2">inbox</span>
+                <p className="text-sm font-bold">No issues match your filter</p>
+              </div>
+            ) : filtered.map(issue => (
+              <div
+                key={issue.id}
+                onClick={() => setSelectedIssue(issue)}
+                className={`p-5 flex items-start gap-4 cursor-pointer hover:bg-[#f3fbf5] transition-all ${selectedIssue?.id === issue.id ? 'bg-[#eef6ef]' : ''}`}
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#eef6ef] flex-shrink-0 overflow-hidden">
+                  {issue.imageUrl
+                    ? <img src={issue.imageUrl} alt="" className="w-full h-full object-cover" />
+                    : <span className="material-symbols-outlined text-[#006c4f] text-xl m-auto flex items-center justify-center h-full">report_problem</span>}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-[#161d1a] text-sm truncate">{issue.title}</p>
+                  <p className="text-[11px] text-[#6c7a72] mt-0.5">{issue.area} · {issue.department}</p>
+                </div>
+                <div className="flex flex-col items-end gap-1.5">
+                  <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${statusColor(issue.status)}`}>{issue.status}</span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${priorityColor(issue.priority)}`}>{issue.priority}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Panel */}
+        <div className="flex flex-col gap-6">
+
+          {/* Assign Labour Panel */}
+          <div className="bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 p-6">
+            <h2 className="font-display-lg text-[16px] text-[#161d1a] font-bold mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#006c4f]">engineering</span>
+              Assign Labour
+            </h2>
+            {selectedIssue ? (
+              <form onSubmit={handleAssign} className="space-y-4">
+                <div className="bg-[#eef6ef] rounded-2xl p-4">
+                  <p className="font-bold text-[#161d1a] text-sm line-clamp-2">{selectedIssue.title}</p>
+                  <p className="text-[11px] text-[#6c7a72] mt-1">{selectedIssue.area} · {selectedIssue.department}</p>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Assign Worker</label>
+                  <div className="relative">
+                    <select
+                      required
+                      value={assignForm.labourId}
+                      onChange={e => setAssignForm(p => ({ ...p, labourId: e.target.value }))}
+                      className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#006c4f]"
+                    >
+                      <option value="">Select worker...</option>
+                      {(labour || []).map(l => (
+                        <option key={l.id} value={l.id}>{l.name} — {l.department}</option>
+                      ))}
+                    </select>
+                    <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a] text-sm">expand_more</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Admin Note</label>
+                  <textarea
+                    rows="3"
+                    value={assignForm.note}
+                    onChange={e => setAssignForm(p => ({ ...p, note: e.target.value }))}
+                    className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm resize-none focus:ring-2 focus:ring-[#006c4f]"
+                    placeholder="Add a note for the field worker..."
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Update Status</label>
+                  <div className="relative">
+                    <select
+                      onChange={e => handleStatusUpdate(selectedIssue.id, e.target.value)}
+                      defaultValue={selectedIssue.status}
+                      className="w-full bg-[#eef6ef] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#006c4f]"
+                    >
+                      {['Pending', 'In Progress', 'Resolved', 'Rejected'].map(s => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                    <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a] text-sm">expand_more</span>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIssue(null)}
+                    className="flex-1 py-3 rounded-xl border border-[#bbcac1] text-[#3c4a43] text-sm font-bold hover:bg-[#f3fbf5] transition-all"
+                  >Cancel</button>
+                  <button
+                    type="submit"
+                    disabled={updating}
+                    className="flex-1 py-3 rounded-xl bg-[#006c4f] text-white text-sm font-bold hover:bg-[#005040] transition-all disabled:opacity-50"
+                  >{updating ? 'Saving...' : 'Assign & Save'}</button>
+                </div>
+              </form>
+            ) : (
+              <div className="text-center py-10 text-[#bbcac1]">
+                <span className="material-symbols-outlined text-4xl block mb-2">touch_app</span>
+                <p className="text-sm font-bold">Select an issue from the list to assign a worker</p>
+              </div>
+            )}
+          </div>
+
+          {/* Notifications */}
+          <div className="bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 p-6">
+            <h2 className="font-display-lg text-[16px] text-[#161d1a] font-bold mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#006c4f]">notifications</span>
+              Recent Alerts
+              {notifications?.filter(n => !n.read).length > 0 && (
+                <span className="ml-auto bg-[#00c896] text-white text-[10px] font-black px-2 py-0.5 rounded-full">{notifications.filter(n => !n.read).length} new</span>
+              )}
+            </h2>
+            <div className="space-y-3 max-h-64 overflow-y-auto">
+              {(notifications || []).length === 0 ? (
+                <p className="text-center text-[#bbcac1] text-sm py-6">No notifications</p>
+              ) : notifications.slice(0, 8).map(n => (
+                <div key={n.id} className={`flex items-start gap-3 p-3 rounded-xl ${n.read ? 'opacity-50' : 'bg-[#eef6ef]'}`}>
+                  <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? 'bg-[#bbcac1]' : 'bg-[#00c896]'}`}></span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] font-bold text-[#161d1a] truncate">{n.title || 'New Issue Submitted'}</p>
+                    <p className="text-[11px] text-[#6c7a72] mt-0.5">{n.message || n.body || ''}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
