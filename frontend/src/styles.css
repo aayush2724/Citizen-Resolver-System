@@ -2,6 +2,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Manrope:wght@400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
 
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,19 +44,6 @@
     background-size: 32px 32px;
 }
 
-.bento-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(12, 1fr);
-    gap: 16px;
-    height: calc(100vh - 160px);
-}
-
-.bento-grid-bg {
-    background-image: radial-gradient(#00c89615 1px, transparent 1px);
-    background-size: 32px 32px;
-}
-
 .tilted-card {
     transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
     transition: transform 0.3s ease;
@@ -65,14 +56,6 @@
 .map-bg {
     background-image: radial-gradient(circle at 2px 2px, #bbcac1 1px, transparent 0);
     background-size: 24px 24px;
-}
-
-.perspective-grid {
-    background-image: linear-gradient(var(--tw-colors-outline-variant) 1px, transparent 1px), linear-gradient(90deg, var(--tw-colors-outline-variant) 1px, transparent 1px);
-    background-size: 40px 40px;
-    transform: perspective(1000px) rotateX(60deg) translateY(-200px);
-    mask-image: linear-gradient(to bottom, transparent, black);
-    opacity: 0.15;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

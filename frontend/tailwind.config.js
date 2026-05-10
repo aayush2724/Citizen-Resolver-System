@@ -33,7 +33,7 @@ export default {
         "error": "#ba1a1a",
         "on-surface-variant": "#3c4a43",
         "primary": "#006c4f",
-        "background": "#f3fbf5",
+        "background": "#F9F7F2",
         "surface-container-low": "#eef6ef",
         "surface-container-high": "#e2eae4",
         "surface-dim": "#d4dcd6"
@@ -72,5 +72,8 @@ export default {
       }
     }
   },
-  plugins: [],
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/container-queries")
+  ],
 };
