@@ -1,52 +1,111 @@
 import { useState, useEffect } from "react";
-import {
-  Bell,
-  Bug,
-  ClipboardList,
-  Home,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  PlusCircle,
-  User,
-  X,
-} from "lucide-react";
+import { Menu, X } from "lucide-react";
 
-const navItems = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "report", label: "Report Issue", icon: PlusCircle },
-  { id: "my", label: "My Issues", icon: User },
-  { id: "public", label: "Public Issues", icon: ClipboardList },
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "feedback", label: "Report Bug", icon: Bug },
+const NAV_ITEMS = [
+  { id: "home", label: "Home" },
+  { id: "report", label: "Report Issue", citizenOnly: true },
+  { id: "my", label: "My Issues", citizenOnly: true },
+  { id: "public", label: "Public Issues" },
+  { id: "dashboard", label: "Dashboard", adminOnly: true },
+  { id: "feedback", label: "Report Bug" },
 ];
 
-function Logo({ onClick }) {
+function AppHeader({ activePage, setActivePage, currentUser, unreadCount, onLogout }) {
   return (
-    <button className="flex items-center gap-4 text-left group" type="button" onClick={onClick}>
-      <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white shadow-xl transition-all duration-500 group-hover:rotate-6 group-hover:scale-110">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          <path d="m9 12 2 2 4-4" />
-        </svg>
-      </div>
-      <div className="flex flex-col">
-        <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-[900] tracking-tighter text-text-dark leading-none">
-            Citizen
+    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-md border border-outline-variant/30 px-10 py-4 shadow-xl rounded-full flex justify-between items-center w-[90%] max-w-[1200px] h-16">
+      <div className="flex items-center gap-12">
+        <button
+          className="flex items-center gap-2"
+          onClick={() => setActivePage("home")}
+          type="button"
+        >
+          <span className="font-extrabold text-primary text-lg" style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}>
+            Citizen Resolver System
           </span>
-          <span className="text-2xl font-[900] tracking-tighter text-primary leading-none">
-            Resolver
-          </span>
-          <span className="text-sm font-black tracking-widest text-primary leading-none ml-1 opacity-60">
-            SYSTEM
-          </span>
+        </button>
+
+        <div className="hidden lg:flex items-center gap-8">
+          {NAV_ITEMS.filter((item) => {
+            if (item.adminOnly) return currentUser?.role === "admin";
+            if (item.citizenOnly) return currentUser?.role === "citizen";
+            return true;
+          }).map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActivePage(item.id)}
+              className={`text-sm font-bold tracking-tight transition-all relative ${
+                activePage === item.id
+                  ? "text-primary after:absolute after:-bottom-[10px] after:left-0 after:right-0 after:h-[2px] after:bg-primary"
+                  : "text-on-surface-variant hover:text-primary"
+              }`}
+            >
+              {item.label}
+              {item.id === "my" && unreadCount > 0 && (
+                <span className="bg-primary text-white text-[11px] px-2 py-0.5 rounded-full leading-none font-black shadow-sm ml-2">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
-        <span className="mt-1 text-[10px] font-black tracking-[0.3em] text-slate-400 uppercase">
-          Empowering Communities
-        </span>
       </div>
-    </button>
+
+      <div className="flex items-center gap-6">
+        <button
+          className="relative text-on-surface-variant hover:text-primary transition-colors"
+          onClick={() => setActivePage("my")}
+          type="button"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>notifications</span>
+          {unreadCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary rounded-full border border-white"></span>
+          )}
+        </button>
+
+        {currentUser ? (
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-xs border border-outline-variant/30">
+              {currentUser.name?.[0]?.toUpperCase()}
+            </div>
+            <button
+              className="text-on-surface-variant hover:text-error transition-colors"
+              onClick={onLogout}
+              title="Sign Out"
+              type="button"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>logout</span>
+            </button>
+          </div>
+        ) : (
+          <button
+            className="text-sm font-bold text-primary"
+            onClick={() => setActivePage("auth")}
+            type="button"
+          >
+            Sign In
+          </button>
+        )}
+      </div>
+    </nav>
+  );
+}
+
+function AppFooter() {
+  return (
+    <footer className="bg-surface-container-low border-t border-outline-variant/30 py-12 px-margin-desktop mt-auto">
+      <div className="max-w-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="flex flex-col gap-2">
+          <p className="font-headline-md font-extrabold text-on-surface tracking-tighter text-lg">Citizen Resolver System</p>
+          <p className="font-body-md text-label-md text-on-surface-variant">© 2024 Citizen Resolver System. Empowering communities through transparency.</p>
+        </div>
+        <div className="flex gap-8">
+          <a className="text-on-surface-variant hover:text-primary transition-all text-label-md font-black uppercase tracking-widest" href="#">Privacy Policy</a>
+          <a className="text-on-surface-variant hover:text-primary transition-all text-label-md font-black uppercase tracking-widest" href="#">Terms of Service</a>
+          <a className="text-on-surface-variant hover:text-primary transition-all text-label-md font-black uppercase tracking-widest" href="#">Support</a>
+        </div>
+      </div>
+    </footer>
   );
 }
 
@@ -59,196 +118,91 @@ export default function Shell({
   children,
 }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    setDrawerOpen(false);
-  }, [activePage]);
-
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth >= 1024) setDrawerOpen(false);
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
+  useEffect(() => { setDrawerOpen(false); }, [activePage]);
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [drawerOpen]);
 
-  const navigate = (id) => {
-    setActivePage(id);
-    setDrawerOpen(false);
-  };
-
   return (
-    <div className="min-h-screen bg-[#f4eee0] text-[#1a1a1a] selection:bg-primary/20 selection:text-primary">
-      {/* ── Header ── */}
-      <header 
-        className={`sticky top-0 z-50 transition-all duration-500 ${
-          scrolled 
-            ? "h-20 border-b border-black/5 bg-white/80 backdrop-blur-xl" 
-            : "h-28 bg-transparent"
-        }`}
-      >
-        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-8">
-          <Logo onClick={() => navigate("home")} />
+    <div className="min-h-screen flex flex-col bg-background font-body-md text-on-surface selection:bg-primary-container">
+      <AppHeader
+        activePage={activePage}
+        setActivePage={setActivePage}
+        currentUser={currentUser}
+        unreadCount={unreadCount}
+        onLogout={onLogout}
+      />
 
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-2 rounded-full bg-black/5 p-1.5 border border-black/5">
-            {navItems.filter(item => {
-              if (item.id === "dashboard") return currentUser?.role === "admin";
-              if (item.id === "report" || item.id === "my") return currentUser?.role === "citizen";
-              return true;
-            }).map((item) => {
-              const active = activePage === item.id;
-              return (
-                <button
-                  className={`relative px-6 py-2.5 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 rounded-full ${
-                    active ? "bg-white text-text-dark shadow-sm" : "text-slate-500 hover:text-text-dark"
-                  }`}
-                  key={item.id}
-                  type="button"
-                  onClick={() => navigate(item.id)}
-                >
-                  {item.label}
-                  {item.id === "my" && unreadCount > 0 && (
-                    <span className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-black text-white">
-                      {unreadCount}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Right side */}
-          <div className="flex items-center gap-4">
-            {currentUser ? (
-              <>
-                <button
-                  className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white border border-black/5 text-slate-400 hover:text-primary transition-all duration-500 shadow-sm"
-                  onClick={() => navigate("my")}
-                >
-                  <Bell size={18} />
-                  {unreadCount > 0 && (
-                    <span className="absolute top-3 right-3 block h-2 w-2 rounded-full bg-primary" />
-                  )}
-                </button>
-
-                <button
-                  className="hidden sm:flex items-center gap-3 rounded-full bg-white pl-2 pr-5 py-2 border border-black/5 shadow-sm hover:border-primary/30 transition-all"
-                  onClick={() => navigate("dashboard")}
-                >
-                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-black text-xs">
-                    {currentUser.name?.[0]?.toUpperCase()}
-                  </div>
-                  <div className="text-left">
-                     <p className="text-[10px] font-black text-text-dark leading-none">{currentUser.name}</p>
-                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">{currentUser.role}</p>
-                  </div>
-                </button>
-                
-                <button
-                  className="flex h-12 w-12 items-center justify-center rounded-full bg-white border border-black/5 text-slate-400 hover:text-red-500 transition-all shadow-sm"
-                  onClick={onLogout}
-                >
-                  <LogOut size={18} />
-                </button>
-              </>
-            ) : (
-              <button
-                className="btn-premium px-8 py-3.5"
-                onClick={() => navigate("auth")}
-              >
-                Sign In
-              </button>
-            )}
-
-            <button
-              className="lg:hidden flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white text-text-dark shadow-sm"
-              onClick={() => setDrawerOpen(true)}
-            >
-              <Menu size={20} />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* ── Mobile drawer ── */}
+      {/* Mobile drawer backdrop */}
       {drawerOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm lg:hidden"
           onClick={() => setDrawerOpen(false)}
         />
       )}
 
+      {/* Mobile drawer */}
       <div
-        className={`fixed top-0 right-0 z-[70] h-full w-80 bg-white border-l border-black/5 flex flex-col shadow-2xl transition-transform duration-500 ${
-          drawerOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 z-[70] h-full w-72 bg-surface-container-lowest border-l border-outline-variant/30 flex flex-col shadow-2xl transition-transform duration-500 ${drawerOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
-        <div className="flex items-center justify-between px-8 py-8">
-          <Logo onClick={() => navigate("home")} />
+        <div className="flex items-center justify-between px-6 py-6 border-b border-outline-variant/20">
+          <span className="font-extrabold text-on-surface" style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}>
+            Navigation
+          </span>
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full text-slate-400 hover:text-text-dark hover:bg-black/5"
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-surface-container"
             onClick={() => setDrawerOpen(false)}
           >
-            <X size={20} />
+            <X size={18} className="text-on-surface-variant" />
           </button>
         </div>
-
-        <nav className="flex-1 px-6 py-6 flex flex-col gap-2">
-          {navItems.filter(item => {
-            if (item.id === "dashboard") return currentUser?.role === "admin";
-            if (item.id === "report" || item.id === "my") return currentUser?.role === "citizen";
+        <nav className="flex-1 px-4 py-4 flex flex-col gap-1">
+          {NAV_ITEMS.filter((item) => {
+            if (item.adminOnly) return currentUser?.role === "admin";
+            if (item.citizenOnly) return currentUser?.role === "citizen";
             return true;
-          }).map((item) => {
-            const active = activePage === item.id;
-            return (
-              <button
-                key={item.id}
-                className={`w-full flex items-center gap-4 rounded-2xl px-6 py-4 text-[12px] font-black uppercase tracking-[0.1em] transition-all ${
-                  active ? "bg-primary text-white" : "text-slate-500 hover:bg-black/5 hover:text-text-dark"
+          }).map((item) => (
+            <button
+              key={item.id}
+              className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all text-left ${activePage === item.id
+                ? "bg-primary-container text-on-primary-container"
+                : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
                 }`}
-                onClick={() => navigate(item.id)}
-              >
-                <item.icon size={18} />
-                {item.label}
-              </button>
-            );
-          })}
+              onClick={() => setActivePage(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
         </nav>
-
-        <div className="px-8 py-8 border-t border-black/5">
+        <div className="px-4 py-6 border-t border-outline-variant/20">
           {currentUser ? (
-             <button className="w-full flex items-center gap-4 text-left" onClick={onLogout}>
-                <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white font-black">
-                   {currentUser.name?.[0]?.toUpperCase()}
-                </div>
-                <div className="flex-1">
-                   <p className="font-black text-text-dark">{currentUser.name}</p>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sign Out</p>
-                </div>
-                <LogOut size={18} className="text-slate-300" />
-             </button>
+            <button
+              className="w-full flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-error hover:bg-red-50 transition-all"
+              onClick={onLogout}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>logout</span>
+              Sign Out
+            </button>
           ) : (
-            <button className="w-full btn-premium" onClick={() => navigate("auth")}>Sign In</button>
+            <button
+              className="w-full px-4 py-3 rounded-xl text-sm font-bold bg-primary text-on-primary hover:opacity-90 transition-all"
+              onClick={() => setActivePage("auth")}
+            >
+              Sign In
+            </button>
           )}
         </div>
       </div>
 
-      <main className={activePage === "home" ? "" : "mx-auto max-w-7xl px-6 py-16 lg:px-8"}>
+      {/* Page content */}
+      <main className="flex-grow pt-16 relative">
         {children}
       </main>
+
+      <AppFooter />
     </div>
   );
 }

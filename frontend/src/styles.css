@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Manrope:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -11,94 +13,78 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  /* HopeRise Palette */
-  --bg-main: #f4eee0;
-  --text-dark: #1a1a1a;
-  --text-muted: #555555;
-  --primary: #00c87c;
-  --primary-hover: #00a86b;
-  --secondary: #e8dfc9;
+  /* Navy/Mint Palette */
+  --bg-main: #fbf9fa;
+  --text-dark: #1b1c1d;
+  --text-muted: #44474c;
+  --primary: #041627;
+  --secondary: #006c49;
   --white: #ffffff;
   --border: rgba(0, 0, 0, 0.08);
 }
 
-* {
-  box-sizing: border-box;
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
 }
 
-html {
-  scroll-behavior: smooth;
+.floating-img {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  background: var(--bg-main);
-  color: var(--text-dark);
-  font-family: 'Outfit', sans-serif;
-  overflow-x: hidden;
+/* ── New Layout Utilities ── */
+.bento-grid-bg {
+    background-image: radial-gradient(#00c89615 1px, transparent 1px);
+    background-size: 32px 32px;
 }
 
-/* Background - Simple & Clean */
-.bg-mesh {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: var(--bg-main);
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    gap: 16px;
+    height: calc(100vh - 160px);
 }
 
-/* Navigation & Buttons */
-.btn-premium {
-  @apply relative overflow-hidden rounded-full px-10 py-5 text-[11px] font-black uppercase tracking-[0.2em] text-white transition-all hover:scale-105 active:scale-95;
-  background-color: var(--primary);
-  box-shadow: 0 10px 30px -5px rgba(0, 200, 124, 0.3);
+.bento-grid-bg {
+    background-image: radial-gradient(#00c89615 1px, transparent 1px);
+    background-size: 32px 32px;
 }
 
-.btn-premium:hover {
-  background-color: var(--primary-hover);
+.tilted-card {
+    transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+    transition: transform 0.3s ease;
 }
 
-.glass-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 3rem;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+.tilted-card:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, var(--text-dark) 0%, #444 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.map-bg {
+    background-image: radial-gradient(circle at 2px 2px, #bbcac1 1px, transparent 0);
+    background-size: 24px 24px;
 }
 
-@keyframes pulse-glow {
-  0% { box-shadow: 0 0 0 0 rgba(0, 200, 124, 0.4); }
-  70% { box-shadow: 0 0 0 15px rgba(0, 200, 124, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 200, 124, 0); }
+.perspective-grid {
+    background-image: linear-gradient(var(--tw-colors-outline-variant) 1px, transparent 1px), linear-gradient(90deg, var(--tw-colors-outline-variant) 1px, transparent 1px);
+    background-size: 40px 40px;
+    transform: perspective(1000px) rotateX(60deg) translateY(-200px);
+    mask-image: linear-gradient(to bottom, transparent, black);
+    opacity: 0.15;
 }
 
-.pulse-glow {
-  animation: pulse-glow 3s infinite;
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
 }
 
-.card-hover {
-  @apply transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-main);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  border: 2px solid var(--bg-main);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
