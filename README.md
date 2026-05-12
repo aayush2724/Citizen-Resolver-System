@@ -12,36 +12,51 @@ review, assign, and manage resolution workflows with notifications.
 - Citizen notification feed for report and status updates
 - Public issue board with filtering
 - Master data management (areas, departments, labour)
+- Real-time messaging between citizens and admins
 
 ## Tech Stack
 
-- Client: React, Vite, Tailwind CSS, Lucide React
-- Server: Node.js, Express, MySQL (mysql2/promise), bcrypt, jsonwebtoken
+| Layer | Technology |
+|---|---|
+| Client | React 19, Vite, Tailwind CSS v3, Lucide React |
+| Server | Node.js, Express 5, MySQL (mysql2/promise) |
+| Auth | bcrypt, jsonwebtoken |
+| Dev tooling | nodemon, concurrently |
 
 ## Repository Layout
 
 ```text
 .
-├── server/
+├── client/                   # React + Vite frontend
+│   ├── public/
+│   │   └── images/
 │   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── middlewares/
-│   │   ├── routes/
-│   │   └── app.js
-│   ├── server.js
-│   ├── init_db.js
+│   │   ├── components/       # IssueCard, IssueModal, Shell, …
+│   │   ├── data/             # mockData.js
+│   │   ├── services/         # api.js (fetch wrapper)
+│   │   ├── utils/            # image.js, status.js
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── tailwind.config.js
+│   └── vite.config.js        # Proxies /api → localhost:5000
+│
+├── server/                   # Express REST API
+│   ├── src/
+│   │   ├── config/           # db.js (MySQL pool)
+│   │   ├── controllers/      # auth, issue, entity, state, …
+│   │   ├── middlewares/      # auth.middleware, error.middleware
+│   │   ├── routes/           # one file per resource
+│   │   └── app.js            # Express app setup
+│   ├── server.js             # Entry point
+│   ├── init_db.js            # DB initializer / seeder
 │   ├── schema.sql
-│   └── .env
-├── client/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── services/
-│   │   ├── utils/
-│   │   └── App.jsx
-│   └── vite.config.js
+│   ├── .env                  # ← copy from .env.example (not committed)
+│   └── .env.example
+│
 ├── FEATURE_TESTING_GUIDE.md
 ├── IMPLEMENTATION_SUMMARY.md
+├── package.json              # Root orchestrator (concurrently)
 └── README.md
 ```
 
@@ -53,14 +68,21 @@ review, assign, and manage resolution workflows with notifications.
 
 ## Setup
 
-1. Install dependencies
+### 1. Install all dependencies
 
 ```bash
-npm --prefix server install
-npm --prefix client install
+npm run install:all
 ```
 
-2. Configure server environment in server/.env
+This installs root devDeps (`concurrently`) plus all packages for `server/` and `client/`.
+
+### 2. Configure the server
+
+```bash
+cp server/.env.example server/.env
+```
+
+Then edit `server/.env` with your MySQL credentials and a JWT secret:
 
 ```env
 PORT=5000
@@ -72,80 +94,75 @@ DB_NAME=citizen_resolver
 JWT_SECRET=your_random_secret_string
 ```
 
-3. Initialize database schema and seed data
+### 3. Initialize the database
 
 ```bash
-cd server
-node init_db.js
+npm run init:db
 ```
+
+This creates the `citizen_resolver` database, runs the schema, and seeds demo accounts.
 
 ## Run the Application
 
-Server:
+Start both the API server and the Vite dev server with a single command:
 
 ```bash
-npm --prefix server start
+npm run dev
 ```
 
-Client (Vite dev server):
+| Service | URL |
+|---|---|
+| Client (Vite) | http://127.0.0.1:5173 |
+| Server (Express) | http://localhost:5000 |
+
+To run them individually:
 
 ```bash
-npm --prefix client run dev
+npm run dev --prefix server   # API only
+npm run dev --prefix client   # Vite only
 ```
 
-Client URL: http://127.0.0.1:5173
-Server URL: http://localhost:5000
-
-## Build
+## Build (Production)
 
 ```bash
-npm --prefix client run build
+npm run build --prefix client
 ```
 
 ## Demo Accounts
 
-- Citizen: aarav@example.com / password
-- Admin: admin@helpline.local / password
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@helpline.local | password |
+| Citizen | aarav@example.com | password |
 
 ## Core API Endpoints
 
-- POST /api/auth/login
-- POST /api/auth/signup
-- GET /api/state
-- POST /api/issues
-- PATCH /api/issues/:id
-- POST /api/entities/:type
-- PATCH /api/notifications/:id/read
+| Method | Path | Description |
+|---|---|---|
+| POST | /api/auth/login | Login |
+| POST | /api/auth/signup | Register |
+| GET | /api/state | Full portal state (auth-gated) |
+| POST | /api/issues | Create issue |
+| PATCH | /api/issues/:id | Update issue (admin) |
+| POST | /api/entities/:type | Add area / department / labour |
+| PATCH | /api/notifications/:id/read | Mark notification read |
+| GET | /api/messages/:issueId | Get chat messages |
+| POST | /api/messages/:issueId | Send chat message |
 
 ## Manual End-to-End Test Flow
 
 1. Sign up a new citizen account.
-2. Log in as that citizen.
-3. Create a new issue (with or without image URL).
-4. Log in as admin.
-5. Open Dashboard, assign department/labour, and update status.
-6. Log back in as citizen and confirm:
-    - status changed
-    - assignment note appears
-    - notification appears
-    - issue image is shown (uploaded URL or relevant fallback)
-
-## Notes and Current Behavior
-
-- Issue IDs are rendered as CHP-1001 style identifiers.
-- Areas added from Admin Manage Data are persisted in the database and visible in public filters.
-- City/block/area selection options in signup/report forms are currently driven by client mock location data.
+2. Log in as that citizen and create a new issue.
+3. Log in as admin and open the Dashboard.
+4. Assign a department/labour, update the status, and add a note.
+5. Log back in as the citizen and confirm:
+   - Status has changed
+   - Assignment note appears in the modal
+   - Notification appears in the feed
+   - Issue image is shown (uploaded URL or relevant fallback)
 
 ## Troubleshooting
 
-- Error: ENOENT Could not read package.json at repository root
-   - This repository has separate server and client packages.
-  - Use npm --prefix server ... and npm --prefix client ... commands.
-
-- Server cannot connect to DB
-   - Check server/.env credentials.
-   - Ensure MySQL is running and DB user has permission to create/use citizen_resolver.
-
-- UI shows no data after login
-   - Confirm server is running on port 5000.
-   - Check browser devtools network calls to /api/state.
+- **`ENOENT: could not read package.json` at repo root** — Use `npm run install:all` from the repo root, or `npm --prefix server install` / `npm --prefix client install` individually.
+- **Server cannot connect to DB** — Check `server/.env` credentials. Ensure MySQL is running and the DB user has `CREATE`/`USE` privileges on `citizen_resolver`.
+- **UI shows no data after login** — Confirm the server is running on port 5000 and check browser DevTools → Network → `/api/state`.
