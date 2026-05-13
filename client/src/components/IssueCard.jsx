@@ -3,7 +3,7 @@ import { priorityTone, progressFor, statusTone } from "../utils/status";
 import { fallbackImage, getRelevantImage } from "../utils/image";
 
 export default function IssueCard({ issue, onOpen }) {
-  const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department);
+  const imageSrc = getRelevantImage(issue.title, issue.description, issue.department, `card:${issue.id}`);
 
   return (
     <article 

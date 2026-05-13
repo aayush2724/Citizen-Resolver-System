@@ -41,7 +41,7 @@ export default function IssueModal({ issue, onClose }) {
 
   if (!issue) return null;
 
-  const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department);
+  const imageSrc = getRelevantImage(issue.title, issue.description, issue.department, `modal:${issue.id}`);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
