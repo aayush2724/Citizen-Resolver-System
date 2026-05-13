@@ -45,6 +45,15 @@ export const getEntireState = async (req, res, next) => {
       ? await pool.query("SELECT * FROM notifications ORDER BY created_at DESC")
       : await pool.query("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC", [req.user.id]);
 
+    const completedCount = notifications.filter((n) => typeof n.title === "string" && n.title.endsWith(" Completed")).length;
+    const dashboardStats = {
+      total: issues.length,
+      pending: issues.filter((i) => i.status === "Pending").length,
+      inProgress: issues.filter((i) => i.status === "In Progress").length,
+      resolved: issues.filter((i) => i.status === "Resolved").length + completedCount,
+      completed: completedCount,
+    };
+
     res.json({
       currentUser,
       users,
@@ -63,6 +72,7 @@ export const getEntireState = async (req, res, next) => {
       areas,
       departments,
       labour,
+      dashboardStats,
       notifications: notifications.map((n) => ({
         ...n,
         read: !!n.read_at,
