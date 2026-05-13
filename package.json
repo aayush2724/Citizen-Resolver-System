@@ -7,7 +7,7 @@
     "dev": "concurrently --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "start": "concurrently --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm run start --prefix server\" \"npm run dev --prefix client\"",
     "install:all": "npm install && npm install --prefix server && npm install --prefix client",
-    "init:db": "node server/init_db.js"
+    "init:db": "node server/scripts/init_db.js"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import pool from "../config/db.js";
+import pool from "../../shared/config/db.js";
 
 const signToken = (user) =>
   jwt.sign(

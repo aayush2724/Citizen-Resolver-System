@@ -20,4 +20,5 @@ dist/
 
 ## Debug
 server/debug_*.json
-server/scratch/
+server/logs/
+server/scripts/scratch/

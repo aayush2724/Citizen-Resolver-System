@@ -1,6 +1,6 @@
 import express from "express";
-import { getEntireState } from "../controllers/state.controller.js";
-import { authenticateToken } from "../middlewares/auth.middleware.js";
+import { getEntireState } from "./state.controller.js";
+import { authenticateToken } from "../../shared/middlewares/auth.middleware.js";
 
 const router = express.Router();
 

@@ -1,7 +1,6 @@
 import express from "express";
-import { submitBugReport, getBugReports } from "../controllers/bugreport.controller.js";
-import { authenticateToken, requireAdmin } from "../middlewares/auth.middleware.js";
-import { optionalAuth } from "../middlewares/auth.middleware.js";
+import { submitBugReport, getBugReports } from "./bug-reports.controller.js";
+import { authenticateToken, requireAdmin, optionalAuth } from "../../shared/middlewares/auth.middleware.js";
 
 const router = express.Router();
 

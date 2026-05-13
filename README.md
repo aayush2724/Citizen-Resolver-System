@@ -41,24 +41,43 @@ review, assign, and manage resolution workflows with notifications.
 │   ├── tailwind.config.js
 │   └── vite.config.js        # Proxies /api → localhost:5000
 │
-├── server/                   # Express REST API
+├── server/                   # Express REST API (SaaS modular architecture)
+│   ├── db/
+│   │   └── schema.sql
+│   ├── logs/
+│   │   └── debug_issue.json
+│   ├── scripts/
+│   │   ├── init_db.js        # DB initializer / seeder
+│   │   └── scratch/          # local one-off debug scripts
 │   ├── src/
-│   │   ├── config/           # db.js (MySQL pool)
-│   │   ├── controllers/      # auth, issue, entity, state, …
-│   │   ├── middlewares/      # auth.middleware, error.middleware
-│   │   ├── routes/           # one file per resource
-│   │   └── app.js            # Express app setup
-│   ├── server.js             # Entry point
-│   ├── init_db.js            # DB initializer / seeder
-│   ├── schema.sql
+│   │   ├── modules/          # Domain-driven feature modules
+│   │   │   ├── auth/         # Authentication module (login, signup)
+│   │   │   ├── issues/       # Issues module (create, update)
+│   │   │   ├── entities/     # Master data (areas, departments, labour)
+│   │   │   ├── state/        # Portal state aggregator
+│   │   │   ├── notifications/# Notifications (mark read)
+│   │   │   ├── messages/     # Chat messaging
+│   │   │   └── bug-reports/  # User feedback
+│   │   ├── shared/           # Shared utilities & middleware
+│   │   │   ├── config/       # db.js (MySQL pool)
+│   │   │   └── middlewares/  # auth, error handling
+│   │   ├── app.js            # Express app setup
+│   │   └── server.js         # Entry point
 │   ├── .env                  # ← copy from .env.example (not committed)
 │   └── .env.example
 │
-├── FEATURE_TESTING_GUIDE.md
-├── IMPLEMENTATION_SUMMARY.md
+├── docs/
+│   ├── FEATURE_TESTING_GUIDE.md
+│   └── IMPLEMENTATION_SUMMARY.md
 ├── package.json              # Root orchestrator (concurrently)
 └── README.md
 ```
+
+## Documentation
+
+- [Feature Testing Guide](docs/FEATURE_TESTING_GUIDE.md)
+- [Implementation Summary](docs/IMPLEMENTATION_SUMMARY.md)
+- [Backend Architecture (SaaS Modular)](docs/BACKEND_ARCHITECTURE.md)
 
 ## Prerequisites
 

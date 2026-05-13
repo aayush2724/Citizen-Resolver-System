@@ -1,6 +1,11 @@
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function initDB() {
   try {
@@ -18,7 +23,8 @@ async function initDB() {
     
     await connection.query(`USE \`${dbName}\`;`);
 
-    const schema = fs.readFileSync('./schema.sql', 'utf8');
+    const schemaPath = path.resolve(__dirname, '../db/schema.sql');
+    const schema = fs.readFileSync(schemaPath, 'utf8');
     
     // We split statements or just use multipleStatements: true
     await connection.query(schema);

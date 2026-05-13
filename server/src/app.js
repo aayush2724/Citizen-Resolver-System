@@ -1,14 +1,16 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import authRoutes from "./routes/auth.routes.js";
-import issueRoutes from "./routes/issue.routes.js";
-import entityRoutes from "./routes/entity.routes.js";
-import stateRoutes from "./routes/state.routes.js";
-import notificationRoutes from "./routes/notification.routes.js";
-import bugReportRoutes from "./routes/bugreport.routes.js";
-import messageRoutes from "./routes/message.routes.js";
-import { apiErrorHandler } from "./middlewares/error.middleware.js";
+import { apiErrorHandler } from "./shared/middlewares/error.middleware.js";
+
+// Module imports
+import authRoutes from "./modules/auth/auth.routes.js";
+import issueRoutes from "./modules/issues/issues.routes.js";
+import entityRoutes from "./modules/entities/entities.routes.js";
+import stateRoutes from "./modules/state/state.routes.js";
+import notificationRoutes from "./modules/notifications/notifications.routes.js";
+import bugReportRoutes from "./modules/bug-reports/bug-reports.routes.js";
+import messageRoutes from "./modules/messages/messages.routes.js";
 
 const app = express();
 
@@ -18,6 +20,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Register module routes
 app.use("/api/auth", authRoutes);
 app.use("/api/issues", issueRoutes);
 app.use("/api/entities", entityRoutes);
@@ -26,6 +29,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
 app.use("/api/messages", messageRoutes);
 
+// Global error handler
 app.use(apiErrorHandler);
 
 export default app;

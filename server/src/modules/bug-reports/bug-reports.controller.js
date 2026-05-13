@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../../shared/config/db.js";
 
 export const submitBugReport = async (req, res, next) => {
   try {
