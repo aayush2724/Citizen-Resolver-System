@@ -91,6 +91,37 @@ export const api = {
     localStorage.removeItem("citizen-sessions");
     window.dispatchEvent(new Event("portal-state-change"));
   },
+  // Remove only the current active session (logout current user)
+  logout() {
+    const current = JSON.parse(localStorage.getItem("citizen-user") || "null");
+    if (!current) return;
+    const sessions = this.getSessions();
+    const remaining = sessions.filter(s => s.email !== current.email);
+    if (remaining.length > 0) {
+      localStorage.setItem("citizen-user", JSON.stringify(remaining[0]));
+    } else {
+      localStorage.removeItem("citizen-user");
+    }
+    localStorage.setItem("citizen-sessions", JSON.stringify(remaining));
+    window.dispatchEvent(new Event("portal-state-change"));
+  },
+
+  // Remove a specific saved session by email (does not affect other sessions)
+  logoutSession(email) {
+    if (!email) return;
+    const sessions = this.getSessions();
+    const remaining = sessions.filter(s => s.email !== email);
+    localStorage.setItem("citizen-sessions", JSON.stringify(remaining));
+    const current = JSON.parse(localStorage.getItem("citizen-user") || "null");
+    if (current && current.email === email) {
+      if (remaining.length > 0) {
+        localStorage.setItem("citizen-user", JSON.stringify(remaining[0]));
+      } else {
+        localStorage.removeItem("citizen-user");
+      }
+      window.dispatchEvent(new Event("portal-state-change"));
+    }
+  },
 
   async login({ email, password, role }) {
     // FIX: was only sending { email }, password was never sent to the backend

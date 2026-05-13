@@ -356,7 +356,7 @@ export const issues = [
     description:
       "Rain water is collecting beside the stop and flowing into nearby shops.",
     imageUrl:
-      "https://images.unsplash.com/photo-1590496793929-36417d3117de?auto=format&fit=crop&w=900&q=80",
+      "/images/drainage/drainage1.jpg",
     area: "Station Area",
     department: "Drainage",
     status: "Resolved",
