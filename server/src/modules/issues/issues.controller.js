@@ -83,6 +83,39 @@ export const updateIssue = async (req, res, next) => {
       }
     }
 
+    if (status === "Completed") {
+      const [issueRows] = await pool.query(
+        "SELECT citizen_id, department_id FROM issues WHERE id = ?",
+        [actualId]
+      );
+
+      if (issueRows.length === 0) {
+        return res.status(404).json({ error: `Issue ${issueIdStr} not found` });
+      }
+
+      const existingIssue = issueRows[0];
+      const finalDeptId = deptId || existingIssue.department_id;
+
+      if (finalDeptId) {
+        await pool.query(
+          "INSERT INTO issue_assignments (issue_id, department_id, labour_id, assigned_by, note, assigned_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
+          [actualId, finalDeptId, labourId, req.user.id, finalNote || null]
+        );
+      }
+
+      await pool.query(
+        "INSERT INTO notifications (user_id, issue_id, title, body) VALUES (?, NULL, ?, ?)",
+        [
+          existingIssue.citizen_id,
+          `CHP-${actualId + 1000} Completed`,
+          finalNote || "Your issue has been completed and removed from the active queue.",
+        ]
+      );
+
+      await pool.query("DELETE FROM issues WHERE id = ?", [actualId]);
+      return res.json({ success: true, deleted: true });
+    }
+
     let updateResult;
     if (deptId) {
       [updateResult] = await pool.query(
@@ -111,22 +144,6 @@ export const updateIssue = async (req, res, next) => {
         "INSERT INTO issue_assignments (issue_id, department_id, labour_id, assigned_by, note, assigned_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
         [actualId, finalDeptId, labourId, req.user.id, finalNote || null]
       );
-    }
-
-    if (status === "Completed") {
-      const [issueRows] = await pool.query("SELECT citizen_id FROM issues WHERE id = ?", [actualId]);
-      if (issueRows.length > 0) {
-        await pool.query(
-          "INSERT INTO notifications (user_id, issue_id, title, body) VALUES (?, NULL, ?, ?)",
-          [
-            issueRows[0].citizen_id,
-            `CHP-${actualId + 1000} Completed`,
-            finalNote || "Your issue has been completed and removed from the active queue.",
-          ]
-        );
-      }
-      await pool.query("DELETE FROM issues WHERE id = ?", [actualId]);
-      return res.json({ success: true, deleted: true });
     }
 
     const [issueRows] = await pool.query("SELECT citizen_id FROM issues WHERE id = ?", [actualId]);
