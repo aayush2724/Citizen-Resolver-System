@@ -31,7 +31,19 @@ const globalStyles = `
 
 // --- Components ---
 
-const Header = ({ currentUser, onLogout }) => {
+const Header = ({ currentUser, onLogout, notifications = [] }) => {
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  const handleNotificationClick = async (n) => {
+    try {
+      if (!n.read) await api.markNotificationRead(n.id);
+    } catch (err) {
+      console.error('Error marking notification as read:', err);
+    }
+  };
+
+  const unreadCount = notifications?.filter(n => !n.read).length || 0;
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-3 max-w-container-max mx-auto bg-white/80 backdrop-blur-md dark:bg-surface-dim rounded-full mt-4 w-[95%] shadow-sm flex-shrink-0 border border-[#bbcac1]/30">
       <div className="flex items-center gap-3">
@@ -39,25 +51,93 @@ const Header = ({ currentUser, onLogout }) => {
           <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
         </div>
         <div className="flex flex-col">
-          <span className="text-lg md:text-xl font-display-lg font-extrabold text-[#161d1a] leading-none">Citizen Resolver</span>
-          <span className="text-[9px] uppercase tracking-widest font-bold text-[#006c4f] opacity-80">Empowering Communities</span>
+          <span
+            className="text-lg md:text-xl font-black text-[#161d1a] leading-none tracking-[-0.03em]"
+            style={{ fontFamily: "'Outfit', sans-serif" }}
+          >
+            Citizen Resolver
+          </span>
+          <span className="text-[9px] uppercase tracking-[0.28em] font-bold text-[#006c4f] opacity-80" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Empowering Communities
+          </span>
         </div>
       </div>
       <nav className="hidden md:flex items-center bg-[#e8f0e9]/50 rounded-full p-1 ml-4">
-        <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Home</NavLink>
-        <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Report Issue</NavLink>
-        <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>My Issues</NavLink>
-        <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Public Issues</NavLink>
+        <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
+        <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
+        <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
+        <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
         {currentUser?.role === 'admin' && (
-          <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Dashboard</NavLink>
+          <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
         )}
-        <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all font-label-bold text-[13px] rounded-full ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`}>Report Bug</NavLink>
+        <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#006c4f] text-white shadow-md' : 'text-[#3c4a43] hover:text-[#006c4f]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
       </nav>
 
       <div className="flex items-center gap-3">
-        <button className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white shadow-sm hover:bg-[#eef6ef] transition-all border border-[#bbcac1]/20">
-          <span className="material-symbols-outlined text-[#3c4a43] text-xl">notifications</span>
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setNotifOpen(!notifOpen)}
+            className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white shadow-sm hover:bg-[#eef6ef] transition-all border border-[#bbcac1]/20 relative"
+          >
+            <span className="material-symbols-outlined text-[#3c4a43] text-xl">notifications</span>
+            {unreadCount > 0 && (
+              <span className="absolute top-0 right-0 bg-[#d84315] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[20px] text-center leading-none shadow-sm">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Notifications Dropdown */}
+          {notifOpen && (
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 flex flex-col overflow-hidden z-50">
+              <div className="px-4 py-3 bg-[#eef6ef]/50 border-b border-[#bbcac1]/20 flex items-center justify-between">
+                <p className="text-[10px] font-bold text-[#3c4a43] uppercase tracking-wider">Notifications</p>
+                {unreadCount > 0 && (
+                  <span className="bg-[#00c896] text-white text-[10px] font-black px-2 py-0.5 rounded-full">{unreadCount} new</span>
+                )}
+              </div>
+              
+              <div className="max-h-80 overflow-y-auto">
+                {(notifications || []).length === 0 ? (
+                  <p className="text-center text-[#bbcac1] text-sm py-6">No notifications</p>
+                ) : (
+                  notifications.slice(0, 10).map(n => (
+                    <button
+                      key={n.id}
+                      onClick={() => {
+                        handleNotificationClick(n);
+                        setNotifOpen(false);
+                      }}
+                      className={`w-full text-left flex items-start gap-3 p-3 border-b border-[#bbcac1]/10 hover:bg-[#eef6ef] transition-all group ${
+                        n.read ? 'opacity-50' : 'bg-white'
+                      }`}
+                    >
+                      <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
+                        n.read ? 'bg-[#bbcac1]' : 'bg-[#00c896]'
+                      }`}></span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] font-bold text-[#161d1a] truncate group-hover:text-[#006c4f]">
+                          {n.title || 'New Notification'}
+                        </p>
+                        <p className="text-[11px] text-[#6c7a72] mt-0.5 line-clamp-2">
+                          {n.message || n.body || ''}
+                        </p>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Backdrop to close dropdown */}
+          {notifOpen && (
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setNotifOpen(false)}
+            />
+          )}
+        </div>
         
         {currentUser && (
           <div className="relative group">
@@ -80,7 +160,7 @@ const Header = ({ currentUser, onLogout }) => {
               
               <div className="max-h-48 overflow-y-auto">
                 {(api.getSessions() || []).map(session => (
-                  <button
+                  <div
                     key={session.email}
                     onClick={() => api.switchAccount(session.token)}
                     className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${
@@ -88,6 +168,9 @@ const Header = ({ currentUser, onLogout }) => {
                         ? 'bg-[#006c4f]/5 cursor-default' 
                         : 'hover:bg-[#f3fbf5] cursor-pointer'
                     }`}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') api.switchAccount(session.token); }}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
                       session.role === 'admin' ? 'bg-[#161d1a] text-white' : 'bg-[#00c896] text-white'
@@ -100,10 +183,19 @@ const Header = ({ currentUser, onLogout }) => {
                       </p>
                       <p className="text-[10px] text-[#6c7a72] truncate">{session.email}</p>
                     </div>
-                    {session.email === currentUser.email && (
-                      <span className="material-symbols-outlined text-[#00c896] text-sm">check_circle</span>
-                    )}
-                  </button>
+                    <div className="flex items-center gap-2">
+                      {session.email === currentUser.email && (
+                        <span className="material-symbols-outlined text-[#00c896] text-sm">check_circle</span>
+                      )}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); api.logoutSession(session.email); }}
+                        title="Sign out this account"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-[#6c7a72] hover:bg-[#ffecec] hover:text-red-600 transition-colors"
+                      >
+                        <span className="material-symbols-outlined">logout</span>
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
 
@@ -197,42 +289,97 @@ const ParallaxBackground = () => {
       <div className="absolute top-2/3 right-20 w-56 h-56 rounded-full bg-[#00c896]/15 blur-2xl" style={getParallaxStyle(0.3)}></div>
       <div className="absolute hidden lg:block top-1/3 right-1/4 w-32 h-32 border-4 border-[#00c896]/20 rounded-full" style={getParallaxStyle(0.8)}></div>
 
+      {/* Additional green blush accents for Home */}
+      <div className="absolute -top-6 left-1/3 w-56 h-56 rounded-full bg-[#00c896]/18 blur-3xl opacity-90" style={getParallaxStyle(0.5)}></div>
+      <div className="absolute top-20 left-1/6 w-28 h-28 rounded-full bg-[#00c896]/25 blur-2xl opacity-90" style={getParallaxStyle(0.7)}></div>
+      <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-gradient-to-r from-[#00c896]/20 to-transparent blur-2xl opacity-90" style={getParallaxStyle(0.4)}></div>
+      <div className="absolute top-10 right-1/3 w-44 h-44 rounded-full bg-[#00c896]/10 blur-3xl opacity-85" style={getParallaxStyle(0.35)}></div>
+      <div className="absolute hidden md:block top-40 right-10 w-32 h-32 rounded-full bg-[#00c896]/12 blur-xl opacity-80" style={getParallaxStyle(0.25)}></div>
+
       {/* ── Scattered Photo Collage ── */}
 
       {/* Top-right: tilted strongly clockwise */}
       <div className="absolute top-[6%] right-[5%] w-80 h-56 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white rotate-[14deg] opacity-75 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.45)}>
-        <img alt="Sanitation" className="w-full h-full object-cover" src="/images/Sanitation.jpg"/>
+        <img alt="Sanitation" className="w-full h-full object-cover" src="/images/Sanitation/Sanitation.jpg"/>
       </div>
 
 
 
       {/* Top-left: counter-clockwise lean */}
       <div className="absolute top-[12%] left-[3%] w-72 h-52 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white -rotate-[10deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.6)}>
-        <img alt="Urban Roads" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ug1b_le1O_J_vMNkoWJEIq2D5YegOVbio-fqDb9Rba16z3Ptn8ihTIAvKtEF9emCTs_m7h5uR5oOaiQAhD_8CISIB0JOXWgMu84iDdbddmdqipfSOHgx9p-9zTdZ37WMZE2krcgZECM6CfFN0PBKlKf0Gok2JilFdRKHhRqfu5Jq2KN4d3WvK8S28TOwIA4ojzESriHeTmY9C6Vg_zNIz49UdESJEBMnzVa__XjRv347HwmCceGvd5iMZ4"/>
+        <img alt="Urban Roads" className="w-full h-full object-cover" src="/images/Roads/Potholes.jpg"/>
       </div>
 
       {/* Mid-left: slightly tilted, peeking from bottom-left edge */}
       <div className="absolute bottom-[42%] -left-[4%] w-72 h-52 rounded-2xl overflow-hidden shadow-xl border-[5px] border-white -rotate-[8deg] opacity-65 hidden lg:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.7)}>
-        <img alt="Drainage" className="w-full h-full object-cover" src="/images/Drainage.jpg"/>
+        <img alt="Drainage" className="w-full h-full object-cover" src="/images/Drainage/Drainage.jpg"/>
       </div>
 
       {/* Mid-right: steep tilt going left */}
       <div className="absolute top-[38%] right-[2%] w-64 h-48 rounded-2xl overflow-hidden shadow-xl border-[5px] border-white -rotate-[18deg] opacity-65 hidden lg:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.5)}>
-        <img alt="Public Parks" className="w-full h-full object-cover" src="/images/PublicParks.jpg"/>
+        <img alt="Public Parks" className="w-full h-full object-cover" src="/images/PublicParks/PublicParks.jpg"/>
       </div>
 
       {/* Bottom-left: large, gently rotated */}
       <div className="absolute bottom-[8%] left-[4%] w-96 h-64 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white -rotate-[8deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.55)}>
-        <img alt="City" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNWJKQ5ezgjD9-L54EIS7IMRA0mkM9xb_TThZ1HlUBtRbs7AXEpzbtdtcQTREczSitTIA0SnrGoK1WfqrRgU3N2e7_Qnf6QFAzULEH2SuRVPhypvkqGrQxAcfc_AMaOgmdoJhwGQkk4n9NGFgKKp2sMC8H3sFrGTYFVshV3W1v1NsERhPC5E3qpYrt7fTl9xR9IxnWRccdTXTm-Z1sPrabMKNLSBqG6vn4xUHNmBdE85tH4zpcLiV56UkW8f1W31sjMC3Y8YO2dFc"/>
+        <img alt="City" className="w-full h-full object-cover" src="/images/Roads/Roads.jpg"/>
       </div>
 
       {/* Bottom-right: punchy tilt right */}
       <div className="absolute bottom-[10%] right-[3%] w-80 h-56 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white rotate-[12deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.4)}>
-        <img alt="Street Lights" className="w-full h-full object-cover" src="/images/StreetLights.jpg"/>
+        <img alt="Street Lights" className="w-full h-full object-cover" src="/images/StreetLights/StreetLights.jpg"/>
       </div>
 
 
 
+    </div>
+  );
+};
+
+const NonHomeBackground = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const getParallaxStyle = (depth) => ({
+    transform: `translate3d(${(window.innerWidth / 2 - mousePos.x) * depth * 0.05}px, ${(window.innerHeight / 2 - mousePos.y) * depth * 0.05}px, 0)`,
+    transition: "transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)",
+  });
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+      <div className="absolute inset-0 opacity-[0.14]" style={getParallaxStyle(0.08)}>
+        <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern height="56" id="route-grid" patternUnits="userSpaceOnUse" width="56">
+              <path d="M 56 0 L 0 0 0 56" fill="none" stroke="#006c4f" strokeWidth="1.2"></path>
+            </pattern>
+          </defs>
+          <rect fill="url(#route-grid)" height="100%" width="100%"></rect>
+        </svg>
+      </div>
+
+      <div className="absolute top-[10%] right-[8%] w-72 h-52 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/10 rotate-12 floating-img opacity-45 grayscale hover:grayscale-0 hover:opacity-70 transition-all duration-700" style={getParallaxStyle(0.35)}>
+        <img alt="Sanitation" className="w-full h-full object-cover" src="/images/Sanitation/Sanitation.jpg" />
+      </div>
+      <div className="absolute bottom-[14%] left-[7%] w-64 h-48 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/10 -rotate-6 floating-img opacity-45 grayscale hover:grayscale-0 hover:opacity-70 transition-all duration-700" style={getParallaxStyle(0.5)}>
+        <img alt="Roads" className="w-full h-full object-cover" src="/images/Roads/Roads.jpg" />
+      </div>
+      <div className="absolute top-[38%] left-[12%] w-60 h-44 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/10 rotate-[8deg] floating-img opacity-40 grayscale hover:grayscale-0 hover:opacity-65 transition-all duration-700 hidden md:block" style={getParallaxStyle(0.45)}>
+        <img alt="Drainage" className="w-full h-full object-cover" src="/images/Drainage/Drainage.jpg" />
+      </div>
+      <div className="absolute bottom-[8%] right-[6%] w-72 h-52 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/10 -rotate-[10deg] floating-img opacity-40 grayscale hover:grayscale-0 hover:opacity-65 transition-all duration-700 hidden md:block" style={getParallaxStyle(0.4)}>
+        <img alt="Street Lights" className="w-full h-full object-cover" src="/images/StreetLights/StreetLights.jpg" />
+      </div>
+
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-[120px]" style={getParallaxStyle(0.12)}></div>
+      <div className="absolute bottom-1/3 right-1/4 w-[520px] h-[520px] rounded-full bg-primary/5 blur-[150px]" style={getParallaxStyle(0.18)}></div>
     </div>
   );
 };
@@ -313,23 +460,20 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const departmentImages = {
-    "Roads": "/images/Roads.jpg",
-    "Sanitation": "/images/Sanitation.jpg",
-    "Street Lights": "/images/StreetLights.jpg",
-    "Water Supply": "/images/WaterSupply.jpg",
-    "Drainage": "/images/Drainage.jpg",
-    "Public Parks": "/images/PublicParks.jpg"
+    "Roads": "/images/Roads/Roads.jpg",
+    "Sanitation": "/images/Sanitation/Sanitation.jpg",
+    "Street Lights": "/images/StreetLights/StreetLights.jpg",
+    "Water Supply": "/images/WaterSupply/WaterSupply.jpg",
+    "Drainage": "/images/Drainage/Drainage.jpg",
+    "Public Parks": "/images/PublicParks/PublicParks.jpg"
   };
 
   const getDepartmentImageUrl = (department, title, description) => {
-    if (department && departmentImages[department]) {
-      const text = `${title} ${description}`.toLowerCase();
-      if (department === "Roads" && text.includes("pothole")) {
-        return "/images/Potholes.jpg";
-      }
-      return departmentImages[department];
-    }
-    return "";
+    // Use getRelevantImage to pick a deterministic image from the department pool
+    if (!department) return "";
+    const text = `${title} ${description}`.toLowerCase();
+    if (department === "Roads" && text.includes("pothole")) return "/images/Roads/Potholes.jpg";
+    return getRelevantImage(title || "", description || "", department, `preview:${department}:${title}:${description}`);
   };
 
   const handleChange = (e) => {
@@ -349,7 +493,7 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
         if (autoImage) {
           newData.imageUrl = autoImage;
         } else if (`${newData.title} ${newData.description}`.toLowerCase().includes("pothole")) {
-          newData.imageUrl = "/images/Potholes.jpg";
+          newData.imageUrl = "/images/Roads/Potholes.jpg";
         }
       }
       
@@ -885,6 +1029,13 @@ const Login = () => {
 };
 
 // --- Main App Component ---
+// Render decorative background only when on Home route (uses hooks correctly inside component)
+function BackgroundController() {
+  const location = useLocation();
+  return (
+    location.pathname === '/' ? <ParallaxBackground /> : <NonHomeBackground />
+  );
+}
 
 export default function App() {
   const [portalState, setPortalState] = useState({
@@ -963,24 +1114,18 @@ export default function App() {
   }
 
   const handleLogout = () => {
-    api.logoutAll();
+    api.logout();
   };
 
   return (
     <Router>
       <style>{globalStyles}</style>
       <div className="font-body-md text-on-surface bg-[#F9F7F2] min-h-screen flex flex-col">
-        <Header currentUser={portalState.currentUser} onLogout={handleLogout} />
+        <Header currentUser={portalState.currentUser} onLogout={handleLogout} notifications={portalState.notifications} />
 
         <main className="relative flex-1 pt-24 md:pt-32 pb-24 w-full overflow-x-hidden">
-          <ParallaxBackground />
-          {/* Decorative Background Elements */}
-          <div className="fixed top-[20%] -left-20 w-64 h-80 bg-white rounded-lg shadow-xl -rotate-12 -z-10 overflow-hidden border-8 border-white opacity-40 pointer-events-none">
-            <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHIZtu-aKcB1SQ6PWtrUkHzkIdKY7NJVj75rlIF_qM-9qzPAHR99u7REhz3e10163dZ3HuY7gj6y6Buea0Lza7Jd_Df5PfEGmghkaDpVl1EqRpVDhStXlCT3by2nZcxKV52NuV59_FmZUIKSQRroxyodmXhtJ9YO4MvGHNJB9pfsIV97WfbRlhU_N85GkT0CmhpCAiwx-tXKNbRHLizqQSWB95lx4hrsdxSIYJRFS1CLldSc5HnCvirCPKY7hPxG_W3QL7hA95O74"/>
-          </div>
-          <div className="fixed bottom-[10%] -right-16 w-72 h-56 bg-white rounded-lg shadow-xl rotate-6 -z-10 overflow-hidden border-8 border-white opacity-40 pointer-events-none">
-            <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA85rjydlD00ZZ8FfqEqYrLakMG5AMdQBuwSQ28FdGcpo-e1LT9sznh2yjoM6VgJLS7GeEZo9UC8QnFbPXv4_8AxWu7LN0bwkLJJHM7CBmP1v87p7MwwOmGVYJkN031sdLFOS5dlSE9CWI3QnRxvmUyGBQxqxD9jfer7wCh30QuEKc4lWCgG6WIUPs1UYNd2nZeGNWqx1Shu4D8VvJgM6v6G0P7DeD5kRlGEhFLq25zXnl8q9viewg2RwPcQv2bF7U7ZO0svLd0ozo"/>
-          </div>
+          {/* BackgroundController renders decorative background only on Home route */}
+          <BackgroundController />
 
           {!portalState.currentUser || isAddingAccount ? (
             <div className="max-w-container-max mx-auto px-margin-desktop relative z-20">
@@ -1046,6 +1191,7 @@ export default function App() {
                       departments={portalState.departments}
                       labour={portalState.labour}
                       notifications={portalState.notifications}
+                      dashboardStats={portalState.dashboardStats}
                       currentUser={portalState.currentUser}
                     />
                   </div>
@@ -1226,7 +1372,7 @@ const ReportBug = () => {
 
 // ─── Admin Dashboard ──────────────────────────────────────────────────────────
 
-const AdminDashboard = ({ issues, departments, labour, notifications, currentUser }) => {
+const AdminDashboard = ({ issues, departments, labour, notifications, dashboardStats, currentUser }) => {
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [filterStatus, setFilterStatus] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
@@ -1288,11 +1434,12 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
     return matchStatus && matchSearch;
   });
 
-  const stats = {
+  const stats = dashboardStats || {
     total: issues.length,
     pending: issues.filter(i => i.status === 'Pending').length,
     inProgress: issues.filter(i => i.status === 'In Progress').length,
     resolved: issues.filter(i => i.status === 'Resolved' || i.status === 'Completed').length,
+    completed: issues.filter(i => i.status === 'Completed').length,
   };
 
   const handleStatusUpdate = async (issueId, status) => {
@@ -1342,13 +1489,13 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
   };
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
+    <div className="space-y-8 animate-fade-in-up" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span className="text-[#006c4f] font-label-bold text-[11px] uppercase tracking-widest block mb-1">Administration</span>
-          <h1 className="font-display-lg text-[32px] md:text-[40px] text-[#161d1a] leading-tight">Admin Dashboard</h1>
-          <p className="text-[#3c4a43] text-sm opacity-70 mt-1">Manage civic issues, assign labour, and monitor resolutions.</p>
+          <h1 className="font-display-lg text-[34px] md:text-[44px] text-[#161d1a] leading-[1] tracking-[-0.04em]">Admin Dashboard</h1>
+          <p className="text-[#3c4a43] text-sm opacity-70 mt-2 font-medium tracking-[-0.01em]">Manage civic issues, assign labour, and monitor resolutions.</p>
         </div>
         <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-[#bbcac1]/30 shadow-sm">
           <div className="w-8 h-8 rounded-full bg-[#006c4f] flex items-center justify-center text-white font-bold text-xs">
@@ -1373,8 +1520,8 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
             <div className={`w-11 h-11 ${s.bg} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
               <span className={`material-symbols-outlined ${s.color} text-xl`}>{s.icon}</span>
             </div>
-            <p className="text-[36px] font-display-lg font-extrabold text-[#161d1a] leading-none">{s.value}</p>
-            <p className="text-[11px] font-bold text-[#6c7a72] uppercase tracking-widest mt-1">{s.label}</p>
+            <p className="text-[36px] font-display-lg font-black text-[#161d1a] leading-none tracking-[-0.05em]">{s.value}</p>
+            <p className="text-[11px] font-semibold text-[#6c7a72] uppercase tracking-[0.28em] mt-2">{s.label}</p>
           </div>
         ))}
       </div>
@@ -1385,7 +1532,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
         {/* Issues Table */}
         <div className="xl:col-span-2 bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 overflow-hidden">
           <div className="p-6 border-b border-[#eef6ef] flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-            <h2 className="font-display-lg text-[18px] text-[#161d1a] font-bold">Issue Reports</h2>
+              <h2 className="font-display-lg text-[18px] text-[#161d1a] font-extrabold tracking-[-0.03em]">Issue Reports</h2>
             <div className="flex gap-3 flex-wrap">
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#bbcac1] text-sm">search</span>
@@ -1416,18 +1563,23 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
                 <span className="material-symbols-outlined text-5xl block mb-2">inbox</span>
                 <p className="text-sm font-bold">No issues match your filter</p>
               </div>
-            ) : filtered.map(issue => (
+            ) : filtered.map((issue, index) => (
               <div
                 key={issue.id}
                 onClick={() => setSelectedIssue(issue)}
                 className={`p-5 flex items-start gap-4 cursor-pointer hover:bg-[#f3fbf5] transition-all ${selectedIssue?.id === issue.id ? 'bg-[#eef6ef]' : ''}`}
               >
-                <div className="w-10 h-10 rounded-xl bg-[#eef6ef] flex-shrink-0 overflow-hidden">
-                  <img src={issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department)} alt="" className="w-full h-full object-cover" />
+                <div className="w-10 h-10 rounded-xl bg-[#eef6ef] flex-shrink-0 overflow-hidden ring-1 ring-[#bbcac1]/20 relative">
+                  <img src={getRelevantImage(issue.title, issue.description, issue.department, `thumb:${issue.id}`)} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-[#161d1a] text-sm truncate">{issue.title}</p>
-                  <p className="text-[11px] text-[#6c7a72] mt-0.5">{issue.area} · {issue.department}</p>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="inline-flex items-center justify-center rounded-full bg-[#006c4f]/10 text-[#006c4f] text-[10px] font-black px-2 py-0.5 tracking-[0.22em] flex-shrink-0">
+                      #{String(index + 1).padStart(2, '0')}
+                    </span>
+                    <p className="font-bold text-[#161d1a] text-sm truncate tracking-[-0.02em]">{issue.title}</p>
+                  </div>
+                  <p className="text-[11px] text-[#6c7a72] mt-0.5 font-medium">{issue.area} · {issue.department} · {issue.id}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1.5">
                   <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${statusColor(issue.status)}`}>{issue.status}</span>
@@ -1443,7 +1595,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
 
           {/* Assign Labour Panel */}
           <div className="bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 p-6">
-            <h2 className="font-display-lg text-[16px] text-[#161d1a] font-bold mb-4 flex items-center gap-2">
+            <h2 className="font-display-lg text-[16px] text-[#161d1a] font-extrabold tracking-[-0.03em] mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-[#006c4f]">engineering</span>
               Assign Labour
             </h2>
@@ -1458,8 +1610,8 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
                 {activeTab === 'assign' ? (
                   <form onSubmit={handleAssign} className="space-y-4">
                     <div className="bg-[#eef6ef] rounded-2xl p-4">
-                      <p className="font-bold text-[#161d1a] text-sm line-clamp-2">{selectedIssue.title}</p>
-                      <p className="text-[11px] text-[#6c7a72] mt-1">{selectedIssue.area} · {selectedIssue.department}</p>
+                      <p className="font-bold text-[#161d1a] text-sm line-clamp-2 tracking-[-0.02em]">{selectedIssue.title}</p>
+                      <p className="text-[11px] text-[#6c7a72] mt-1 font-medium">{selectedIssue.area} · {selectedIssue.department} · {selectedIssue.id}</p>
                     </div>
                     <div className="space-y-1">
                       <label className="text-[11px] font-bold text-[#3c4a43] uppercase tracking-wide">Assign Worker</label>
@@ -1579,7 +1731,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, currentUse
 
           {/* Notifications */}
           <div className="bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 p-6">
-            <h2 className="font-display-lg text-[16px] text-[#161d1a] font-bold mb-4 flex items-center gap-2">
+            <h2 className="font-display-lg text-[16px] text-[#161d1a] font-extrabold tracking-[-0.03em] mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-[#006c4f]">notifications</span>
               Recent Alerts
               {notifications?.filter(n => !n.read).length > 0 && (
