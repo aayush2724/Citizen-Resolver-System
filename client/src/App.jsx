@@ -599,55 +599,6 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Issue Title */}
-          <div className="space-y-1">
-            <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Issue Title</label>
-            <input 
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-              className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md placeholder:text-[#bbcac1] transition-all"
-              placeholder="e.g. Major pothole on Sector 4 main road"
-            />
-          </div>
-
-          {/* Priority & Department */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1">
-              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Priority Level</label>
-              <div className="relative">
-                <select 
-                  name="priority"
-                  value={formData.priority}
-                  onChange={handleChange}
-                  className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12"
-                >
-                  <option value="Normal">Normal</option>
-                  <option value="High">High</option>
-                  <option value="Urgent">Urgent</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
-              </div>
-            </div>
-            <div className="space-y-1">
-              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Department</label>
-              <div className="relative">
-                <select 
-                  name="department"
-                  value={formData.department}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12"
-                >
-                  <option value="">Select department</option>
-                  {departments.map(d => <option key={d.id || d._id} value={d.name}>{d.name}</option>)}
-                </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
-              </div>
-            </div>
-          </div>
-
           {/* Location Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-1">
@@ -696,6 +647,55 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
                 >
                   <option value="">Select area</option>
                   {areasList.map(a => <option key={a} value={a}>{a}</option>)}
+                </select>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Issue Title */}
+          <div className="space-y-1">
+            <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Issue Title</label>
+            <input 
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md placeholder:text-[#bbcac1] transition-all"
+              placeholder="e.g. Major pothole on Sector 4 main road"
+            />
+          </div>
+
+          {/* Priority & Department */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1">
+              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Priority Level</label>
+              <div className="relative">
+                <select 
+                  name="priority"
+                  value={formData.priority}
+                  onChange={handleChange}
+                  className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12"
+                >
+                  <option value="Normal">Normal</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <label className="font-label-bold text-[12px] text-[#3c4a43] uppercase tracking-wide px-1">Department</label>
+              <div className="relative">
+                <select 
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-[#eef6ef] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#006c4f] text-body-md pr-12"
+                >
+                  <option value="">Select department</option>
+                  {departments.map(d => <option key={d.id || d._id} value={d.name}>{d.name}</option>)}
                 </select>
                 <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#161d1a]">expand_more</span>
               </div>
