@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "exQVtExTV_ai3sjMm2Xc8"
+uri = "file://client/public/images/hero-bg.png"
+type = "image"
+title = "generated_image"

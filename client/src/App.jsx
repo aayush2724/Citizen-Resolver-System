@@ -392,18 +392,18 @@ const ParallaxBackground = () => {
       {/* ── Single Full-screen Ken Burns Background Image ── */}
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src="/images/Roads/Roads.jpg"
+          src="/images/hero-bg.png"
           alt=""
           className="kb-image absolute inset-0 w-full h-full object-cover"
           style={{ transformOrigin: 'center center' }}
         />
-        {/* Deep layered gradient overlay for readability and brand */}
+        {/* Light natural dark overlay — just enough for text readability, no colour cast */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(135deg, rgba(10,20,50,0.82) 0%, rgba(20,40,90,0.70) 40%, rgba(10,20,40,0.85) 100%)'
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.30) 50%, rgba(0,0,0,0.60) 100%)'
         }} />
-        {/* Subtle blue-tinted vignette at edges */}
+        {/* Vignette at the very edges only */}
         <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(5,15,40,0.55) 100%)'
+          background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.38) 100%)'
         }} />
       </div>
 
