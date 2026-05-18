@@ -46,6 +46,70 @@ const globalStyles = `
     white-space: nowrap;
     direction: ltr;
   }
+  @keyframes kenBurns {
+    0%   { transform: scale(1.0) translate(0%, 0%); }
+    33%  { transform: scale(1.12) translate(-2%, -1%); }
+    66%  { transform: scale(1.08) translate(2%, 1%); }
+    100% { transform: scale(1.15) translate(-1%, 2%); }
+  }
+  @keyframes floatUp {
+    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+    50% { transform: translateY(-28px) rotate(3deg); opacity: 1; }
+  }
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-18px); }
+  }
+  @keyframes scanLine {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.85); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 0.4; }
+    100% { transform: scale(0.85); opacity: 0.8; }
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 30px 8px rgba(33,61,118,0.35); }
+    50% { box-shadow: 0 0 60px 18px rgba(33,61,118,0.6); }
+  }
+  @keyframes particleDrift {
+    0% { transform: translateY(100vh) translateX(0px); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
+  }
+  .kb-image {
+    animation: kenBurns 28s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .float-card {
+    animation: floatUp 6s ease-in-out infinite;
+  }
+  .float-card-2 {
+    animation: floatUp 8s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+  .float-card-3 {
+    animation: floatUp 7s ease-in-out infinite;
+    animation-delay: -4s;
+  }
+  .hero-text-1 { animation: fadeSlideUp 0.8s ease-out 0.1s both; }
+  .hero-text-2 { animation: fadeSlideUp 0.8s ease-out 0.3s both; }
+  .hero-text-3 { animation: fadeSlideUp 0.8s ease-out 0.5s both; }
+  .hero-text-4 { animation: fadeSlideUp 0.8s ease-out 0.7s both; }
+  .hero-text-5 { animation: fadeSlideUp 0.8s ease-out 0.9s both; }
+  .ticker-track { animation: ticker 30s linear infinite; }
+  .scan-line { animation: scanLine 6s linear infinite; }
+  .glow-btn { animation: glowPulse 3s ease-in-out infinite; }
 `;
 
 // --- Components ---
@@ -302,7 +366,6 @@ const Footer = () => (
 const ParallaxBackground = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-
   useEffect(() => {
     const handleMouseMove = (e) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -312,70 +375,116 @@ const ParallaxBackground = () => {
   }, []);
 
   const getParallaxStyle = (depth) => ({
-    transform: `translate3d(${(window.innerWidth / 2 - mousePos.x) * depth * 0.1}px, ${(window.innerHeight / 2 - mousePos.y) * depth * 0.1}px, 0)`,
-    transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)'
+    transform: `translate3d(${(window.innerWidth / 2 - mousePos.x) * depth * 0.06}px, ${(window.innerHeight / 2 - mousePos.y) * depth * 0.06}px, 0)`,
+    transition: 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)'
   });
+
+  const particles = Array.from({ length: 18 }, (_, i) => ({
+    id: i,
+    left: `${(i * 37 + 5) % 95}%`,
+    size: i % 3 === 0 ? 3 : i % 3 === 1 ? 5 : 2,
+    delay: `${(i * 1.3) % 12}s`,
+    duration: `${10 + (i * 1.7) % 14}s`,
+  }));
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      <div className="absolute inset-0 opacity-[0.12]" style={getParallaxStyle(0.1)}>
+      {/* ── Single Full-screen Ken Burns Background Image ── */}
+      <div className="absolute inset-0 overflow-hidden">
+        <img
+          src="/images/Roads/Roads.jpg"
+          alt=""
+          className="kb-image absolute inset-0 w-full h-full object-cover"
+          style={{ transformOrigin: 'center center' }}
+        />
+        {/* Deep layered gradient overlay for readability and brand */}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(135deg, rgba(10,20,50,0.82) 0%, rgba(20,40,90,0.70) 40%, rgba(10,20,40,0.85) 100%)'
+        }} />
+        {/* Subtle blue-tinted vignette at edges */}
+        <div className="absolute inset-0" style={{
+          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(5,15,40,0.55) 100%)'
+        }} />
+      </div>
+
+      {/* ── Animated scan line ── */}
+      <div
+        className="scan-line absolute left-0 right-0 h-px opacity-[0.08]"
+        style={{ background: 'linear-gradient(90deg, transparent, #60a5fa, transparent)' }}
+      />
+
+      {/* ── Grid overlay with parallax ── */}
+      <div className="absolute inset-0 opacity-[0.07]" style={getParallaxStyle(0.08)}>
         <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern height="60" id="hero-grid" patternUnits="userSpaceOnUse" width="60">
-              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#1F345E" strokeWidth="1.5"></path>
+            <pattern height="64" id="hero-grid" patternUnits="userSpaceOnUse" width="64">
+              <path d="M 64 0 L 0 0 0 64" fill="none" stroke="#60a5fa" strokeWidth="1"></path>
             </pattern>
           </defs>
           <rect fill="url(#hero-grid)" height="100%" width="100%"></rect>
         </svg>
       </div>
 
-      <div className="absolute top-1/4 left-10 w-40 h-40 rounded-full bg-[#213D76]/20 blur-xl" style={getParallaxStyle(0.6)}></div>
-      <div className="absolute top-2/3 right-20 w-56 h-56 rounded-full bg-[#213D76]/15 blur-2xl" style={getParallaxStyle(0.3)}></div>
-      <div className="absolute hidden lg:block top-1/3 right-1/4 w-32 h-32 border-4 border-[#213D76]/20 rounded-full" style={getParallaxStyle(0.8)}></div>
+      {/* ── Floating blue glow orbs with parallax ── */}
+      <div className="absolute top-1/4 left-[8%] w-56 h-56 rounded-full blur-3xl opacity-30"
+        style={{ background: 'radial-gradient(circle, #3b82f6, transparent)', ...getParallaxStyle(0.5) }} />
+      <div className="absolute bottom-1/3 right-[10%] w-72 h-72 rounded-full blur-3xl opacity-20"
+        style={{ background: 'radial-gradient(circle, #1d4ed8, transparent)', ...getParallaxStyle(0.3) }} />
+      <div className="absolute top-[60%] left-[45%] w-48 h-48 rounded-full blur-2xl opacity-25"
+        style={{ background: 'radial-gradient(circle, #2563eb, transparent)', ...getParallaxStyle(0.6) }} />
 
-      {/* Additional green blush accents for Home */}
-      <div className="absolute -top-6 left-1/3 w-56 h-56 rounded-full bg-[#213D76]/18 blur-3xl opacity-90" style={getParallaxStyle(0.5)}></div>
-      <div className="absolute top-20 left-1/6 w-28 h-28 rounded-full bg-[#213D76]/25 blur-2xl opacity-90" style={getParallaxStyle(0.7)}></div>
-      <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-gradient-to-r from-[#213D76]/20 to-transparent blur-2xl opacity-90" style={getParallaxStyle(0.4)}></div>
-      <div className="absolute top-10 right-1/3 w-44 h-44 rounded-full bg-[#213D76]/10 blur-3xl opacity-85" style={getParallaxStyle(0.35)}></div>
-      <div className="absolute hidden md:block top-40 right-10 w-32 h-32 rounded-full bg-[#213D76]/12 blur-xl opacity-80" style={getParallaxStyle(0.25)}></div>
+      {/* ── Floating particles ── */}
+      {particles.map(p => (
+        <div
+          key={p.id}
+          className="absolute rounded-full bg-blue-300"
+          style={{
+            left: p.left,
+            bottom: '-10px',
+            width: p.size,
+            height: p.size,
+            opacity: 0,
+            animation: `particleDrift ${p.duration} linear ${p.delay} infinite`,
+          }}
+        />
+      ))}
 
-      {/* ── Scattered Photo Collage ── */}
-
-      {/* Top-right: tilted strongly clockwise */}
-      <div className="absolute top-[6%] right-[5%] w-80 h-56 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white rotate-[14deg] opacity-75 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.45)}>
-        <img alt="Sanitation" className="w-full h-full object-cover" src="/images/Sanitation/Sanitation.jpg"/>
+      {/* ── Floating issue-type badges with parallax ── */}
+      <div className="float-card absolute top-[18%] left-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl"
+        style={getParallaxStyle(0.55)}>
+        <span className="material-symbols-outlined text-amber-300 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>construction</span>
+        <div>
+          <div className="text-[11px] font-bold text-white/90">Roads & Potholes</div>
+          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider">Dept. Active</div>
+        </div>
       </div>
 
-
-
-      {/* Top-left: counter-clockwise lean */}
-      <div className="absolute top-[12%] left-[3%] w-72 h-52 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white -rotate-[10deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.6)}>
-        <img alt="Urban Roads" className="w-full h-full object-cover" src="/images/Roads/Potholes.jpg"/>
+      <div className="float-card-2 absolute top-[22%] right-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl"
+        style={getParallaxStyle(0.45)}>
+        <span className="material-symbols-outlined text-emerald-300 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+        <div>
+          <div className="text-[11px] font-bold text-white/90">Water Supply</div>
+          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider">Monitoring</div>
+        </div>
       </div>
 
-      {/* Mid-left: slightly tilted, peeking from bottom-left edge */}
-      <div className="absolute bottom-[42%] -left-[4%] w-72 h-52 rounded-2xl overflow-hidden shadow-xl border-[5px] border-white -rotate-[8deg] opacity-65 hidden lg:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.7)}>
-        <img alt="Drainage" className="w-full h-full object-cover" src="/images/Drainage/Drainage.jpg"/>
+      <div className="float-card-3 absolute bottom-[28%] right-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl"
+        style={getParallaxStyle(0.65)}>
+        <span className="material-symbols-outlined text-yellow-300 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
+        <div>
+          <div className="text-[11px] font-bold text-white/90">Street Lights</div>
+          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider">12 Pending</div>
+        </div>
       </div>
 
-      {/* Mid-right: steep tilt going left */}
-      <div className="absolute top-[38%] right-[2%] w-64 h-48 rounded-2xl overflow-hidden shadow-xl border-[5px] border-white -rotate-[18deg] opacity-65 hidden lg:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.5)}>
-        <img alt="Public Parks" className="w-full h-full object-cover" src="/images/PublicParks/PublicParks.jpg"/>
+      <div className="float-card absolute bottom-[30%] left-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl"
+        style={{ animationDelay: '-3s', ...getParallaxStyle(0.4) }}>
+        <span className="material-symbols-outlined text-cyan-300 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>water</span>
+        <div>
+          <div className="text-[11px] font-bold text-white/90">Drainage</div>
+          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider">Resolved ✓</div>
+        </div>
       </div>
-
-      {/* Bottom-left: large, gently rotated */}
-      <div className="absolute bottom-[8%] left-[4%] w-96 h-64 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white -rotate-[8deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.55)}>
-        <img alt="City" className="w-full h-full object-cover" src="/images/Roads/Roads.jpg"/>
-      </div>
-
-      {/* Bottom-right: punchy tilt right */}
-      <div className="absolute bottom-[10%] right-[3%] w-80 h-56 rounded-2xl overflow-hidden shadow-2xl border-[5px] border-white rotate-[12deg] opacity-70 hidden md:block transition-transform duration-700 hover:scale-105" style={getParallaxStyle(0.4)}>
-        <img alt="Street Lights" className="w-full h-full object-cover" src="/images/StreetLights/StreetLights.jpg"/>
-      </div>
-
-
-
     </div>
   );
 };
@@ -435,64 +544,145 @@ const Home = ({ issues = [] }) => {
   };
 
   const animatedTotal = useCountUp(stats.total);
-  const animatedResolved = useCountUp(2400); // hardcoded '2.4k' target for demonstration
+  const animatedResolved = useCountUp(2400);
   const animatedActive = useCountUp(stats.total - stats.resolved);
 
   const formatNumber = (num) => {
     return num >= 1000 ? (num / 1000).toFixed(1) + 'k' : num;
   };
 
+  const tickerItems = [
+    { icon: 'construction', label: 'Roads & Potholes' },
+    { icon: 'water_drop', label: 'Water Supply' },
+    { icon: 'lightbulb', label: 'Street Lights' },
+    { icon: 'water', label: 'Drainage' },
+    { icon: 'delete', label: 'Sanitation' },
+    { icon: 'park', label: 'Public Parks' },
+    { icon: 'construction', label: 'Roads & Potholes' },
+    { icon: 'water_drop', label: 'Water Supply' },
+    { icon: 'lightbulb', label: 'Street Lights' },
+    { icon: 'water', label: 'Drainage' },
+    { icon: 'delete', label: 'Sanitation' },
+    { icon: 'park', label: 'Public Parks' },
+  ];
+
   return (
-    <div className="relative w-full h-full min-h-[calc(100vh-120px)] md:min-h-[calc(100vh-160px)] flex flex-col items-center justify-center overflow-hidden font-body-md py-12 md:py-20 animate-fade-in">
-      <div className="relative z-10 flex flex-col items-center text-center px-6 w-full max-w-5xl">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E0EDF8] dark:bg-[#2a322e] border border-[#7E8AA9]/50 dark:border-white/10 mb-4 md:mb-6 scale-75 md:scale-90">
-          <span className="w-2 h-2 rounded-full bg-[#213D76] animate-pulse"></span>
-          <span className="font-label-bold text-xs md:text-[14px] uppercase tracking-widest text-[#1F345E] dark:text-[#7E8AA9]">Official Civic Platform</span>
+    <div className="relative w-full min-h-[calc(100vh-80px)] flex flex-col items-center justify-center overflow-hidden py-16 md:py-24">
+
+      {/* ── Hero Content ── */}
+      <div className="relative z-10 flex flex-col items-center text-center px-6 w-full max-w-5xl mx-auto">
+
+        {/* Live status badge */}
+        <div className="hero-text-1 inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full mb-6 md:mb-8"
+          style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(12px)' }}>
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
+          </span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-white/80">Live Civic Platform</span>
+          <span className="w-px h-3 bg-white/20"></span>
+          <span className="text-[11px] font-semibold text-blue-300">System Active</span>
         </div>
 
-        <h1 className="font-display-lg text-[40px] md:text-[56px] lg:text-[80px] leading-[1.05] mb-4 md:mb-6 font-extrabold text-[#161d1a] dark:text-[#E0EDF8] px-4">
-          Citizen <span className="text-[#213D76]">Resolver</span> System
+        {/* Main headline */}
+        <h1 className="hero-text-2 font-extrabold leading-[1.0] mb-4 md:mb-6 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          <span className="block text-[46px] md:text-[68px] lg:text-[90px] text-white drop-shadow-2xl">
+            Citizen
+          </span>
+          <span className="block text-[46px] md:text-[68px] lg:text-[90px]"
+            style={{ background: 'linear-gradient(90deg, #60a5fa, #93c5fd, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            Resolver System
+          </span>
         </h1>
 
-        <p className="font-body-lg text-[16px] md:text-[18px] text-[#1F345E] dark:text-[#7E8AA9] max-w-2xl mx-auto mb-8 md:mb-10 opacity-80 leading-relaxed px-4">
-          Bridging the gap between citizens and administration with unprecedented transparency and efficiency.
+        {/* Subtitle */}
+        <p className="hero-text-3 text-[15px] md:text-[18px] text-white/60 max-w-xl mx-auto mb-10 md:mb-12 leading-relaxed font-medium">
+          Bridging citizens and administration with real-time transparency, smart assignment, and verifiable resolution tracking.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 md:mb-12 w-full px-4">
-          <NavLink to="/report" className="w-full sm:w-auto bg-[#213D76] text-[#1F345E] font-label-bold text-sm md:text-[14px] px-8 md:px-10 py-4 md:py-5 rounded-full hover:shadow-lg hover:scale-105 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group">
-            REPORT AN ISSUE
-            <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        {/* CTA Buttons */}
+        <div className="hero-text-4 flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 md:mb-16 w-full">
+          <NavLink
+            to="/report"
+            className="glow-btn w-full sm:w-auto flex items-center justify-center gap-2.5 px-9 py-4 rounded-full font-bold text-[14px] uppercase tracking-wider text-white group transition-all hover:scale-105 active:scale-95"
+            style={{ background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)', border: '1px solid rgba(96,165,250,0.4)' }}
+          >
+            <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
+            Report an Issue
+            <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </NavLink>
-          <NavLink to="/public-issues" className="w-full sm:w-auto bg-white dark:bg-[#161d1a] text-[#161d1a] dark:text-[#E0EDF8] font-label-bold text-sm md:text-[14px] px-8 md:px-10 py-4 md:py-5 rounded-full hover:shadow-md border border-[#7E8AA9]/30 transition-all active:scale-95 hover:-translate-y-1 hover:bg-[#7E8AA9]">
-            PUBLIC BOARD
+          <NavLink
+            to="/public-issues"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-9 py-4 rounded-full font-bold text-[14px] uppercase tracking-wider text-white/90 transition-all hover:scale-105 active:scale-95 hover:text-white group"
+            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(12px)' }}
+          >
+            <span className="material-symbols-outlined text-lg">public</span>
+            Public Board
           </NavLink>
         </div>
 
-        {/* Stats Section - Stack on mobile, grid on desktop */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-stretch px-4">
-          <div className="bg-white/80 dark:bg-[#161d1a]/80 backdrop-blur-sm shadow-sm p-5 md:p-6 rounded-xl flex flex-col justify-center items-center group transition-all hover:shadow-xl border border-white/50 dark:border-white/10 order-2 md:order-1">
-            <div className="text-[32px] md:text-[42px] font-display-lg font-extrabold text-[#161d1a] dark:text-[#E0EDF8] leading-none mb-1">{formatNumber(animatedResolved)}</div>
-            <div className="font-label-bold text-[10px] md:text-[12px] text-[#1F345E] dark:text-[#7E8AA9] uppercase tracking-widest">Solved Cases</div>
-            <div className="mt-3 w-8 md:w-10 h-1 bg-[#213D76]/20 group-hover:w-16 transition-all duration-500 rounded-full"></div>
-          </div>
-
-          <div className="bg-[#213D76] shadow-xl p-6 md:p-8 rounded-xl flex flex-col justify-center items-center group hover:scale-[1.02] transition-all text-[#1F345E] order-1 md:order-2">
-            <div className="text-[48px] md:text-[64px] font-display-lg font-extrabold leading-none mb-1">{animatedTotal}</div>
-            <div className="font-label-bold text-[10px] md:text-[12px] uppercase tracking-widest">Total Reports</div>
-            <div className="mt-4 flex gap-1">
-              <span className="w-2 h-2 rounded-full bg-black/20"></span>
-              <span className="w-2 h-2 rounded-full bg-black/20"></span>
-              <span className="w-2 h-2 rounded-full bg-black/40"></span>
+        {/* Stats Row */}
+        <div className="hero-text-5 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 items-stretch px-0 md:px-4">
+          {/* Solved */}
+          <div className="group relative overflow-hidden rounded-2xl p-6 flex flex-col justify-between transition-all hover:scale-[1.02] cursor-default order-2 md:order-1"
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(16px)' }}>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Solved Cases</span>
+              <span className="material-symbols-outlined text-emerald-400 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+            </div>
+            <div className="text-[42px] md:text-[52px] font-extrabold text-white leading-none">{formatNumber(animatedResolved)}</div>
+            <div className="mt-3 h-0.5 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+              <div className="h-full bg-emerald-400 rounded-full group-hover:w-full transition-all duration-1000" style={{ width: '72%' }}></div>
             </div>
           </div>
 
-          <div className="bg-white/80 dark:bg-[#161d1a]/80 backdrop-blur-sm shadow-sm p-5 md:p-6 rounded-xl flex flex-col justify-center items-center group transition-all hover:shadow-xl border border-white/50 dark:border-white/10 order-3 md:order-3">
-            <div className="text-[32px] md:text-[42px] font-display-lg font-extrabold text-[#161d1a] dark:text-[#E0EDF8] leading-none mb-1">{animatedActive}</div>
-            <div className="font-label-bold text-[10px] md:text-[12px] text-[#1F345E] dark:text-[#7E8AA9] uppercase tracking-widest">Active Tasks</div>
-            <div className="mt-3 w-8 md:w-10 h-1 bg-[#213D76]/20 group-hover:w-16 transition-all duration-500 rounded-full"></div>
+          {/* Total — center, featured */}
+          <div className="group relative overflow-hidden rounded-2xl p-7 flex flex-col justify-between transition-all hover:scale-[1.03] cursor-default order-1 md:order-2"
+            style={{ background: 'linear-gradient(135deg, rgba(29,78,216,0.6), rgba(59,130,246,0.4))', border: '1px solid rgba(96,165,250,0.35)', backdropFilter: 'blur(16px)', boxShadow: '0 0 40px rgba(59,130,246,0.2)' }}>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200/60">Total Reports</span>
+              <span className="material-symbols-outlined text-blue-300 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>bar_chart</span>
+            </div>
+            <div className="text-[56px] md:text-[68px] font-extrabold text-white leading-none">{animatedTotal}</div>
+            <div className="flex gap-1.5 mt-3">
+              {[40, 60, 50, 80, 65, 90, 70].map((h, i) => (
+                <div key={i} className="flex-1 rounded-sm bg-blue-300/30 group-hover:bg-blue-300/50 transition-all duration-300"
+                  style={{ height: `${h * 0.28}px`, alignSelf: 'flex-end', transitionDelay: `${i * 40}ms` }}></div>
+              ))}
+            </div>
+          </div>
+
+          {/* Active */}
+          <div className="group relative overflow-hidden rounded-2xl p-6 flex flex-col justify-between transition-all hover:scale-[1.02] cursor-default order-3 md:order-3"
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(16px)' }}>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Active Tasks</span>
+              <span className="material-symbols-outlined text-amber-400 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>pending_actions</span>
+            </div>
+            <div className="text-[42px] md:text-[52px] font-extrabold text-white leading-none">{animatedActive}</div>
+            <div className="mt-3 flex gap-1">
+              {[1,2,3,4,5,6,7,8].map((_, i) => (
+                <span key={i} className={`flex-1 h-1.5 rounded-full ${i < 5 ? 'bg-amber-400' : 'bg-white/10'}`}></span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* ── Issue Category Ticker ── */}
+      <div className="absolute bottom-0 left-0 right-0 overflow-hidden py-3"
+        style={{ background: 'rgba(0,0,0,0.35)', borderTop: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(8px)' }}>
+        <div className="ticker-track flex items-center gap-0" style={{ width: 'max-content' }}>
+          {tickerItems.map((item, i) => (
+            <div key={i} className="flex items-center gap-2 px-6 shrink-0">
+              <span className="material-symbols-outlined text-blue-300/70 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40">{item.label}</span>
+              <span className="mx-3 text-white/10">·</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 };
