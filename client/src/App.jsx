@@ -478,108 +478,129 @@ const ParallaxBackground = () => {
   }));
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      {/* ── Single Full-screen Ken Burns Background Image ── */}
-      <div className="absolute inset-0 overflow-hidden">
-        <img
-          src="/images/india-community_2.jpg"
-          alt=""
-          className="kb-image absolute inset-0 w-full h-full object-cover"
-          style={{ transformOrigin: 'center center' }}
-        />
-        {/* Cinematic overlay — preserves image colours, darkens for readability */}
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0.55) 100%)'
-        }} />
-        {/* Centre spotlight keeps hero text area bright */}
-        <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 70% 60% at 50% 45%, transparent 0%, rgba(0,0,0,0.30) 100%)'
-        }} />
-      </div>
+    <>
+      {/* ── Background layer (non-interactive) ── */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+        {/* ── Single Full-screen Ken Burns Background Image ── */}
+        <div className="absolute inset-0 overflow-hidden">
+          <img
+            src="/images/india-community_2.jpg"
+            alt=""
+            className="kb-image absolute inset-0 w-full h-full object-cover"
+            style={{ transformOrigin: 'center center' }}
+          />
+          {/* Cinematic overlay — preserves image colours, darkens for readability */}
+          <div className="absolute inset-0" style={{
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0.55) 100%)'
+          }} />
+          {/* Centre spotlight keeps hero text area bright */}
+          <div className="absolute inset-0" style={{
+            background: 'radial-gradient(ellipse 70% 60% at 50% 45%, transparent 0%, rgba(0,0,0,0.30) 100%)'
+          }} />
+        </div>
 
-      {/* ── Animated scan line ── */}
-      <div
-        className="scan-line absolute left-0 right-0 h-px opacity-[0.08]"
-        style={{ background: 'linear-gradient(90deg, transparent, #60a5fa, transparent)' }}
-      />
-
-      {/* ── Grid overlay with parallax ── */}
-      <div className="absolute inset-0 opacity-[0.07]" style={getParallaxStyle(0.08)}>
-        <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern height="64" id="hero-grid" patternUnits="userSpaceOnUse" width="64">
-              <path d="M 64 0 L 0 0 0 64" fill="none" stroke="#60a5fa" strokeWidth="1"></path>
-            </pattern>
-          </defs>
-          <rect fill="url(#hero-grid)" height="100%" width="100%"></rect>
-        </svg>
-      </div>
-
-      {/* ── Floating blue glow orbs with parallax ── */}
-      <div className="absolute top-1/4 left-[8%] w-56 h-56 rounded-full blur-3xl opacity-30"
-        style={{ background: 'radial-gradient(circle, #3b82f6, transparent)', ...getParallaxStyle(0.5) }} />
-      <div className="absolute bottom-1/3 right-[10%] w-72 h-72 rounded-full blur-3xl opacity-20"
-        style={{ background: 'radial-gradient(circle, #1d4ed8, transparent)', ...getParallaxStyle(0.3) }} />
-      <div className="absolute top-[60%] left-[45%] w-48 h-48 rounded-full blur-2xl opacity-25"
-        style={{ background: 'radial-gradient(circle, #2563eb, transparent)', ...getParallaxStyle(0.6) }} />
-
-      {/* ── Floating particles ── */}
-      {particles.map(p => (
+        {/* ── Animated scan line ── */}
         <div
-          key={p.id}
-          className="absolute rounded-full bg-blue-300"
-          style={{
-            left: p.left,
-            bottom: '-10px',
-            width: p.size,
-            height: p.size,
-            opacity: 0,
-            animation: `particleDrift ${p.duration} linear ${p.delay} infinite`,
-          }}
+          className="scan-line absolute left-0 right-0 h-px opacity-[0.08]"
+          style={{ background: 'linear-gradient(90deg, transparent, #60a5fa, transparent)' }}
         />
-      ))}
 
-      {/* ── Floating issue-type badges with parallax ── */}
-      <NavLink to="/report" className="float-badge float-card absolute top-[18%] left-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:bg-amber-400/15 hover:border-amber-300/50 hover:shadow-amber-300/25 hover:shadow-2xl"
-        style={getParallaxStyle(0.55)}>
-        <span className="material-symbols-outlined text-amber-300 text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-8deg]" style={{ fontVariationSettings: "'FILL' 1" }}>construction</span>
-        <div>
-          <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Roads & Potholes</div>
-          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider group-hover:text-amber-200/80 transition-colors">Dept. Active</div>
+        {/* ── Grid overlay with parallax ── */}
+        <div className="absolute inset-0 opacity-[0.07]" style={getParallaxStyle(0.08)}>
+          <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern height="64" id="hero-grid" patternUnits="userSpaceOnUse" width="64">
+                <path d="M 64 0 L 0 0 0 64" fill="none" stroke="#60a5fa" strokeWidth="1"></path>
+              </pattern>
+            </defs>
+            <rect fill="url(#hero-grid)" height="100%" width="100%"></rect>
+          </svg>
         </div>
-        <span className="material-symbols-outlined text-white/0 text-sm ml-1 group-hover:text-amber-200/70 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">arrow_forward</span>
-      </NavLink>
 
-      <NavLink to="/report" className="float-badge float-card-2 absolute top-[22%] right-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:bg-emerald-400/15 hover:border-emerald-300/50 hover:shadow-emerald-300/25 hover:shadow-2xl"
-        style={getParallaxStyle(0.45)}>
-        <span className="material-symbols-outlined text-emerald-300 text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[8deg]" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
-        <div>
-          <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Water Supply</div>
-          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider group-hover:text-emerald-200/80 transition-colors">Monitoring</div>
-        </div>
-        <span className="material-symbols-outlined text-white/0 text-sm ml-1 group-hover:text-emerald-200/70 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">arrow_forward</span>
-      </NavLink>
+        {/* ── Floating blue glow orbs with parallax ── */}
+        <div className="absolute top-1/4 left-[8%] w-56 h-56 rounded-full blur-3xl opacity-30"
+          style={{ background: 'radial-gradient(circle, #3b82f6, transparent)', ...getParallaxStyle(0.5) }} />
+        <div className="absolute bottom-1/3 right-[10%] w-72 h-72 rounded-full blur-3xl opacity-20"
+          style={{ background: 'radial-gradient(circle, #1d4ed8, transparent)', ...getParallaxStyle(0.3) }} />
+        <div className="absolute top-[60%] left-[45%] w-48 h-48 rounded-full blur-2xl opacity-25"
+          style={{ background: 'radial-gradient(circle, #2563eb, transparent)', ...getParallaxStyle(0.6) }} />
 
-      <NavLink to="/report" className="float-badge float-card-3 absolute bottom-[28%] right-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:bg-yellow-400/15 hover:border-yellow-300/50 hover:shadow-yellow-300/25 hover:shadow-2xl"
-        style={getParallaxStyle(0.65)}>
-        <span className="material-symbols-outlined text-yellow-300 text-lg transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
-        <div>
-          <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Street Lights</div>
-          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider group-hover:text-yellow-200/80 transition-colors">12 Pending</div>
-        </div>
-        <span className="material-symbols-outlined text-white/0 text-sm ml-1 group-hover:text-yellow-200/70 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">arrow_forward</span>
-      </NavLink>
+        {/* ── Floating particles ── */}
+        {particles.map(p => (
+          <div
+            key={p.id}
+            className="absolute rounded-full bg-blue-300"
+            style={{
+              left: p.left,
+              bottom: '-10px',
+              width: p.size,
+              height: p.size,
+              opacity: 0,
+              animation: `particleDrift ${p.duration} linear ${p.delay} infinite`,
+            }}
+          />
+        ))}
+      </div>
 
-      <NavLink to="/report" className="float-badge float-card absolute bottom-[30%] left-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:bg-cyan-400/15 hover:border-cyan-300/50 hover:shadow-cyan-300/25 hover:shadow-2xl"
-        style={{ animationDelay: '-3s', ...getParallaxStyle(0.4) }}>
-        <span className="material-symbols-outlined text-cyan-300 text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[6deg]" style={{ fontVariationSettings: "'FILL' 1" }}>water</span>
-        <div>
-          <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Drainage</div>
-          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider group-hover:text-cyan-200/80 transition-colors">Resolved ✓</div>
-        </div>
-        <span className="material-symbols-outlined text-white/0 text-sm ml-1 group-hover:text-cyan-200/70 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">arrow_forward</span>
-      </NavLink>
-    </div>
+      {/* ── Floating badges — own layer above content so hover events work ── */}
+      <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden select-none">
+        <NavLink to="/report"
+          className="float-card absolute top-[18%] left-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:border-amber-300/60 hover:shadow-2xl"
+          style={{ ...getParallaxStyle(0.55), textDecoration: 'none' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(251,191,36,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(251,191,36,0.35)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
+        >
+          <span className="material-symbols-outlined text-amber-300 text-lg transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" style={{ fontVariationSettings: "'FILL' 1" }}>construction</span>
+          <div>
+            <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Roads & Potholes</div>
+            <div className="text-[9px] text-blue-200/70 group-hover:text-amber-200/80 font-semibold uppercase tracking-wider transition-colors">Dept. Active</div>
+          </div>
+          <span className="material-symbols-outlined text-amber-300/0 text-sm ml-0.5 group-hover:text-amber-300/80 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100">arrow_forward</span>
+        </NavLink>
+
+        <NavLink to="/report"
+          className="float-card-2 absolute top-[22%] right-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:border-emerald-300/60 hover:shadow-2xl"
+          style={{ ...getParallaxStyle(0.45), textDecoration: 'none' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(52,211,153,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(52,211,153,0.35)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
+        >
+          <span className="material-symbols-outlined text-emerald-300 text-lg transition-transform duration-300 group-hover:scale-125 group-hover:rotate-6" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+          <div>
+            <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Water Supply</div>
+            <div className="text-[9px] text-blue-200/70 group-hover:text-emerald-200/80 font-semibold uppercase tracking-wider transition-colors">Monitoring</div>
+          </div>
+          <span className="material-symbols-outlined text-emerald-300/0 text-sm ml-0.5 group-hover:text-emerald-300/80 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100">arrow_forward</span>
+        </NavLink>
+
+        <NavLink to="/report"
+          className="float-card-3 absolute bottom-[28%] right-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:border-yellow-300/60 hover:shadow-2xl"
+          style={{ ...getParallaxStyle(0.65), textDecoration: 'none' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(253,224,71,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(253,224,71,0.35)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
+        >
+          <span className="material-symbols-outlined text-yellow-300 text-lg transition-transform duration-300 group-hover:scale-125 group-hover:-translate-y-1" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
+          <div>
+            <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Street Lights</div>
+            <div className="text-[9px] text-blue-200/70 group-hover:text-yellow-200/80 font-semibold uppercase tracking-wider transition-colors">12 Pending</div>
+          </div>
+          <span className="material-symbols-outlined text-yellow-300/0 text-sm ml-0.5 group-hover:text-yellow-300/80 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100">arrow_forward</span>
+        </NavLink>
+
+        <NavLink to="/report"
+          className="float-card absolute bottom-[30%] left-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:border-cyan-300/60 hover:shadow-2xl"
+          style={{ animationDelay: '-3s', ...getParallaxStyle(0.4), textDecoration: 'none' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(103,232,249,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(103,232,249,0.35)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
+        >
+          <span className="material-symbols-outlined text-cyan-300 text-lg transition-transform duration-300 group-hover:scale-125 group-hover:rotate-6" style={{ fontVariationSettings: "'FILL' 1" }}>water</span>
+          <div>
+            <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Drainage</div>
+            <div className="text-[9px] text-blue-200/70 group-hover:text-cyan-200/80 font-semibold uppercase tracking-wider transition-colors">Resolved ✓</div>
+          </div>
+          <span className="material-symbols-outlined text-cyan-300/0 text-sm ml-0.5 group-hover:text-cyan-300/80 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100">arrow_forward</span>
+        </NavLink>
+      </div>
+    </>
   );
 };
 
