@@ -1,8 +1,31 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "exQVtExTV_ai3sjMm2Xc8"
 uri = "file://client/public/images/hero-bg.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "hZ-qy4PZtxMixkVzDscNb"
+uri = "file://attached_assets/stock_images/citizens-community_1.jpg"
+type = "image"
+title = "citizens community gathering city neighborhood protest"
+
+[[outputs]]
+id = "PU_ieDoI3DhS6JGECCRyS"
+uri = "file://attached_assets/stock_images/road-pothole_1.jpg"
+type = "image"
+title = "pothole road damage city infrastructure problem"
+
+[[outputs]]
+id = "0ESKuAkdYOYO1Bp18OBH8"
+uri = "file://attached_assets/stock_images/urban-india-street_1.jpg"
+type = "image"
+title = "crowded urban street India city infrastructure road"
+
+[[outputs]]
+id = "WK_4tYFwsuEyUPq-R7CQV"
+uri = "file://attached_assets/stock_images/road-pothole_2.jpg"
+type = "image"
+title = "pothole road damage city infrastructure problem"

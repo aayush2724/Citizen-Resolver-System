@@ -110,7 +110,97 @@ const globalStyles = `
   .ticker-track { animation: ticker 30s linear infinite; }
   .scan-line { animation: scanLine 6s linear infinite; }
   .glow-btn { animation: glowPulse 3s ease-in-out infinite; }
+
+  @keyframes shimmer {
+    0%   { transform: translateX(-120%) skewX(-15deg); }
+    100% { transform: translateX(220%) skewX(-15deg); }
+  }
+  @keyframes rippleOut {
+    0%   { transform: scale(0); opacity: 0.5; }
+    100% { transform: scale(4); opacity: 0; }
+  }
+  @keyframes btnBorderPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(96,165,250,0.5), 0 8px 32px rgba(29,78,216,0.35); }
+    50%       { box-shadow: 0 0 0 6px rgba(96,165,250,0), 0 12px 40px rgba(29,78,216,0.55); }
+  }
+  @keyframes arrowBounce {
+    0%, 100% { transform: translateX(0); }
+    50%       { transform: translateX(5px); }
+  }
+  .btn-primary-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+    transform: translateX(-120%) skewX(-15deg);
+  }
+  .btn-primary-shimmer:hover::after {
+    animation: shimmer 0.7s ease-in-out;
+  }
+  .btn-primary-shimmer:hover {
+    animation: btnBorderPulse 1.5s ease-in-out infinite;
+  }
+  .btn-primary-shimmer .arrow-icon {
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .btn-primary-shimmer:hover .arrow-icon {
+    animation: arrowBounce 0.5s ease-in-out infinite;
+  }
+  .btn-ghost-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform: translateX(-120%) skewX(-15deg);
+  }
+  .btn-ghost-shimmer:hover::after {
+    animation: shimmer 0.7s ease-in-out;
+  }
+  .btn-ghost-shimmer:hover {
+    background: rgba(255,255,255,0.14) !important;
+    border-color: rgba(255,255,255,0.4) !important;
+  }
+  .ripple-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    pointer-events: none;
+    animation: rippleOut 0.7s ease-out forwards;
+  }
 `;
+
+// --- Ripple Button ---
+const RippleButton = ({ to, className, style, children, onClick }) => {
+  const [ripples, setRipples] = React.useState([]);
+  const ref = React.useRef(null);
+
+  const handleClick = (e) => {
+    const rect = ref.current.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.6;
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+    const id = Date.now();
+    setRipples(prev => [...prev, { id, x, y, size }]);
+    setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 700);
+    if (onClick) onClick(e);
+  };
+
+  const Tag = to ? NavLink : 'button';
+  return (
+    <Tag to={to} ref={ref} className={className} style={style} onClick={handleClick}>
+      {children}
+      {ripples.map(r => (
+        <span
+          key={r.id}
+          className="ripple-circle"
+          style={{ left: r.x, top: r.y, width: r.size, height: r.size }}
+        />
+      ))}
+    </Tag>
+  );
+};
 
 // --- Components ---
 
@@ -392,18 +482,18 @@ const ParallaxBackground = () => {
       {/* ── Single Full-screen Ken Burns Background Image ── */}
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src="/images/hero-bg.png"
+          src="/images/hero-bg-stock.jpg"
           alt=""
           className="kb-image absolute inset-0 w-full h-full object-cover"
           style={{ transformOrigin: 'center center' }}
         />
-        {/* Light natural dark overlay — just enough for text readability, no colour cast */}
+        {/* Cinematic overlay — preserves image colours, darkens for readability */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.30) 50%, rgba(0,0,0,0.60) 100%)'
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0.55) 100%)'
         }} />
-        {/* Vignette at the very edges only */}
+        {/* Centre spotlight keeps hero text area bright */}
         <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.38) 100%)'
+          background: 'radial-gradient(ellipse 70% 60% at 50% 45%, transparent 0%, rgba(0,0,0,0.30) 100%)'
         }} />
       </div>
 
@@ -507,32 +597,52 @@ const NonHomeBackground = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      <div className="absolute inset-0 opacity-[0.14]" style={getParallaxStyle(0.08)}>
+      {/* ── Real photo background, blurred & dimmed ── */}
+      <div className="absolute inset-0">
+        <img
+          src="/images/inner-bg.jpg"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: 'blur(3px) brightness(0.45) saturate(0.7)', transform: 'scale(1.05)' }}
+        />
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(135deg, rgba(224,237,248,0.92) 0%, rgba(255,255,255,0.88) 50%, rgba(224,237,248,0.92) 100%)'
+        }} />
+      </div>
+
+      {/* ── Subtle grid over white ── */}
+      <div className="absolute inset-0 opacity-[0.06]" style={getParallaxStyle(0.06)}>
         <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern height="56" id="route-grid" patternUnits="userSpaceOnUse" width="56">
-              <path d="M 56 0 L 0 0 0 56" fill="none" stroke="#1F345E" strokeWidth="1.2"></path>
+            <pattern height="48" id="route-grid" patternUnits="userSpaceOnUse" width="48">
+              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#1F345E" strokeWidth="1"></path>
             </pattern>
           </defs>
           <rect fill="url(#route-grid)" height="100%" width="100%"></rect>
         </svg>
       </div>
 
-      <div className="absolute top-[10%] right-[8%] w-72 h-52 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/10 rotate-12 floating-img opacity-45 grayscale hover:grayscale-0 hover:opacity-70 transition-all duration-700" style={getParallaxStyle(0.35)}>
+      {/* ── Floating civic photo cards (coloured, with parallax) ── */}
+      <div className="absolute top-[10%] right-[5%] w-56 h-40 rounded-2xl overflow-hidden shadow-2xl border-[3px] border-white rotate-[10deg] opacity-60 hidden md:block transition-all duration-700 hover:opacity-90 hover:scale-105" style={getParallaxStyle(0.35)}>
         <img alt="Sanitation" className="w-full h-full object-cover" src="/images/Sanitation/Sanitation.jpg" />
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Sanitation</div>
       </div>
-      <div className="absolute bottom-[14%] left-[7%] w-64 h-48 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/10 -rotate-6 floating-img opacity-45 grayscale hover:grayscale-0 hover:opacity-70 transition-all duration-700" style={getParallaxStyle(0.5)}>
+      <div className="absolute bottom-[16%] left-[4%] w-52 h-38 rounded-2xl overflow-hidden shadow-2xl border-[3px] border-white -rotate-[7deg] opacity-55 hidden md:block transition-all duration-700 hover:opacity-85 hover:scale-105" style={getParallaxStyle(0.5)}>
         <img alt="Roads" className="w-full h-full object-cover" src="/images/Roads/Roads.jpg" />
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Roads</div>
       </div>
-      <div className="absolute top-[38%] left-[12%] w-60 h-44 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/10 rotate-[8deg] floating-img opacity-40 grayscale hover:grayscale-0 hover:opacity-65 transition-all duration-700 hidden md:block" style={getParallaxStyle(0.45)}>
+      <div className="absolute top-[42%] left-[3%] w-48 h-36 rounded-2xl overflow-hidden shadow-xl border-[3px] border-white rotate-[5deg] opacity-50 hidden lg:block transition-all duration-700 hover:opacity-80 hover:scale-105" style={getParallaxStyle(0.45)}>
         <img alt="Drainage" className="w-full h-full object-cover" src="/images/Drainage/Drainage.jpg" />
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Drainage</div>
       </div>
-      <div className="absolute bottom-[8%] right-[6%] w-72 h-52 rounded-2xl overflow-hidden shadow-xl border-2 border-primary/10 -rotate-[10deg] floating-img opacity-40 grayscale hover:grayscale-0 hover:opacity-65 transition-all duration-700 hidden md:block" style={getParallaxStyle(0.4)}>
+      <div className="absolute bottom-[10%] right-[4%] w-52 h-38 rounded-2xl overflow-hidden shadow-xl border-[3px] border-white -rotate-[9deg] opacity-50 hidden lg:block transition-all duration-700 hover:opacity-80 hover:scale-105" style={getParallaxStyle(0.4)}>
         <img alt="Street Lights" className="w-full h-full object-cover" src="/images/StreetLights/StreetLights.jpg" />
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Street Lights</div>
       </div>
-
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-[120px]" style={getParallaxStyle(0.12)}></div>
-      <div className="absolute bottom-1/3 right-1/4 w-[520px] h-[520px] rounded-full bg-primary/5 blur-[150px]" style={getParallaxStyle(0.18)}></div>
+      <div className="absolute top-[18%] left-[5%] w-44 h-32 rounded-2xl overflow-hidden shadow-xl border-[3px] border-white -rotate-[4deg] opacity-50 hidden lg:block transition-all duration-700 hover:opacity-80 hover:scale-105" style={getParallaxStyle(0.55)}>
+        <img alt="Water" className="w-full h-full object-cover" src="/images/WaterSupply/WaterSupply.jpg" />
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Water Supply</div>
+      </div>
     </div>
   );
 };
@@ -602,23 +712,24 @@ const Home = ({ issues = [] }) => {
 
         {/* CTA Buttons */}
         <div className="hero-text-4 flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 md:mb-16 w-full">
-          <NavLink
+          <RippleButton
             to="/report"
-            className="glow-btn w-full sm:w-auto flex items-center justify-center gap-2.5 px-9 py-4 rounded-full font-bold text-[14px] uppercase tracking-wider text-white group transition-all hover:scale-105 active:scale-95"
-            style={{ background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)', border: '1px solid rgba(96,165,250,0.4)' }}
+            className="btn-primary-shimmer relative overflow-hidden w-full sm:w-auto flex items-center justify-center gap-2.5 px-9 py-4 rounded-full font-bold text-[14px] uppercase tracking-wider text-white active:scale-95 transition-transform duration-150"
+            style={{ background: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 60%, #60a5fa 100%)', border: '1px solid rgba(96,165,250,0.5)' }}
           >
-            <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
-            Report an Issue
-            <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </NavLink>
-          <NavLink
+            <span className="material-symbols-outlined text-lg relative z-10" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
+            <span className="relative z-10">Report an Issue</span>
+            <span className="arrow-icon material-symbols-outlined text-base relative z-10">arrow_forward</span>
+          </RippleButton>
+
+          <RippleButton
             to="/public-issues"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-9 py-4 rounded-full font-bold text-[14px] uppercase tracking-wider text-white/90 transition-all hover:scale-105 active:scale-95 hover:text-white group"
-            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.18)', backdropFilter: 'blur(12px)' }}
+            className="btn-ghost-shimmer relative overflow-hidden w-full sm:w-auto flex items-center justify-center gap-2.5 px-9 py-4 rounded-full font-bold text-[14px] uppercase tracking-wider text-white/90 active:scale-95 transition-all duration-200 hover:text-white"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.22)', backdropFilter: 'blur(16px)' }}
           >
-            <span className="material-symbols-outlined text-lg">public</span>
-            Public Board
-          </NavLink>
+            <span className="material-symbols-outlined text-lg relative z-10">public</span>
+            <span className="relative z-10">Public Board</span>
+          </RippleButton>
         </div>
 
         {/* Stats Row */}
@@ -1490,12 +1601,20 @@ const PublicIssues = ({ issues, onOpenIssue }) => {
             <IssueCard key={issue.id} issue={issue} onOpen={onOpenIssue} />
           ))
         ) : (
-          <div className="col-span-full py-20 text-center bg-white dark:bg-[#161d1a] rounded-[2rem] border border-outline-variant/20">
-            <div className="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="text-on-surface-variant" size={32} />
+          <div className="col-span-full relative overflow-hidden rounded-[2rem] border border-[#E0EDF8] dark:border-white/10">
+            <div className="absolute inset-0 grid grid-cols-4">
+              {['/images/Roads/Roads.jpg', '/images/Sanitation/Sanitation.jpg', '/images/Drainage/Drainage.jpg', '/images/PublicParks/PublicParks.jpg'].map((src, i) => (
+                <img key={i} src={src} alt="" className="w-full h-full object-cover opacity-15 dark:opacity-10" style={{ filter: 'saturate(0.4)' }} />
+              ))}
             </div>
-            <h3 className="text-headline-sm font-display-lg text-on-surface">No issues found</h3>
-            <p className="text-body-md text-on-surface-variant">Try adjusting your search or filters.</p>
+            <div className="absolute inset-0 bg-white/85 dark:bg-[#161d1a]/88 backdrop-blur-sm" />
+            <div className="relative z-10 py-16 text-center">
+              <div className="w-16 h-16 bg-[#E0EDF8] dark:bg-[#2a322e] rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-[#1F345E] dark:text-[#7E8AA9] text-3xl">search_off</span>
+              </div>
+              <h3 className="text-[18px] font-extrabold text-[#161d1a] dark:text-[#E0EDF8] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>No issues found</h3>
+              <p className="text-[13px] text-[#7E8AA9]">Try adjusting your search or filters.</p>
+            </div>
           </div>
         )}
       </div>
@@ -1520,15 +1639,30 @@ const MyIssues = ({ issues, currentUser, onOpenIssue }) => {
           ))}
         </div>
       ) : (
-        <div className="py-20 text-center bg-white dark:bg-[#161d1a] rounded-[2rem] border border-outline-variant/20">
-          <div className="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-4">
-            <Shield className="text-on-surface-variant" size={32} />
+        <div className="relative overflow-hidden rounded-[2rem] border border-[#E0EDF8] dark:border-white/10">
+          {/* Background collage */}
+          <div className="absolute inset-0 grid grid-cols-3">
+            {['/images/Roads/Roads.jpg', '/images/Drainage/Drainage.jpg', '/images/StreetLights/StreetLights.jpg'].map((src, i) => (
+              <img key={i} src={src} alt="" className="w-full h-full object-cover opacity-20 dark:opacity-10" style={{ filter: 'saturate(0.5)' }} />
+            ))}
           </div>
-          <h3 className="text-headline-sm font-display-lg text-on-surface">No reports yet</h3>
-          <p className="text-body-md text-on-surface-variant mb-8">You haven't submitted any issues yet.</p>
-          <NavLink to="/report" className="bg-primary text-white px-10 py-4 rounded-full font-label-bold shadow-lg hover:shadow-xl transition-all">
-            Submit Your First Report
-          </NavLink>
+          <div className="absolute inset-0 bg-white/80 dark:bg-[#161d1a]/85 backdrop-blur-sm" />
+          <div className="relative z-10 py-20 text-center px-6">
+            <div className="w-20 h-20 bg-[#E0EDF8] dark:bg-[#2a322e] rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+              <span className="material-symbols-outlined text-[#1F345E] dark:text-[#7E8AA9] text-4xl">shield_person</span>
+            </div>
+            <h3 className="text-[22px] font-extrabold text-[#161d1a] dark:text-[#E0EDF8] mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>No reports yet</h3>
+            <p className="text-[14px] text-[#7E8AA9] mb-8 max-w-xs mx-auto">You haven't submitted any civic issues. Be the first to make a difference in your community.</p>
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {['Potholes', 'Street Lights', 'Drainage', 'Sanitation'].map(tag => (
+                <span key={tag} className="px-3 py-1 rounded-full bg-[#E0EDF8] dark:bg-[#2a322e] text-[#1F345E] dark:text-[#7E8AA9] text-[11px] font-bold uppercase tracking-wider">{tag}</span>
+              ))}
+            </div>
+            <NavLink to="/report" className="inline-flex items-center gap-2 bg-[#213D76] text-white px-10 py-4 rounded-full font-bold text-[13px] uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+              <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
+              Submit Your First Report
+            </NavLink>
+          </div>
         </div>
       )}
     </div>
@@ -1801,9 +1935,12 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
 
           <div className="divide-y divide-[#E0EDF8] max-h-[520px] overflow-y-auto">
             {filtered.length === 0 ? (
-              <div className="py-16 text-center text-[#7E8AA9]">
-                <span className="material-symbols-outlined text-5xl block mb-2">inbox</span>
-                <p className="text-sm font-bold">No issues match your filter</p>
+              <div className="py-14 text-center">
+                <div className="w-14 h-14 bg-[#E0EDF8] dark:bg-[#2a322e] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="material-symbols-outlined text-[#1F345E] dark:text-[#7E8AA9] text-2xl">inbox</span>
+                </div>
+                <p className="text-sm font-bold text-[#7E8AA9]">No issues match your filter</p>
+                <p className="text-[11px] text-[#7E8AA9]/60 mt-1">Try a different status or search term</p>
               </div>
             ) : filtered.map((issue, index) => (
               <div
