@@ -245,7 +245,7 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
   const unreadCount = notifications?.filter(n => !n.read).length || 0;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-3 max-w-container-max mx-auto bg-white/80 dark:bg-[#161d1a]/80 backdrop-blur-md dark:bg-surface-dim rounded-full mt-4 w-[95%] shadow-sm flex-shrink-0 border border-[#7E8AA9]/30 dark:border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-3 max-w-container-max mx-auto bg-white/80 dark:bg-[#0c1422]/95 backdrop-blur-md rounded-full mt-4 w-[95%] shadow-sm flex-shrink-0 border border-[#7E8AA9]/30 dark:border-white/10">
       <div className="flex items-center gap-3">
         <div className="bg-[#213D76] p-2 rounded-xl flex items-center justify-center shadow-sm shadow-[#213D76]/20">
           <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
@@ -257,28 +257,28 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
           >
             Citizen Resolver
           </span>
-          <span className="text-[9px] uppercase tracking-[0.28em] font-bold text-[#1F345E] opacity-80" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <span className="text-[9px] uppercase tracking-[0.28em] font-bold text-[#1F345E] opacity-80 dark:text-[#9DB4E6] dark:opacity-100" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             Empowering Communities
           </span>
         </div>
       </div>
-      <nav className="hidden md:flex items-center bg-[#E0EDF8] dark:bg-[#2a322e]/50 rounded-full p-1 ml-4">
-        <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] text-white shadow-md' : 'text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
-        <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] text-white shadow-md' : 'text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
-        <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] text-white shadow-md' : 'text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
-        <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] text-white shadow-md' : 'text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
+      <nav className="hidden md:flex items-center bg-[#E0EDF8] dark:bg-[#111b2d]/95 rounded-full p-1 ml-4 dark:border dark:border-white/10">
+        <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
+        <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
+        <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
+        <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
         {currentUser?.role === 'admin' && (
-          <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] text-white shadow-md' : 'text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
+          <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
         )}
-        <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] text-white shadow-md' : 'text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
+        <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
       </nav>
 
       <div className="flex items-center gap-3">
         <button
           onClick={toggleTheme}
-          className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white dark:bg-[#161d1a] shadow-sm hover:bg-[#E0EDF8] dark:bg-[#2a322e] transition-all border border-[#7E8AA9]/20 dark:border-white/10 dark:bg-[#161d1a] dark:border-white/10 dark:hover:bg-[#2a322e]"
+          className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white dark:bg-[#101826] shadow-sm hover:bg-[#E0EDF8] dark:hover:bg-[#1a2740] transition-all border border-[#7E8AA9]/20 dark:border-white/10"
         >
-          <span className="material-symbols-outlined text-[#1F345E] dark:text-[#7E8AA9] dark:text-[#E0EDF8] text-xl">
+          <span className="material-symbols-outlined text-[#1F345E] dark:text-[#EAF2FF] text-xl">
             {isDark ? 'light_mode' : 'dark_mode'}
           </span>
         </button>
@@ -286,9 +286,9 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
         <div className="relative">
           <button
             onClick={() => setNotifOpen(!notifOpen)}
-            className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white dark:bg-[#161d1a] shadow-sm hover:bg-[#E0EDF8] dark:bg-[#2a322e] transition-all border border-[#7E8AA9]/20 dark:border-white/10 relative"
+            className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white dark:bg-[#101826] shadow-sm hover:bg-[#E0EDF8] dark:hover:bg-[#1a2740] transition-all border border-[#7E8AA9]/20 dark:border-white/10 relative"
           >
-            <span className="material-symbols-outlined text-[#1F345E] dark:text-[#7E8AA9] text-xl">notifications</span>
+            <span className="material-symbols-outlined text-[#1F345E] dark:text-[#EAF2FF] text-xl">notifications</span>
             {unreadCount > 0 && (
               <span className="absolute top-0 right-0 bg-[#d84315] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[20px] text-center leading-none shadow-sm">
                 {unreadCount > 9 ? '9+' : unreadCount}
@@ -298,9 +298,9 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
 
           {/* Notifications Dropdown */}
           {notifOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white/95 dark:bg-[#161d1a]/95 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 flex flex-col overflow-hidden z-50">
-              <div className="px-4 py-3 bg-[#E0EDF8] dark:bg-[#2a322e]/50 border-b border-[#7E8AA9]/20 dark:border-white/10 flex items-center justify-between">
-                <p className="text-[10px] font-bold text-[#1F345E] dark:text-[#7E8AA9] uppercase tracking-wider">Notifications</p>
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white/95 dark:bg-[#101826]/98 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 dark:border-white/10 flex flex-col overflow-hidden z-50">
+              <div className="px-4 py-3 bg-[#E0EDF8] dark:bg-[#16233a] border-b border-[#7E8AA9]/20 dark:border-white/10 flex items-center justify-between">
+                <p className="text-[10px] font-bold text-[#1F345E] dark:text-[#EAF2FF] uppercase tracking-wider">Notifications</p>
                 {unreadCount > 0 && (
                   <span className="bg-[#213D76] text-white text-[10px] font-black px-2 py-0.5 rounded-full">{unreadCount} new</span>
                 )}
@@ -308,7 +308,7 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
               
               <div className="max-h-80 overflow-y-auto">
                 {(notifications || []).length === 0 ? (
-                  <p className="text-center text-[#7E8AA9] text-sm py-6">No notifications</p>
+                  <p className="text-center text-[#7E8AA9] dark:text-[#9DB4E6] text-sm py-6">No notifications</p>
                 ) : (
                   notifications.slice(0, 10).map(n => (
                     <button
@@ -328,7 +328,7 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
                         <p className="text-[12px] font-bold text-[#161d1a] dark:text-[#E0EDF8] truncate group-hover:text-[#1F345E]">
                           {n.title || 'New Notification'}
                         </p>
-                        <p className="text-[11px] text-[#7E8AA9] dark:text-[#7E8AA9] mt-0.5 line-clamp-2">
+                        <p className="text-[11px] text-[#7E8AA9] dark:text-[#9DB4E6] mt-0.5 line-clamp-2">
                           {n.message || n.body || ''}
                         </p>
                       </div>
@@ -350,21 +350,21 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
         
         {currentUser && (
           <div className="relative group">
-            <button className="flex items-center gap-3 bg-white dark:bg-[#161d1a] px-3 py-1.5 rounded-full shadow-sm border border-[#7E8AA9]/30 dark:border-white/10 hover:bg-[#E0EDF8] dark:bg-[#2a322e] transition-all">
+            <button className="flex items-center gap-3 bg-white dark:bg-[#101826] px-3 py-1.5 rounded-full shadow-sm border border-[#7E8AA9]/30 dark:border-white/10 hover:bg-[#E0EDF8] dark:hover:bg-[#1a2740] transition-all">
               <div className="w-8 h-8 rounded-full bg-[#213D76] flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-[#213D76]/20">
                 {currentUser.name?.[0].toUpperCase() || 'U'}
               </div>
               <div className="hidden lg:flex flex-col items-start text-left">
-                <span className="text-[10px] font-bold text-[#161d1a] dark:text-[#E0EDF8] leading-tight">{currentUser.name}</span>
-                <span className="text-[8px] uppercase text-[#7E8AA9] dark:text-[#7E8AA9] font-bold">{currentUser.role || 'Citizen'}</span>
+                <span className="text-[10px] font-bold text-[#161d1a] dark:text-[#EAF2FF] leading-tight">{currentUser.name}</span>
+                <span className="text-[8px] uppercase text-[#7E8AA9] dark:text-[#9DB4E6] font-bold">{currentUser.role || 'Citizen'}</span>
               </div>
-              <span className="material-symbols-outlined text-[#7E8AA9] text-sm ml-1 group-hover:text-[#1F345E]">expand_more</span>
+              <span className="material-symbols-outlined text-[#7E8AA9] dark:text-[#9DB4E6] text-sm ml-1 group-hover:text-[#1F345E] dark:group-hover:text-white">expand_more</span>
             </button>
 
             {/* Dropdown Menu */}
-            <div className="absolute right-0 top-full mt-2 w-64 bg-white/95 dark:bg-[#161d1a]/95 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 flex flex-col overflow-hidden z-50">
-              <div className="px-4 py-3 bg-[#E0EDF8] dark:bg-[#2a322e]/50 border-b border-[#7E8AA9]/20 dark:border-white/10">
-                <p className="text-[10px] font-bold text-[#1F345E] dark:text-[#7E8AA9] uppercase tracking-wider">Active Accounts</p>
+            <div className="absolute right-0 top-full mt-2 w-64 bg-white/95 dark:bg-[#101826]/98 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 dark:border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 flex flex-col overflow-hidden z-50">
+              <div className="px-4 py-3 bg-[#E0EDF8] dark:bg-[#16233a] border-b border-[#7E8AA9]/20 dark:border-white/10">
+                <p className="text-[10px] font-bold text-[#1F345E] dark:text-[#EAF2FF] uppercase tracking-wider">Active Accounts</p>
               </div>
               
               <div className="max-h-48 overflow-y-auto">
@@ -387,19 +387,19 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
                       {session.name?.[0].toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-[12px] font-bold truncate ${session.email === currentUser.email ? 'text-[#1F345E]' : 'text-[#161d1a] dark:text-[#E0EDF8]'}`}>
+                      <p className={`text-[12px] font-bold truncate ${session.email === currentUser.email ? 'text-[#1F345E] dark:text-[#EAF2FF]' : 'text-[#161d1a] dark:text-[#EAF2FF]'}`}>
                         {session.name}
                       </p>
-                      <p className="text-[10px] text-[#7E8AA9] dark:text-[#7E8AA9] truncate">{session.email}</p>
+                      <p className="text-[10px] text-[#7E8AA9] dark:text-[#9DB4E6] truncate">{session.email}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {session.email === currentUser.email && (
-                        <span className="material-symbols-outlined text-[#213D76] text-sm">check_circle</span>
+                        <span className="material-symbols-outlined text-[#213D76] dark:text-[#60a5fa] text-sm">check_circle</span>
                       )}
                       <button
                         onClick={(e) => { e.stopPropagation(); api.logoutSession(session.email); }}
                         title="Sign out this account"
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-[#7E8AA9] dark:text-[#7E8AA9] hover:bg-[#ffecec] hover:text-red-600 transition-colors"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-[#7E8AA9] dark:text-[#9DB4E6] hover:bg-[#ffecec] hover:text-red-600 transition-colors"
                       >
                         <span className="material-symbols-outlined">logout</span>
                       </button>
