@@ -169,6 +169,17 @@ const globalStyles = `
     pointer-events: none;
     animation: rippleOut 0.7s ease-out forwards;
   }
+  @keyframes cinematicPop {
+    0%   { opacity: 0; transform: scale(0.88) translateY(14px); }
+    100% { opacity: 1; transform: scale(1)    translateY(0px);  }
+  }
+  @keyframes cinematicFadeIn {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  .cinematic-popup {
+    animation: cinematicPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
 `;
 
 // --- Ripple Button ---
@@ -455,6 +466,7 @@ const Footer = () => (
 
 const ParallaxBackground = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [hoveredBadge, setHoveredBadge] = useState(null);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -463,6 +475,51 @@ const ParallaxBackground = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  const badgeInfo = {
+    roads: {
+      image: '/images/Roads/Roads.jpg',
+      label: 'Roads & Potholes',
+      icon: 'construction',
+      color: '#fbbf24',
+      glow: 'rgba(251,191,36,0.55)',
+      desc: 'Crumbling road surfaces and deep potholes endangering commuters and vehicles across the city.',
+      stat: '847 active reports',
+      popupStyle: { top: '8%', left: '20%' },
+    },
+    water: {
+      image: '/images/WaterSupply/WaterSupply.jpg',
+      label: 'Water Supply',
+      icon: 'water_drop',
+      color: '#34d399',
+      glow: 'rgba(52,211,153,0.55)',
+      desc: 'Burst pipes, low pressure, and supply disruptions leaving neighbourhoods without clean water.',
+      stat: '312 active reports',
+      popupStyle: { top: '8%', right: '20%' },
+    },
+    lights: {
+      image: '/images/StreetLights/StreetLights.jpg',
+      label: 'Street Lights',
+      icon: 'lightbulb',
+      color: '#fde047',
+      glow: 'rgba(253,224,71,0.55)',
+      desc: 'Dark streets and non-functional lamps creating safety risks for pedestrians after sunset.',
+      stat: '189 active reports',
+      popupStyle: { bottom: '18%', right: '20%' },
+    },
+    drainage: {
+      image: '/images/Drainage/Drainage.jpg',
+      label: 'Drainage',
+      icon: 'water',
+      color: '#67e8f9',
+      glow: 'rgba(103,232,249,0.55)',
+      desc: 'Clogged drains causing waterlogging and flooding across streets and residential areas.',
+      stat: '423 active reports',
+      popupStyle: { bottom: '18%', left: '20%' },
+    },
+  };
+
+  const badge = hoveredBadge ? badgeInfo[hoveredBadge] : null;
 
   const getParallaxStyle = (depth) => ({
     transform: `translate3d(${(window.innerWidth / 2 - mousePos.x) * depth * 0.06}px, ${(window.innerHeight / 2 - mousePos.y) * depth * 0.06}px, 0)`,
@@ -544,11 +601,13 @@ const ParallaxBackground = () => {
 
       {/* ── Floating badges — own layer above content so hover events work ── */}
       <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden select-none">
+
+        {/* Roads & Potholes — top left */}
         <NavLink to="/report"
           className="float-card absolute top-[18%] left-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:border-amber-300/60 hover:shadow-2xl"
           style={{ ...getParallaxStyle(0.55), textDecoration: 'none' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(251,191,36,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(251,191,36,0.35)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
+          onMouseEnter={e => { setHoveredBadge('roads'); e.currentTarget.style.background = 'rgba(251,191,36,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(251,191,36,0.35)'; }}
+          onMouseLeave={e => { setHoveredBadge(null); e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
         >
           <span className="material-symbols-outlined text-amber-300 text-lg transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" style={{ fontVariationSettings: "'FILL' 1" }}>construction</span>
           <div>
@@ -558,11 +617,12 @@ const ParallaxBackground = () => {
           <span className="material-symbols-outlined text-amber-300/0 text-sm ml-0.5 group-hover:text-amber-300/80 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100">arrow_forward</span>
         </NavLink>
 
+        {/* Water Supply — top right */}
         <NavLink to="/report"
           className="float-card-2 absolute top-[22%] right-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:border-emerald-300/60 hover:shadow-2xl"
           style={{ ...getParallaxStyle(0.45), textDecoration: 'none' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(52,211,153,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(52,211,153,0.35)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
+          onMouseEnter={e => { setHoveredBadge('water'); e.currentTarget.style.background = 'rgba(52,211,153,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(52,211,153,0.35)'; }}
+          onMouseLeave={e => { setHoveredBadge(null); e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
         >
           <span className="material-symbols-outlined text-emerald-300 text-lg transition-transform duration-300 group-hover:scale-125 group-hover:rotate-6" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
           <div>
@@ -572,11 +632,12 @@ const ParallaxBackground = () => {
           <span className="material-symbols-outlined text-emerald-300/0 text-sm ml-0.5 group-hover:text-emerald-300/80 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100">arrow_forward</span>
         </NavLink>
 
+        {/* Street Lights — bottom right */}
         <NavLink to="/report"
           className="float-card-3 absolute bottom-[28%] right-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:border-yellow-300/60 hover:shadow-2xl"
           style={{ ...getParallaxStyle(0.65), textDecoration: 'none' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(253,224,71,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(253,224,71,0.35)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
+          onMouseEnter={e => { setHoveredBadge('lights'); e.currentTarget.style.background = 'rgba(253,224,71,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(253,224,71,0.35)'; }}
+          onMouseLeave={e => { setHoveredBadge(null); e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
         >
           <span className="material-symbols-outlined text-yellow-300 text-lg transition-transform duration-300 group-hover:scale-125 group-hover:-translate-y-1" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
           <div>
@@ -586,11 +647,12 @@ const ParallaxBackground = () => {
           <span className="material-symbols-outlined text-yellow-300/0 text-sm ml-0.5 group-hover:text-yellow-300/80 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100">arrow_forward</span>
         </NavLink>
 
+        {/* Drainage — bottom left */}
         <NavLink to="/report"
           className="float-card absolute bottom-[30%] left-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:border-cyan-300/60 hover:shadow-2xl"
           style={{ animationDelay: '-3s', ...getParallaxStyle(0.4), textDecoration: 'none' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(103,232,249,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(103,232,249,0.35)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
+          onMouseEnter={e => { setHoveredBadge('drainage'); e.currentTarget.style.background = 'rgba(103,232,249,0.18)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(103,232,249,0.35)'; }}
+          onMouseLeave={e => { setHoveredBadge(null); e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = ''; }}
         >
           <span className="material-symbols-outlined text-cyan-300 text-lg transition-transform duration-300 group-hover:scale-125 group-hover:rotate-6" style={{ fontVariationSettings: "'FILL' 1" }}>water</span>
           <div>
@@ -599,6 +661,55 @@ const ParallaxBackground = () => {
           </div>
           <span className="material-symbols-outlined text-cyan-300/0 text-sm ml-0.5 group-hover:text-cyan-300/80 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100">arrow_forward</span>
         </NavLink>
+
+        {/* ── Cinematic image popup ── */}
+        {badge && (
+          <div
+            key={hoveredBadge}
+            className="cinematic-popup absolute pointer-events-none hidden lg:block"
+            style={{ ...badge.popupStyle, width: '340px', zIndex: 50 }}
+          >
+            {/* Outer glow ring */}
+            <div className="absolute -inset-[3px] rounded-[22px] opacity-70 blur-sm pointer-events-none" style={{ background: `linear-gradient(135deg, ${badge.glow}, transparent 60%)` }} />
+
+            <div className="relative rounded-[20px] overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.75)]" style={{ border: `1.5px solid ${badge.color}55` }}>
+              {/* Neon top bar */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] z-10" style={{ background: `linear-gradient(90deg, transparent, ${badge.color}, transparent)` }} />
+
+              {/* Cinematic image */}
+              <div className="relative h-[200px] overflow-hidden">
+                <img
+                  src={badge.image}
+                  alt={badge.label}
+                  className="w-full h-full object-cover"
+                  style={{ filter: 'saturate(1.15) contrast(1.05)' }}
+                />
+                {/* Cinematic letterbox bars */}
+                <div className="absolute top-0 left-0 right-0 h-5 bg-black/60" />
+                <div className="absolute bottom-0 left-0 right-0 h-5 bg-black/60" />
+                {/* Gradient bottom fade */}
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.15) 50%, transparent 100%)' }} />
+                {/* Department name over image */}
+                <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base" style={{ color: badge.color, fontVariationSettings: "'FILL' 1" }}>{badge.icon}</span>
+                  <span className="font-extrabold text-white text-[15px] tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", textShadow: `0 0 20px ${badge.glow}` }}>{badge.label}</span>
+                </div>
+              </div>
+
+              {/* Info panel */}
+              <div className="px-5 py-4" style={{ background: 'rgba(6,10,20,0.92)', backdropFilter: 'blur(24px)' }}>
+                <p className="text-white/65 text-[12px] leading-relaxed mb-3">{badge.desc}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: badge.color, boxShadow: `0 0 6px ${badge.color}` }} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: badge.color }}>{badge.stat}</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-white/30 uppercase tracking-wider">Tap to report →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
