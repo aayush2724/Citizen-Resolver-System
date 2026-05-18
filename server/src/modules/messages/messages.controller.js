@@ -3,7 +3,19 @@ import pool from "../../shared/config/db.js";
 export const getIssueMessages = async (req, res, next) => {
   try {
     const { issueId } = req.params;
-    const actualId = parseInt(issueId.replace("CHP-", "")) - 1000;
+    // Resolve issue identifier to numeric DB id.
+    const asNumber = parseInt(issueId.replace(/^CHP-/i, ""), 10);
+    let actualId;
+    if (String(issueId).toUpperCase().startsWith("CHP-")) {
+      actualId = asNumber - 1000;
+    } else if (!Number.isNaN(asNumber)) {
+      // If client sent the display id (e.g. 1013) treat >=1000 as display id
+      actualId = asNumber >= 1000 ? asNumber - 1000 : asNumber;
+    } else {
+      return res.status(400).json({ error: `Invalid issue id: ${issueId}` });
+    }
+
+    if (actualId < 1) return res.status(404).json({ error: `Issue not found: ${issueId}` });
 
     const [messages] = await pool.query(`
       SELECT 
@@ -25,10 +37,26 @@ export const sendMessage = async (req, res, next) => {
   try {
     const { issueId } = req.params;
     const { message } = req.body;
-    const actualId = parseInt(issueId.replace("CHP-", "")) - 1000;
+    const asNumber = parseInt(issueId.replace(/^CHP-/i, ""), 10);
+    let actualId;
+    if (String(issueId).toUpperCase().startsWith("CHP-")) {
+      actualId = asNumber - 1000;
+    } else if (!Number.isNaN(asNumber)) {
+      actualId = asNumber >= 1000 ? asNumber - 1000 : asNumber;
+    } else {
+      return res.status(400).json({ error: `Invalid issue id: ${issueId}` });
+    }
+
+    if (actualId < 1) return res.status(404).json({ error: `Issue not found: ${issueId}` });
 
     if (!message?.trim()) {
       return res.status(400).json({ error: "Message content is required" });
+    }
+
+    // Ensure the referenced issue exists before inserting message
+    const [issueExists] = await pool.query("SELECT id FROM issues WHERE id = ?", [actualId]);
+    if (issueExists.length === 0) {
+      return res.status(404).json({ error: `Issue ${issueId} not found` });
     }
 
     const [result] = await pool.query(
