@@ -10,54 +10,124 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Light Mode Palette ── */
 :root {
   color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
-  /* Navy/Mint Palette */
-  --bg-main: #fbf9fa;
-  --text-dark: #1b1c1d;
-  --text-muted: #44474c;
-  --primary: #041627;
-  --secondary: #006c49;
-  --white: #ffffff;
-  --border: rgba(0, 0, 0, 0.08);
+
+  --bg-main: #f0f5ff;
+  --surface: #ffffff;
+  --surface-raised: #e8f0fe;
+  --text-dark: #0f1e3d;
+  --text-muted: #4a5e8a;
+  --primary: #1a3468;
+  --primary-accent: #2563eb;
+  --border: rgba(30, 60, 120, 0.10);
+  --shadow-primary: rgba(26, 52, 104, 0.15);
 }
 
+/* ── Dark Mode Palette ── */
+.dark {
+  color-scheme: dark;
+  --bg-main: #080f1e;
+  --surface: #0d1626;
+  --surface-raised: #131f35;
+  --text-dark: #dce8ff;
+  --text-muted: #7a93bf;
+  --primary: #3b82f6;
+  --primary-accent: #60a5fa;
+  --border: rgba(100, 140, 220, 0.12);
+  --shadow-primary: rgba(59, 130, 246, 0.20);
+}
+
+/* ── Light Mode Base Overrides ── */
+body {
+  background-color: var(--bg-main);
+}
+
+/* Light mode: header, nav pills, cards */
+.light-surface {
+  background: var(--surface) !important;
+}
+
+/* ── Department Quick Cards ── */
+.dept-quick-card {
+  position: relative;
+}
+
+.dept-quick-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(circle at 50% -10%, rgba(255,255,255,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.dept-quick-card:hover::before {
+  opacity: 1;
+}
+
+/* ── Floating badge ── */
+.float-badge {
+  text-decoration: none !important;
+}
+
+/* ── Glass Panel ── */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(26, 52, 104, 0.08);
 }
 
+.dark .glass-panel {
+  background: rgba(13, 22, 38, 0.8);
+  border-color: rgba(100, 140, 220, 0.14);
+  box-shadow: 0 8px 32px rgba(0, 0, 10, 0.4);
+}
+
+/* ── Cards ── */
 .floating-img {
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── New Layout Utilities ── */
+/* ── Bento Grid ── */
 .bento-grid-bg {
-    background-image: radial-gradient(#00c89615 1px, transparent 1px);
+    background-image: radial-gradient(#3b82f620 1px, transparent 1px);
     background-size: 32px 32px;
 }
 
+.dark .bento-grid-bg {
+    background-image: radial-gradient(#60a5fa18 1px, transparent 1px);
+}
+
+/* ── Tilted Card ── */
 .tilted-card {
     transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
-    transition: transform 0.3s ease;
+    transition: transform 0.35s ease;
 }
 
 .tilted-card:hover {
     transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
 }
 
+/* ── Map bg ── */
 .map-bg {
-    background-image: radial-gradient(circle at 2px 2px, #bbcac1 1px, transparent 0);
+    background-image: radial-gradient(circle at 2px 2px, #93b4d8 1px, transparent 0);
     background-size: 24px 24px;
 }
 
+.dark .map-bg {
+    background-image: radial-gradient(circle at 2px 2px, #2a4a7a 1px, transparent 0);
+}
+
+/* ── Scrollbars ── */
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
 }
@@ -65,9 +135,33 @@
     background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.1);
+    background: rgba(30, 60, 120, 0.12);
     border-radius: 10px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(100, 140, 220, 0.18);
 }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Light mode: improve cards & surfaces ── */
+.dark\:bg-\[\#161d1a\] {
+  /* dark mode will use the class, light stays white */
+}
+
+/* Better focus rings */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ── Selection highlight ── */
+::selection {
+  background: rgba(37, 99, 235, 0.25);
+  color: inherit;
+}
+
+.dark ::selection {
+  background: rgba(96, 165, 250, 0.30);
+}

@@ -540,41 +540,45 @@ const ParallaxBackground = () => {
       ))}
 
       {/* ── Floating issue-type badges with parallax ── */}
-      <div className="float-card absolute top-[18%] left-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl"
+      <NavLink to="/report" className="float-badge float-card absolute top-[18%] left-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:bg-amber-400/15 hover:border-amber-300/50 hover:shadow-amber-300/25 hover:shadow-2xl"
         style={getParallaxStyle(0.55)}>
-        <span className="material-symbols-outlined text-amber-300 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>construction</span>
+        <span className="material-symbols-outlined text-amber-300 text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-8deg]" style={{ fontVariationSettings: "'FILL' 1" }}>construction</span>
         <div>
-          <div className="text-[11px] font-bold text-white/90">Roads & Potholes</div>
-          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider">Dept. Active</div>
+          <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Roads & Potholes</div>
+          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider group-hover:text-amber-200/80 transition-colors">Dept. Active</div>
         </div>
-      </div>
+        <span className="material-symbols-outlined text-white/0 text-sm ml-1 group-hover:text-amber-200/70 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">arrow_forward</span>
+      </NavLink>
 
-      <div className="float-card-2 absolute top-[22%] right-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl"
+      <NavLink to="/report" className="float-badge float-card-2 absolute top-[22%] right-[6%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:bg-emerald-400/15 hover:border-emerald-300/50 hover:shadow-emerald-300/25 hover:shadow-2xl"
         style={getParallaxStyle(0.45)}>
-        <span className="material-symbols-outlined text-emerald-300 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+        <span className="material-symbols-outlined text-emerald-300 text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[8deg]" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
         <div>
-          <div className="text-[11px] font-bold text-white/90">Water Supply</div>
-          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider">Monitoring</div>
+          <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Water Supply</div>
+          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider group-hover:text-emerald-200/80 transition-colors">Monitoring</div>
         </div>
-      </div>
+        <span className="material-symbols-outlined text-white/0 text-sm ml-1 group-hover:text-emerald-200/70 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">arrow_forward</span>
+      </NavLink>
 
-      <div className="float-card-3 absolute bottom-[28%] right-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl"
+      <NavLink to="/report" className="float-badge float-card-3 absolute bottom-[28%] right-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:bg-yellow-400/15 hover:border-yellow-300/50 hover:shadow-yellow-300/25 hover:shadow-2xl"
         style={getParallaxStyle(0.65)}>
-        <span className="material-symbols-outlined text-yellow-300 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
+        <span className="material-symbols-outlined text-yellow-300 text-lg transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
         <div>
-          <div className="text-[11px] font-bold text-white/90">Street Lights</div>
-          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider">12 Pending</div>
+          <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Street Lights</div>
+          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider group-hover:text-yellow-200/80 transition-colors">12 Pending</div>
         </div>
-      </div>
+        <span className="material-symbols-outlined text-white/0 text-sm ml-1 group-hover:text-yellow-200/70 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">arrow_forward</span>
+      </NavLink>
 
-      <div className="float-card absolute bottom-[30%] left-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl"
+      <NavLink to="/report" className="float-badge float-card absolute bottom-[30%] left-[5%] hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-xl pointer-events-auto cursor-pointer group transition-all duration-300 hover:scale-110 hover:bg-cyan-400/15 hover:border-cyan-300/50 hover:shadow-cyan-300/25 hover:shadow-2xl"
         style={{ animationDelay: '-3s', ...getParallaxStyle(0.4) }}>
-        <span className="material-symbols-outlined text-cyan-300 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>water</span>
+        <span className="material-symbols-outlined text-cyan-300 text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[6deg]" style={{ fontVariationSettings: "'FILL' 1" }}>water</span>
         <div>
-          <div className="text-[11px] font-bold text-white/90">Drainage</div>
-          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider">Resolved ✓</div>
+          <div className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors">Drainage</div>
+          <div className="text-[9px] text-blue-200/70 font-semibold uppercase tracking-wider group-hover:text-cyan-200/80 transition-colors">Resolved ✓</div>
         </div>
-      </div>
+        <span className="material-symbols-outlined text-white/0 text-sm ml-1 group-hover:text-cyan-200/70 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">arrow_forward</span>
+      </NavLink>
     </div>
   );
 };
@@ -789,16 +793,55 @@ const Home = ({ issues = [] }) => {
         </div>
       </div>
 
+      {/* ── Department Quick Access Grid ── */}
+      <div className="relative z-10 w-full max-w-3xl mx-auto px-6 pb-24 mt-10">
+        <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/35 text-center mb-4">Report by Category</p>
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+          {[
+            { icon: 'construction',  label: 'Roads',        sub: 'Potholes',    color: 'text-amber-300',  hoverBg: 'rgba(251,191,36,0.15)',  hoverBorder: 'rgba(251,191,36,0.45)',  hoverShadow: 'rgba(251,191,36,0.3)'  },
+            { icon: 'water_drop',    label: 'Water Supply', sub: 'Leaks',       color: 'text-emerald-300',hoverBg: 'rgba(52,211,153,0.15)',   hoverBorder: 'rgba(52,211,153,0.45)',  hoverShadow: 'rgba(52,211,153,0.3)'  },
+            { icon: 'lightbulb',     label: 'Lights',       sub: 'Street',      color: 'text-yellow-300', hoverBg: 'rgba(253,224,71,0.15)',   hoverBorder: 'rgba(253,224,71,0.45)',  hoverShadow: 'rgba(253,224,71,0.3)'  },
+            { icon: 'water',         label: 'Drainage',     sub: 'Flooding',    color: 'text-cyan-300',   hoverBg: 'rgba(103,232,249,0.15)',  hoverBorder: 'rgba(103,232,249,0.45)', hoverShadow: 'rgba(103,232,249,0.3)' },
+            { icon: 'delete',        label: 'Sanitation',   sub: 'Waste',       color: 'text-rose-300',   hoverBg: 'rgba(253,164,175,0.15)',  hoverBorder: 'rgba(253,164,175,0.45)', hoverShadow: 'rgba(253,164,175,0.3)' },
+            { icon: 'park',          label: 'Parks',        sub: 'Public',      color: 'text-lime-300',   hoverBg: 'rgba(163,230,53,0.15)',   hoverBorder: 'rgba(163,230,53,0.45)',  hoverShadow: 'rgba(163,230,53,0.3)'  },
+          ].map((dept) => (
+            <NavLink
+              key={dept.label}
+              to="/report"
+              className="dept-quick-card group relative flex flex-col items-center gap-2 py-4 px-2 rounded-2xl transition-all duration-300 hover:scale-[1.08] active:scale-95 overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(14px)' }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = dept.hoverBg;
+                e.currentTarget.style.borderColor = dept.hoverBorder;
+                e.currentTarget.style.boxShadow = `0 8px 32px ${dept.hoverShadow}`;
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <span className={`material-symbols-outlined ${dept.color} text-2xl transition-all duration-300 group-hover:scale-125 group-hover:-translate-y-0.5 group-hover:drop-shadow-lg`} style={{ fontVariationSettings: "'FILL' 1" }}>{dept.icon}</span>
+              <div className="text-center">
+                <div className="text-[10px] font-extrabold uppercase tracking-[0.08em] text-white/80 group-hover:text-white transition-colors leading-tight">{dept.label}</div>
+                <div className="text-[8px] text-white/35 group-hover:text-white/60 transition-colors uppercase tracking-wider font-semibold mt-0.5">{dept.sub}</div>
+              </div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%)' }} />
+            </NavLink>
+          ))}
+        </div>
+      </div>
+
       {/* ── Issue Category Ticker ── */}
       <div className="absolute bottom-0 left-0 right-0 overflow-hidden py-3"
         style={{ background: 'rgba(0,0,0,0.35)', borderTop: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(8px)' }}>
         <div className="ticker-track flex items-center gap-0" style={{ width: 'max-content' }}>
           {tickerItems.map((item, i) => (
-            <div key={i} className="flex items-center gap-2 px-6 shrink-0">
-              <span className="material-symbols-outlined text-blue-300/70 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
-              <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40">{item.label}</span>
+            <NavLink key={i} to="/report" className="flex items-center gap-2 px-6 shrink-0 group cursor-pointer transition-all duration-200 hover:opacity-100">
+              <span className="material-symbols-outlined text-blue-300/70 text-sm group-hover:text-blue-300 transition-colors" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 group-hover:text-white/80 transition-colors">{item.label}</span>
               <span className="mx-3 text-white/10">·</span>
-            </div>
+            </NavLink>
           ))}
         </div>
       </div>
