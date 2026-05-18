@@ -124,11 +124,10 @@ export const api = {
   },
 
   async login({ email, password, role }) {
-    // FIX: was only sending { email }, password was never sent to the backend
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identifier: email, password, role }),
+      body: JSON.stringify({ identifier: email, password }),
     });
 
     if (!res.ok) throw await parseError(res, "Invalid email or password");

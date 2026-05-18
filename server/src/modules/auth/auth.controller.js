@@ -37,12 +37,6 @@ export const login = async (req, res, next) => {
       return res.status(401).json({ error: "Incorrect password" });
     }
 
-    // Verify role matches requested role
-    const requestedRole = req.body.role || "citizen";
-    if (user.role !== requestedRole) {
-      return res.status(403).json({ error: `Account is registered as ${user.role}, cannot login as ${requestedRole}` });
-    }
-
     const token = signToken(user);
 
     res.json({
