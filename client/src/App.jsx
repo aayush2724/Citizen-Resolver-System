@@ -605,79 +605,84 @@ const ParallaxBackground = () => {
 };
 
 const NonHomeBackground = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  const getParallaxStyle = (depth) => ({
-    transform: `translate3d(${(window.innerWidth / 2 - mousePos.x) * depth * 0.05}px, ${(window.innerHeight / 2 - mousePos.y) * depth * 0.05}px, 0)`,
-    transition: "transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)",
-  });
-
   const cards = [
-    { src: '/images/Sanitation/Sanitation.jpg',       label: 'Sanitation',    icon: 'delete',        pos: 'top-[8%]  right-[3%]',  rot: 'rotate-[8deg]',   size: 'w-60 h-44', depth: 0.35, delay: '0s'   },
-    { src: '/images/Roads/Roads.jpg',                  label: 'Roads',         icon: 'construction',  pos: 'bottom-[14%] left-[2%]', rot: '-rotate-[6deg]',  size: 'w-56 h-40', depth: 0.5,  delay: '-2s'  },
-    { src: '/images/Drainage/Drainage.jpg',            label: 'Drainage',      icon: 'water',         pos: 'top-[40%] left-[2%]',   rot: 'rotate-[4deg]',   size: 'w-52 h-38', depth: 0.45, delay: '-4s'  },
-    { src: '/images/StreetLights/StreetLights.jpg',    label: 'Street Lights', icon: 'lightbulb',     pos: 'bottom-[8%]  right-[2%]', rot: '-rotate-[8deg]', size: 'w-56 h-40', depth: 0.4,  delay: '-1s'  },
-    { src: '/images/WaterSupply/WaterSupply.jpg',      label: 'Water Supply',  icon: 'water_drop',    pos: 'top-[16%] left-[3%]',   rot: '-rotate-[5deg]',  size: 'w-48 h-36', depth: 0.55, delay: '-3s'  },
-    { src: '/images/PublicParks/PublicParks.jpg',      label: 'Public Parks',  icon: 'park',          pos: 'top-[38%] right-[2%]',  rot: 'rotate-[6deg]',   size: 'w-48 h-36', depth: 0.38, delay: '-5s'  },
+    { src: '/images/Sanitation/Sanitation.jpg',    label: 'Sanitation',    icon: 'delete',       pos: 'top-[8%]  right-[3%]',   rot: 'rotate-[8deg]',  size: 'w-60 h-44', delay: '0s',  neon: 'rgba(251,113,133,0.9)', neonShadow: 'rgba(251,113,133,0.5)' },
+    { src: '/images/Roads/Roads.jpg',              label: 'Roads',         icon: 'construction', pos: 'bottom-[14%] left-[2%]', rot: '-rotate-[6deg]', size: 'w-56 h-40', delay: '-2s', neon: 'rgba(251,191,36,0.9)',  neonShadow: 'rgba(251,191,36,0.5)'  },
+    { src: '/images/Drainage/Drainage.jpg',        label: 'Drainage',      icon: 'water',        pos: 'top-[40%] left-[2%]',    rot: 'rotate-[4deg]',  size: 'w-52 h-36', delay: '-4s', neon: 'rgba(103,232,249,0.9)', neonShadow: 'rgba(103,232,249,0.5)' },
+    { src: '/images/StreetLights/StreetLights.jpg',label: 'Street Lights', icon: 'lightbulb',   pos: 'bottom-[8%]  right-[2%]', rot: '-rotate-[8deg]', size: 'w-56 h-40', delay: '-1s', neon: 'rgba(253,224,71,0.9)',  neonShadow: 'rgba(253,224,71,0.5)'  },
+    { src: '/images/WaterSupply/WaterSupply.jpg',  label: 'Water Supply',  icon: 'water_drop',  pos: 'top-[16%] left-[3%]',    rot: '-rotate-[5deg]', size: 'w-48 h-36', delay: '-3s', neon: 'rgba(52,211,153,0.9)',  neonShadow: 'rgba(52,211,153,0.5)'  },
+    { src: '/images/PublicParks/PublicParks.jpg',  label: 'Public Parks',  icon: 'park',        pos: 'top-[38%] right-[2%]',   rot: 'rotate-[6deg]',  size: 'w-48 h-36', delay: '-5s', neon: 'rgba(163,230,53,0.9)',  neonShadow: 'rgba(163,230,53,0.5)'  },
   ];
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
-
-      {/* ── India street photo, lightly blurred for depth ── */}
-      <div className="absolute inset-0">
-        <img
-          src="/images/india-road-issue_1.jpg"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: 'blur(2px) brightness(0.55) saturate(0.85)', transform: 'scale(1.06)' }}
-        />
-        {/* Light wash — keeps page text legible but shows photo clearly */}
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(160deg, rgba(240,246,255,0.72) 0%, rgba(255,255,255,0.65) 50%, rgba(232,242,255,0.72) 100%)'
-        }} />
-      </div>
-
-      {/* ── Grid texture ── */}
-      <div className="absolute inset-0 opacity-[0.07]" style={getParallaxStyle(0.06)}>
-        <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern height="48" id="route-grid" patternUnits="userSpaceOnUse" width="48">
-              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#1F345E" strokeWidth="0.9"></path>
-            </pattern>
-          </defs>
-          <rect fill="url(#route-grid)" height="100%" width="100%"></rect>
-        </svg>
-      </div>
-
-      {/* ── Floating civic photo cards ── */}
-      {cards.map((c, i) => (
-        <div
-          key={i}
-          className={`absolute ${c.pos} ${c.size} ${c.rot} rounded-2xl overflow-hidden shadow-2xl border-[3px] border-white/90 hidden ${i < 2 ? 'md:block' : 'lg:block'} transition-all duration-700 hover:opacity-100 hover:scale-[1.06] hover:-rotate-0 group`}
-          style={{ opacity: 0.82, animationDelay: c.delay, ...getParallaxStyle(c.depth) }}
-        >
-          <img alt={c.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src={c.src} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 flex items-center gap-1.5 px-3 py-2">
-            <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1", fontSize: '14px' }}>{c.icon}</span>
-            <span className="text-[10px] font-bold text-white uppercase tracking-widest">{c.label}</span>
-          </div>
+    <>
+      {/* ── Static background layer ── */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+        {/* ── India street photo, lightly blurred for depth ── */}
+        <div className="absolute inset-0">
+          <img
+            src="/images/india-road-issue_1.jpg"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: 'blur(2px) brightness(0.55) saturate(0.85)', transform: 'scale(1.06)' }}
+          />
+          <div className="absolute inset-0" style={{
+            background: 'linear-gradient(160deg, rgba(240,246,255,0.72) 0%, rgba(255,255,255,0.65) 50%, rgba(232,242,255,0.72) 100%)'
+          }} />
         </div>
-      ))}
 
-      {/* ── Soft colour glow blobs ── */}
-      <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full blur-[100px] opacity-20" style={{ background: '#1d4ed8', ...getParallaxStyle(0.1) }} />
-      <div className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-15" style={{ background: '#0ea5e9', ...getParallaxStyle(0.15) }} />
-    </div>
+        {/* ── Grid texture ── */}
+        <div className="absolute inset-0 opacity-[0.07]">
+          <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern height="48" id="route-grid" patternUnits="userSpaceOnUse" width="48">
+                <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#1F345E" strokeWidth="0.9"></path>
+              </pattern>
+            </defs>
+            <rect fill="url(#route-grid)" height="100%" width="100%"></rect>
+          </svg>
+        </div>
+
+        {/* ── Soft colour glow blobs ── */}
+        <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full blur-[100px] opacity-20" style={{ background: '#1d4ed8' }} />
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-15" style={{ background: '#0ea5e9' }} />
+      </div>
+
+      {/* ── Civic photo cards — own layer, pointer-events active, fully static ── */}
+      <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden select-none">
+        {cards.map((c, i) => (
+          <div
+            key={i}
+            className={`absolute ${c.pos} ${c.size} ${c.rot} rounded-2xl overflow-hidden shadow-2xl border-[3px] border-white/80 hidden ${i < 2 ? 'md:block' : 'lg:block'} pointer-events-auto cursor-pointer group`}
+            style={{ opacity: 0.85, transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease, border-color 0.35s ease, opacity 0.35s ease' }}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = 'scale(1.10) rotate(0deg)';
+              e.currentTarget.style.boxShadow = `0 0 0 3px ${c.neon}, 0 0 30px ${c.neonShadow}, 0 0 60px ${c.neonShadow.replace('0.5','0.25')}`;
+              e.currentTarget.style.borderColor = c.neon;
+              e.currentTarget.style.opacity = '1';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = '';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)';
+              e.currentTarget.style.opacity = '0.85';
+            }}
+          >
+            <img alt={c.label} src={c.src} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+            {/* Neon overlay shimmer on hover */}
+            <div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-350 pointer-events-none"
+              style={{ background: `linear-gradient(135deg, ${c.neonShadow.replace('0.5','0.12')} 0%, transparent 60%)` }}
+            />
+            <div className="absolute bottom-0 left-0 right-0 flex items-center gap-1.5 px-3 py-2.5">
+              <span className="material-symbols-outlined text-white text-sm transition-all duration-300 group-hover:scale-110" style={{ fontVariationSettings: "'FILL' 1", fontSize: '14px' }}>{c.icon}</span>
+              <span className="text-[10px] font-bold text-white uppercase tracking-widest">{c.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 
