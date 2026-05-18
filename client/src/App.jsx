@@ -482,7 +482,7 @@ const ParallaxBackground = () => {
       {/* ── Single Full-screen Ken Burns Background Image ── */}
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src="/images/hero-bg-stock.jpg"
+          src="/images/india-citizens-street_1.jpg"
           alt=""
           className="kb-image absolute inset-0 w-full h-full object-cover"
           style={{ transformOrigin: 'center center' }}
