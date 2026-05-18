@@ -482,7 +482,7 @@ const ParallaxBackground = () => {
       {/* ── Single Full-screen Ken Burns Background Image ── */}
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src="/images/india-citizens-street_1.jpg"
+          src="/images/india-community_2.jpg"
           alt=""
           className="kb-image absolute inset-0 w-full h-full object-cover"
           style={{ transformOrigin: 'center center' }}
@@ -595,54 +595,63 @@ const NonHomeBackground = () => {
     transition: "transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)",
   });
 
+  const cards = [
+    { src: '/images/Sanitation/Sanitation.jpg',       label: 'Sanitation',    icon: 'delete',        pos: 'top-[8%]  right-[3%]',  rot: 'rotate-[8deg]',   size: 'w-60 h-44', depth: 0.35, delay: '0s'   },
+    { src: '/images/Roads/Roads.jpg',                  label: 'Roads',         icon: 'construction',  pos: 'bottom-[14%] left-[2%]', rot: '-rotate-[6deg]',  size: 'w-56 h-40', depth: 0.5,  delay: '-2s'  },
+    { src: '/images/Drainage/Drainage.jpg',            label: 'Drainage',      icon: 'water',         pos: 'top-[40%] left-[2%]',   rot: 'rotate-[4deg]',   size: 'w-52 h-38', depth: 0.45, delay: '-4s'  },
+    { src: '/images/StreetLights/StreetLights.jpg',    label: 'Street Lights', icon: 'lightbulb',     pos: 'bottom-[8%]  right-[2%]', rot: '-rotate-[8deg]', size: 'w-56 h-40', depth: 0.4,  delay: '-1s'  },
+    { src: '/images/WaterSupply/WaterSupply.jpg',      label: 'Water Supply',  icon: 'water_drop',    pos: 'top-[16%] left-[3%]',   rot: '-rotate-[5deg]',  size: 'w-48 h-36', depth: 0.55, delay: '-3s'  },
+    { src: '/images/PublicParks/PublicParks.jpg',      label: 'Public Parks',  icon: 'park',          pos: 'top-[38%] right-[2%]',  rot: 'rotate-[6deg]',   size: 'w-48 h-36', depth: 0.38, delay: '-5s'  },
+  ];
+
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      {/* ── Real photo background, blurred & dimmed ── */}
+
+      {/* ── India street photo, lightly blurred for depth ── */}
       <div className="absolute inset-0">
         <img
-          src="/images/inner-bg.jpg"
+          src="/images/india-road-issue_1.jpg"
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: 'blur(3px) brightness(0.45) saturate(0.7)', transform: 'scale(1.05)' }}
+          style={{ filter: 'blur(2px) brightness(0.55) saturate(0.85)', transform: 'scale(1.06)' }}
         />
+        {/* Light wash — keeps page text legible but shows photo clearly */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(135deg, rgba(224,237,248,0.92) 0%, rgba(255,255,255,0.88) 50%, rgba(224,237,248,0.92) 100%)'
+          background: 'linear-gradient(160deg, rgba(240,246,255,0.72) 0%, rgba(255,255,255,0.65) 50%, rgba(232,242,255,0.72) 100%)'
         }} />
       </div>
 
-      {/* ── Subtle grid over white ── */}
-      <div className="absolute inset-0 opacity-[0.06]" style={getParallaxStyle(0.06)}>
+      {/* ── Grid texture ── */}
+      <div className="absolute inset-0 opacity-[0.07]" style={getParallaxStyle(0.06)}>
         <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern height="48" id="route-grid" patternUnits="userSpaceOnUse" width="48">
-              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#1F345E" strokeWidth="1"></path>
+              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#1F345E" strokeWidth="0.9"></path>
             </pattern>
           </defs>
           <rect fill="url(#route-grid)" height="100%" width="100%"></rect>
         </svg>
       </div>
 
-      {/* ── Floating civic photo cards (coloured, with parallax) ── */}
-      <div className="absolute top-[10%] right-[5%] w-56 h-40 rounded-2xl overflow-hidden shadow-2xl border-[3px] border-white rotate-[10deg] opacity-60 hidden md:block transition-all duration-700 hover:opacity-90 hover:scale-105" style={getParallaxStyle(0.35)}>
-        <img alt="Sanitation" className="w-full h-full object-cover" src="/images/Sanitation/Sanitation.jpg" />
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Sanitation</div>
-      </div>
-      <div className="absolute bottom-[16%] left-[4%] w-52 h-38 rounded-2xl overflow-hidden shadow-2xl border-[3px] border-white -rotate-[7deg] opacity-55 hidden md:block transition-all duration-700 hover:opacity-85 hover:scale-105" style={getParallaxStyle(0.5)}>
-        <img alt="Roads" className="w-full h-full object-cover" src="/images/Roads/Roads.jpg" />
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Roads</div>
-      </div>
-      <div className="absolute top-[42%] left-[3%] w-48 h-36 rounded-2xl overflow-hidden shadow-xl border-[3px] border-white rotate-[5deg] opacity-50 hidden lg:block transition-all duration-700 hover:opacity-80 hover:scale-105" style={getParallaxStyle(0.45)}>
-        <img alt="Drainage" className="w-full h-full object-cover" src="/images/Drainage/Drainage.jpg" />
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Drainage</div>
-      </div>
-      <div className="absolute bottom-[10%] right-[4%] w-52 h-38 rounded-2xl overflow-hidden shadow-xl border-[3px] border-white -rotate-[9deg] opacity-50 hidden lg:block transition-all duration-700 hover:opacity-80 hover:scale-105" style={getParallaxStyle(0.4)}>
-        <img alt="Street Lights" className="w-full h-full object-cover" src="/images/StreetLights/StreetLights.jpg" />
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Street Lights</div>
-      </div>
-      <div className="absolute top-[18%] left-[5%] w-44 h-32 rounded-2xl overflow-hidden shadow-xl border-[3px] border-white -rotate-[4deg] opacity-50 hidden lg:block transition-all duration-700 hover:opacity-80 hover:scale-105" style={getParallaxStyle(0.55)}>
-        <img alt="Water" className="w-full h-full object-cover" src="/images/WaterSupply/WaterSupply.jpg" />
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] font-bold text-white uppercase tracking-wider" style={{ background: 'rgba(0,0,0,0.45)' }}>Water Supply</div>
-      </div>
+      {/* ── Floating civic photo cards ── */}
+      {cards.map((c, i) => (
+        <div
+          key={i}
+          className={`absolute ${c.pos} ${c.size} ${c.rot} rounded-2xl overflow-hidden shadow-2xl border-[3px] border-white/90 hidden ${i < 2 ? 'md:block' : 'lg:block'} transition-all duration-700 hover:opacity-100 hover:scale-[1.06] hover:-rotate-0 group`}
+          style={{ opacity: 0.82, animationDelay: c.delay, ...getParallaxStyle(c.depth) }}
+        >
+          <img alt={c.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src={c.src} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 flex items-center gap-1.5 px-3 py-2">
+            <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1", fontSize: '14px' }}>{c.icon}</span>
+            <span className="text-[10px] font-bold text-white uppercase tracking-widest">{c.label}</span>
+          </div>
+        </div>
+      ))}
+
+      {/* ── Soft colour glow blobs ── */}
+      <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full blur-[100px] opacity-20" style={{ background: '#1d4ed8', ...getParallaxStyle(0.1) }} />
+      <div className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-15" style={{ background: '#0ea5e9', ...getParallaxStyle(0.15) }} />
     </div>
   );
 };
