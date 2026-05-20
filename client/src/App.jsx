@@ -1284,7 +1284,7 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
             <button 
               type="submit" 
               disabled={loading}
-              className="px-10 py-4 rounded-full bg-[#213D76] text-[#1F345E] font-label-bold hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="px-10 py-4 rounded-full bg-[#213D76] text-[#E0EDF8] font-label-bold hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? "Submitting..." : "Submit Report"}
               <span className="material-symbols-outlined text-lg">send</span>
