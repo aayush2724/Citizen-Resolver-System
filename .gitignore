@@ -17,11 +17,16 @@ dist/
 .DS_Store
 .vscode/
 .idea/
+.replit
+.agents/
+
+## Root clutter / generated assets
+attached_assets/
+.gsd/
 
 ## Debug
 server/debug_*.json
 server/logs/
 server/scripts/scratch/
+server/error.log
 
-# Tooling workspace (local project metadata)
-.gsd/
