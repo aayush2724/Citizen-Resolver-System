@@ -1939,6 +1939,7 @@ const ReportBug = () => {
 
 const AdminDashboard = ({ issues, departments, labour, notifications, dashboardStats, currentUser }) => {
   const [selectedIssue, setSelectedIssue] = useState(null);
+  const [localIssues, setLocalIssues] = useState(issues);
   const [filterStatus, setFilterStatus] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [assignForm, setAssignForm] = useState({ labourId: '', note: '' });
@@ -1947,6 +1948,10 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loadingChat, setLoadingChat] = useState(false);
+
+  useEffect(() => {
+    setLocalIssues(issues);
+  }, [issues]);
 
   useEffect(() => {
     if (selectedIssue && activeTab === 'chat') {
@@ -1969,7 +1974,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
     try {
       if (!n.read) await api.markNotificationRead(n.id);
       if (n.issue_id) {
-        const issue = issues.find(i => i.originalId === n.issue_id);
+        const issue = localIssues.find(i => i.originalId === n.issue_id);
         if (issue) setSelectedIssue(issue);
       }
     } catch (err) {
@@ -1991,7 +1996,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
 
   const statuses = ['All', 'Pending', 'In Progress', 'Resolved', 'Completed', 'Rejected'];
 
-  const filtered = issues.filter(i => {
+  const filtered = localIssues.filter(i => {
     const matchStatus = filterStatus === 'All' || i.status === filterStatus;
     const matchSearch = i.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       i.area?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -2000,17 +2005,19 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
   });
 
   const stats = dashboardStats || {
-    total: issues.length,
-    pending: issues.filter(i => i.status === 'Pending').length,
-    inProgress: issues.filter(i => i.status === 'In Progress').length,
-    resolved: issues.filter(i => i.status === 'Resolved' || i.status === 'Completed').length,
-    completed: issues.filter(i => i.status === 'Completed').length,
+    total: localIssues.length,
+    pending: localIssues.filter(i => i.status === 'Pending').length,
+    inProgress: localIssues.filter(i => i.status === 'In Progress').length,
+    resolved: localIssues.filter(i => i.status === 'Resolved' || i.status === 'Completed').length,
+    completed: localIssues.filter(i => i.status === 'Completed').length,
   };
 
   const handleStatusUpdate = async (issueId, status) => {
     setUpdating(true);
     try {
       await api.updateIssue(issueId, { status });
+      setLocalIssues(prev => prev.map(issue => issue.id === issueId ? { ...issue, status } : issue));
+      setSelectedIssue(prev => prev && prev.id === issueId ? { ...prev, status } : prev);
       if (status === 'Completed') {
         setSelectedIssue(null);
       }
@@ -2031,6 +2038,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
         adminNote: assignForm.note,
         status: 'In Progress',
       });
+      setLocalIssues(prev => prev.map(issue => issue.id === selectedIssue.id ? { ...issue, status: 'In Progress' } : issue));
       setAssignForm({ labourId: '', note: '' });
       setSelectedIssue(null);
     } catch (err) {

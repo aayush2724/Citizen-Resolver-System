@@ -41,9 +41,10 @@ export const getEntireState = async (req, res, next) => {
       FROM labour l 
       LEFT JOIN departments d ON l.department_id = d.id
     `);
-    const [notifications] = req.user.role === "admin"
-      ? await pool.query("SELECT * FROM notifications ORDER BY created_at DESC")
-      : await pool.query("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC", [req.user.id]);
+    const [notifications] = await pool.query(
+      "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC",
+      [req.user.id]
+    );
 
     const completedCount = notifications.filter((n) => typeof n.title === "string" && n.title.endsWith(" Completed")).length;
     const dashboardStats = {
