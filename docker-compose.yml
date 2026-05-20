@@ -4,10 +4,10 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: citizen_resolver
-      MYSQL_USER: crs_user
-      MYSQL_PASSWORD: crs_pass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-citizen_resolver}
+      MYSQL_USER: ${MYSQL_USER:-crs_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
       - ./server/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
@@ -19,10 +19,10 @@ services:
     ports:
       - "3001:3001"
     environment:
-      DATABASE_HOST: db
-      DATABASE_USER: crs_user
-      DATABASE_PASSWORD: crs_pass
-      DATABASE_NAME: citizen_resolver
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_USER: ${DATABASE_USER:-crs_user}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME:-citizen_resolver}
       PORT: 3001
     depends_on:
       - db

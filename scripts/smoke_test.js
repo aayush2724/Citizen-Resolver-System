@@ -24,7 +24,12 @@ async function get(path, token) {
   console.log('BASE:', BASE);
   try {
     console.log('\n1) Login');
-    const login = await post('/auth/login', { identifier: 'aayush12@gmail.com', password: '1234567' });
+    const smokeEmail = process.env.SMOKE_EMAIL || 'aayush12@gmail.com';
+    const smokePassword = process.env.SMOKE_PASSWORD || '';
+    if (!smokePassword) {
+      console.warn('SMOKE_PASSWORD not set; skipping login step to avoid leaking credentials');
+    }
+    const login = smokePassword ? await post('/auth/login', { identifier: smokeEmail, password: smokePassword }) : { status: 0, body: { error: 'no-smoke-password' } };
     console.log(login.status, login.body && (login.body.error || login.body.message || JSON.stringify(login.body)));
 
     const token = login.body && login.body.token ? login.body.token : null;
