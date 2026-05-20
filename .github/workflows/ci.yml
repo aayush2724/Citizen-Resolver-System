@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install root deps
+        run: npm install
+
+      - name: Install server deps
+        run: npm install --prefix server
+
+      - name: Install client deps
+        run: npm install --prefix client
+
+      - name: Lint client
+        run: npm run lint --prefix client
+
+      - name: Build client
+        run: npm run build --prefix client
+
+      - name: Run server tests (if any)
+        run: echo "No server tests configured"
+
+      - name: Build docker images (optional)
+        if: github.event_name == 'push'
+        run: |
+          docker build -t crs-server ./server
+          docker build -t crs-client ./client

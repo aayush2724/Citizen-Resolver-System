@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: citizen_resolver
+      MYSQL_USER: crs_user
+      MYSQL_PASSWORD: crs_pass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./server/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ports:
+      - "3306:3306"
+
+  server:
+    build: ./server
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: crs_user
+      DATABASE_PASSWORD: crs_pass
+      DATABASE_NAME: citizen_resolver
+      PORT: 3001
+    depends_on:
+      - db
+
+  client:
+    build: ./client
+    ports:
+      - "8080:80"
+    depends_on:
+      - server
+
+volumes:
+  db_data:

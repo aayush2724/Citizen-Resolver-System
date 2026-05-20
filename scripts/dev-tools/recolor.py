@@ -31,7 +31,7 @@ def update_file(filepath):
         f.write(content)
         
     print(f"Updated {filepath}")
-
+    
 # Update App.jsx and tailwind.config.js
 update_file('client/src/App.jsx')
 update_file('client/tailwind.config.js')

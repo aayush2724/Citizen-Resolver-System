@@ -352,7 +352,7 @@ replacement = """const ReportIssue = ({ areas = [], departments = [], currentUse
             {step === 1 ? (
               <button 
                 type="button" 
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/')} 
                 className="px-8 py-4 rounded-full border border-[#6c7a72] text-[#3c4a43] font-label-bold hover:bg-[#f3fbf5] transition-all w-full sm:w-auto text-center"
               >
                 Cancel
@@ -398,61 +398,3 @@ replacement = """const ReportIssue = ({ areas = [], departments = [], currentUse
               <div className="relative h-48 w-full bg-[#eef6ef] flex items-center justify-center overflow-hidden">
                 {formData.imageUrl ? (
                   <img className="w-full h-full object-cover" src={formData.imageUrl} alt="Preview" />
-                ) : (
-                  <div className="flex flex-col items-center text-[#bbcac1]">
-                    <span className="material-symbols-outlined text-6xl">image</span>
-                    <span className="text-[10px] uppercase font-bold mt-2">No Image Provided</span>
-                  </div>
-                )}
-                <div className="absolute top-4 left-4">
-                  <span className={`backdrop-blur-md text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest ${
-                    formData.priority === 'Urgent' ? 'bg-error/90' : formData.priority === 'High' ? 'bg-orange-500/90' : 'bg-[#00c896]/90'
-                  }`}>
-                    {formData.priority}
-                  </span>
-                </div>
-              </div>
-              <div className="p-8 space-y-4 flex-grow flex flex-col">
-                <h3 className="font-display-lg text-2xl text-[#161d1a] leading-tight line-clamp-2">
-                  {formData.title || "Report title will appear here"}
-                </h3>
-                <p className="text-[#3c4a43] text-sm leading-relaxed line-clamp-4 opacity-70 flex-grow">
-                  {formData.description || "Enter details to see how your report will look to the administration."}
-                </p>
-                <div className="pt-6 border-t border-[#bbcac1]/20 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#eef6ef] flex items-center justify-center">
-                      <span className="material-symbols-outlined text-lg text-[#006c4f]">location_on</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-[#6c7a72] uppercase tracking-wider">
-                      {formData.city || "Location Pending"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#00c896] animate-pulse"></span>
-                    <span className="text-[10px] font-bold text-[#00c896] uppercase tracking-wider text-right">Draft</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Tip */}
-            <div className="mt-8 p-6 bg-white/40 rounded-2xl border border-dashed border-[#bbcac1] flex items-start gap-4">
-              <span className="material-symbols-outlined text-[#006c4f] text-2xl">lightbulb</span>
-              <p className="text-[13px] text-[#3c4a43] leading-relaxed">
-                Adding a clear photo and precise location helps local authorities resolve your issue up to <b className="text-[#006c4f]">40% faster</b>.
-              </p>
-            </div>
-          </div>
-        </aside>
-      )}
-    </div>
-  );
-};
-"""
-
-new_content = content[:start_idx] + replacement + content[report_issue_end:]
-
-with open('client/src/App.jsx', 'w') as f:
-    f.write(new_content)
-print("Done")

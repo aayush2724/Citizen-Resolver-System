@@ -22,3 +22,6 @@ dist/
 server/debug_*.json
 server/logs/
 server/scripts/scratch/
+
+# Tooling workspace (local project metadata)
+.gsd/

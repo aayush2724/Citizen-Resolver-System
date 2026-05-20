@@ -8,6 +8,14 @@ export const authenticateToken = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET || "supersecret", (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
+    // Attach tenant context from token if available
+    if (user && user.tenant_id) {
+      req.tenant = { id: user.tenant_id };
+    } else if (req.get('x-tenant-id')) {
+      req.tenant = { id: req.get('x-tenant-id') };
+    } else {
+      req.tenant = null;
+    }
     next();
   });
 };
