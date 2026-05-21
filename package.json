@@ -1,20 +1,13 @@
 {
-  "name": "citizen-resolver-system",
+  "name": "civicresolve",
   "version": "1.0.0",
   "private": true,
-  "description": "Citizen Resolver System – civic issue reporting platform (monorepo root)",
+  "description": "CivicResolve – civic issue reporting platform with real-time notifications, AI classification, GPS, PWA support, image upload, and analytics",
   "scripts": {
     "dev": "concurrently --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "start": "concurrently --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm run start --prefix server\" \"npm run dev --prefix client\"",
     "install:all": "npm install && npm install --prefix server && npm install --prefix client",
-    "init:db": "node server/scripts/init_db.js",
-    "dev:recolor": "python3 scripts/dev-tools/recolor_tool.py --map final",
-    "dev:recolor2": "python3 scripts/dev-tools/recolor_tool.py --map v2",
-    "dev:replace-report": "python3 scripts/dev-tools/replace_report_issue.py",
-    "dev:add-dark-mode": "python3 scripts/dev-tools/add_dark_mode.py",
-    "migrate:assets": "bash scripts/migrate_assets.sh"
-    ,
-    "migrate": "node scripts/migrations/run_migrations.js"
+    "init:db": "node server/scripts/init_db.js"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
