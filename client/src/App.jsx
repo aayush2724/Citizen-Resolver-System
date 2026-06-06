@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import { api } from './services/api';
 import IssueCard from './components/IssueCard';
 import IssueModal from './components/IssueModal';
 import MobileNav from './components/MobileNav';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 import { Shield, MapPin, Search, Filter } from 'lucide-react';
 import { getRelevantImage } from './utils/image';
 
@@ -256,7 +258,7 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
             className="text-lg md:text-xl font-black text-[#161d1a] dark:text-[#E0EDF8] leading-none tracking-[-0.03em]"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
-            Citizen Resolver
+            CivicResolve
           </span>
           <span className="text-[9px] uppercase tracking-[0.28em] font-bold text-[#1F345E] opacity-80 dark:text-[#9DB4E6] dark:opacity-100" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             Empowering Communities
@@ -270,6 +272,9 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
         <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
         {currentUser?.role === 'admin' && (
           <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
+        )}
+        {currentUser?.role === 'admin' && (
+          <NavLink to="/analytics" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Analytics</NavLink>
         )}
         <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
       </nav>
@@ -443,9 +448,9 @@ const Footer = () => (
           <div className="w-6 h-6 bg-[#213D76] flex items-center justify-center rounded">
             <span className="material-symbols-outlined text-white text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>shield_person</span>
           </div>
-          <span className="font-bold text-[#1F345E] text-sm">Citizen Resolver</span>
+          <span className="font-bold text-[#1F345E] text-sm">CivicResolve</span>
         </div>
-        <span className="hidden md:inline text-[11px] text-[#1F345E] dark:text-[#7E8AA9] opacity-60">© 2024 Citizen Resolver System</span>
+        <span className="hidden md:inline text-[11px] text-[#1F345E] dark:text-[#7E8AA9] opacity-60">© 2024 CivicResolve System</span>
       </div>
       
       <div className="flex items-center gap-6">
@@ -1004,6 +1009,13 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
   });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [gpsCoords, setGpsCoords] = useState(null);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [imageMode, setImageMode] = useState('url');
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const aiTimerRef = useRef(null);
   const departmentImages = {
     "Roads": "/images/Roads/Roads.jpg",
     "Sanitation": "/images/Sanitation/Sanitation.jpg",
@@ -1025,14 +1037,12 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
     const { name, value } = e.target;
     setFormData(prev => {
       const newData = { ...prev, [name]: value };
-      
       if (name === 'city') {
         newData.block = "";
         newData.area = "";
       } else if (name === 'block') {
         newData.area = "";
       }
-      
       if (name === 'department' || name === 'title' || name === 'description') {
         const autoImage = getDepartmentImageUrl(newData.department, newData.title, newData.description);
         if (autoImage) {
@@ -1041,22 +1051,57 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
           newData.imageUrl = "/images/Roads/Potholes.jpg";
         }
       }
-      
       return newData;
     });
+    if (name === 'title' || name === 'description') {
+      clearTimeout(aiTimerRef.current);
+      aiTimerRef.current = setTimeout(async () => {
+        const t = name === 'title' ? value : formData.title;
+        const d = name === 'description' ? value : formData.description;
+        if ((t + d).trim().length > 8) {
+          setAiLoading(true);
+          try { const result = await api.classifyIssue(t, d); setAiSuggestion(result); } catch {}
+          setAiLoading(false);
+        }
+      }, 700);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.createIssue(formData);
+      await api.createIssue({ ...formData, lat: gpsCoords?.lat, lng: gpsCoords?.lng });
       setSubmitted(true);
       window.dispatchEvent(new Event("portal-state-change"));
     } catch (err) {
       alert(err.message || "Failed to report issue");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGetGPS = () => {
+    if (!navigator.geolocation) { alert('Geolocation is not supported by your browser.'); return; }
+    setGpsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => { setGpsCoords({ lat: pos.coords.latitude.toFixed(6), lng: pos.coords.longitude.toFixed(6) }); setGpsLoading(false); },
+      (err) => { alert('Unable to get location: ' + err.message); setGpsLoading(false); },
+      { timeout: 10000 }
+    );
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadLoading(true);
+    try {
+      const { url } = await api.uploadImage(file);
+      setFormData(prev => ({ ...prev, imageUrl: url }));
+    } catch (err) {
+      alert(err.message || 'Upload failed');
+    } finally {
+      setUploadLoading(false);
     }
   };
 
@@ -1198,6 +1243,25 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
             </div>
           </div>
 
+          {/* GPS Location */}
+          <div className="flex items-center gap-3 p-3 bg-[#E0EDF8]/60 dark:bg-[#2a322e]/60 rounded-2xl border border-[#7E8AA9]/20">
+            <button type="button" onClick={handleGetGPS} disabled={gpsLoading}
+              className="flex items-center gap-2 px-4 py-2 bg-[#213D76] text-white rounded-xl text-[12px] font-bold hover:bg-[#1F345E] transition-all disabled:opacity-50 flex-shrink-0">
+              <span className="material-symbols-outlined text-[16px]">my_location</span>
+              {gpsLoading ? 'Locating...' : 'GPS Location'}
+            </button>
+            {gpsCoords ? (
+              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">📍 {gpsCoords.lat}, {gpsCoords.lng}</span>
+            ) : (
+              <span className="text-[11px] text-[#7E8AA9]">Optional — tags your report with GPS coordinates</span>
+            )}
+            {gpsCoords && (
+              <button type="button" onClick={() => setGpsCoords(null)} className="ml-auto text-[#7E8AA9] hover:text-red-500">
+                <span className="material-symbols-outlined text-[16px]">close</span>
+              </button>
+            )}
+          </div>
+
           {/* Issue Title */}
           <div className="space-y-1">
             <label className="font-label-bold text-[12px] text-[#1F345E] dark:text-[#7E8AA9] uppercase tracking-wide px-1">Issue Title</label>
@@ -1261,19 +1325,64 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
             ></textarea>
           </div>
 
+          {/* AI Classification Suggestion */}
+          {(aiSuggestion?.department || aiLoading) && (
+            <div className="flex items-start gap-3 p-4 bg-[#213D76]/5 dark:bg-[#213D76]/15 rounded-2xl border border-[#213D76]/20">
+              <span className="material-symbols-outlined text-[#213D76] dark:text-[#9DB4E6] text-xl mt-0.5">smart_toy</span>
+              <div className="flex-1">
+                {aiLoading ? (
+                  <span className="text-[12px] text-[#7E8AA9] animate-pulse">Analyzing issue...</span>
+                ) : (
+                  <>
+                    <p className="text-[12px] font-bold text-[#1F345E] dark:text-[#9DB4E6]">
+                      AI Suggestion — <span className="text-[#213D76]">{aiSuggestion.confidence}% match</span>
+                    </p>
+                    <p className="text-[11px] text-[#7E8AA9] mt-0.5">
+                      Dept: <b className="text-[#161d1a] dark:text-[#E0EDF8]">{aiSuggestion.department}</b>
+                      {aiSuggestion.priority !== 'Normal' && <> · Priority: <b className="text-orange-600">{aiSuggestion.priority}</b></>}
+                    </p>
+                    <button type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, department: aiSuggestion.department || prev.department, priority: aiSuggestion.priority || prev.priority }))}
+                      className="mt-2 text-[11px] font-bold text-[#213D76] dark:text-[#9DB4E6] underline">
+                      Apply suggestion
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Visual Evidence */}
           <div className="space-y-1">
-            <label className="font-label-bold text-[12px] text-[#1F345E] dark:text-[#7E8AA9] uppercase tracking-wide px-1">Visual Evidence URL</label>
-            <div className="relative">
-              <input 
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleChange}
-                className="w-full bg-[#E0EDF8] dark:bg-[#2a322e] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#1F345E] text-body-md pr-12"
-                placeholder="https://image-url.com/photo.jpg"
-              />
-              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#7E8AA9]">link</span>
+            <div className="flex items-center justify-between px-1 mb-2">
+              <label className="font-label-bold text-[12px] text-[#1F345E] dark:text-[#7E8AA9] uppercase tracking-wide">Visual Evidence</label>
+              <div className="flex gap-1 bg-[#E0EDF8] dark:bg-[#2a322e] rounded-xl p-1">
+                <button type="button" onClick={() => setImageMode('url')}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${imageMode === 'url' ? 'bg-white dark:bg-[#161d1a] text-[#1F345E] shadow-sm' : 'text-[#7E8AA9]'}`}>
+                  URL
+                </button>
+                <button type="button" onClick={() => setImageMode('upload')}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${imageMode === 'upload' ? 'bg-white dark:bg-[#161d1a] text-[#1F345E] shadow-sm' : 'text-[#7E8AA9]'}`}>
+                  Upload
+                </button>
+              </div>
             </div>
+            {imageMode === 'url' ? (
+              <div className="relative">
+                <input name="imageUrl" value={formData.imageUrl} onChange={handleChange}
+                  className="w-full bg-[#E0EDF8] dark:bg-[#2a322e] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#1F345E] text-body-md pr-12"
+                  placeholder="https://image-url.com/photo.jpg" />
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#7E8AA9]">link</span>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center gap-3 p-6 bg-[#E0EDF8] dark:bg-[#2a322e] rounded-2xl cursor-pointer hover:bg-[#D0E0F0] transition-all border-2 border-dashed border-[#7E8AA9]/40">
+                <span className="material-symbols-outlined text-[#1F345E] text-3xl">upload_file</span>
+                <span className="text-[12px] font-semibold text-[#7E8AA9]">
+                  {uploadLoading ? 'Uploading...' : (formData.imageUrl.startsWith('/uploads/') ? '✅ Image uploaded' : 'Click to upload image (max 10MB)')}
+                </span>
+                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadLoading} />
+              </label>
+            )}
           </div>
 
           <div className="pt-6 border-t border-[#7E8AA9]/30 dark:border-white/10 flex flex-col sm:flex-row justify-end gap-4">
@@ -1413,7 +1522,7 @@ const Login = () => {
                 <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>shield_person</span>
               </div>
               <div>
-                <p className="text-white font-extrabold text-lg leading-none">Citizen Resolver</p>
+                <p className="text-white font-extrabold text-lg leading-none">CivicResolve</p>
                 <p className="text-white/60 text-[10px] uppercase tracking-widest font-bold">Official Civic Platform</p>
               </div>
             </div>
@@ -1449,7 +1558,7 @@ const Login = () => {
             <div className="w-8 h-8 bg-[#1F345E] rounded-lg flex items-center justify-center">
               <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>shield_person</span>
             </div>
-            <span className="font-extrabold text-[#1F345E]">Citizen Resolver</span>
+            <span className="font-extrabold text-[#1F345E]">CivicResolve</span>
           </div>
 
           {/* Tab Toggle */}
@@ -1627,6 +1736,16 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem("citizen-user") || "null");
+    if (!currentUser?.id) return;
+    const socket = io({ query: { userId: currentUser.id } });
+    socket.on("notification", () => {
+      window.dispatchEvent(new Event("portal-state-change"));
+    });
+    return () => socket.disconnect();
+  }, [portalState.currentUser?.id]);
+
   if (portalState.loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-[#F9F7F2]">
@@ -1739,6 +1858,13 @@ export default function App() {
                       dashboardStats={portalState.dashboardStats}
                       currentUser={portalState.currentUser}
                     />
+                  </div>
+                } />
+              )}
+              {portalState.currentUser?.role === 'admin' && (
+                <Route path="/analytics" element={
+                  <div className="max-w-container-max mx-auto px-margin-desktop">
+                    <AnalyticsDashboard />
                   </div>
                 } />
               )}

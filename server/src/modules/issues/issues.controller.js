@@ -1,4 +1,12 @@
 import pool from "../../shared/config/db.js";
+import { classifyIssue } from "../../shared/utils/aiClassifier.js";
+
+let _io = null;
+export const setIo = (io) => { _io = io; };
+
+function emitToUser(userId, event, data) {
+  if (_io) _io.to(`user:${userId}`).emit(event, data);
+}
 
 const VALID_PRIORITIES = ["Normal", "High", "Urgent"];
 const VALID_STATUSES = ["Pending", "Assigned", "In Progress", "Resolved", "Completed", "Rejected"];
@@ -42,40 +50,44 @@ export const createIssue = async (req, res, next) => {
       deptId = deptRows.length > 0 ? deptRows[0].id : null;
     }
 
+    // AI classification
+    const aiResult = classifyIssue(title, description);
+
     const [result] = await pool.query(
-      "INSERT INTO issues (citizen_id, area_id, department_id, title, description, image_url, priority, gps_lat, gps_lng) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [req.user.id, areaId, deptId, title.trim(), description.trim(), imageUrl || null, priority || "Normal", gpsLat || null, gpsLng || null]
+      "INSERT INTO issues (citizen_id, area_id, department_id, title, description, image_url, priority, gps_lat, gps_lng, ai_department, ai_confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [req.user.id, areaId, deptId, title.trim(), description.trim(), imageUrl || null, priority || "Normal",
+       gpsLat || null, gpsLng || null, aiResult.department, aiResult.confidence]
     );
 
-    const issueDisplayId = `CHP-${result.insertId + 1000}`;
+    const issueId = result.insertId;
+    const issueDisplayId = `CHP-${issueId + 1000}`;
 
     await pool.query(
       "INSERT INTO notifications (user_id, issue_id, title, body) VALUES (?, ?, ?, ?)",
-      [
-        req.user.id,
-        result.insertId,
-        `${issueDisplayId} submitted`,
-        "Your report has entered the admin review queue.",
-      ]
+      [req.user.id, issueId, `${issueDisplayId} submitted`, "Your report has entered the admin review queue."]
     );
+    emitToUser(req.user.id, "notification", { title: `${issueDisplayId} submitted`, body: "Your report has entered the admin review queue." });
 
     const [adminUsers] = await pool.query("SELECT id FROM users WHERE role = 'admin'");
     if (adminUsers.length > 0) {
       const adminValues = adminUsers.map(admin => [
-        admin.id,
-        result.insertId,
-        `New Issue: ${issueDisplayId}`,
-        `A new issue "${title}" has been submitted.`
+        admin.id, issueId, `New Issue: ${issueDisplayId}`, `A new issue "${title}" has been submitted.`
       ]);
       await pool.query(
         "INSERT INTO notifications (user_id, issue_id, title, body) VALUES ?",
         [adminValues]
       );
+      adminUsers.forEach(admin => {
+        emitToUser(admin.id, "notification", {
+          title: `New Issue: ${issueDisplayId}`,
+          body: `A new issue "${title}" has been submitted.`,
+        });
+      });
     }
 
     await pool.query(
       "INSERT INTO audit_logs (issue_id, actor_id, action, old_value, new_value) VALUES (?, ?, 'create', NULL, ?)",
-      [result.insertId, req.user.id, JSON.stringify({ title, description, priority, department, area })]
+      [issueId, req.user.id, JSON.stringify({ title, description, priority, department, area })]
     );
 
     res.json({ id: issueDisplayId });
@@ -87,7 +99,8 @@ export const createIssue = async (req, res, next) => {
 export const updateIssue = async (req, res, next) => {
   try {
     let issueIdStr = req.params.id;
-    let actualId = parseInt(issueIdStr.replace("CHP-", "")) - 1000;
+    // Support both old CHP- and new CVR- prefixes
+    let actualId = parseInt(issueIdStr.replace(/^(CHP|CVR)-/i, "")) - 1000;
 
     if (isNaN(actualId) || actualId < 1) {
       return res.status(400).json({ error: `Invalid issue ID: ${issueIdStr}` });
@@ -108,23 +121,26 @@ export const updateIssue = async (req, res, next) => {
     const { status, department, assignedLabour, labourId: incomingLabourId, note, adminNote } = req.body;
     const finalNote = note || adminNote;
 
-    // Validate status
     const statusError = validateEnum(status, VALID_STATUSES, "Status");
     if (statusError) return res.status(400).json({ error: statusError.message });
 
     let deptId = null;
     if (department) {
       const [deptRows] = await pool.query("SELECT id FROM departments WHERE name = ?", [department]);
-      if (deptRows.length > 0) {
-        deptId = deptRows[0].id;
-      }
+      if (deptRows.length > 0) deptId = deptRows[0].id;
     }
 
     let labourId = incomingLabourId || null;
     if (!labourId && assignedLabour && assignedLabour !== "Unassigned") {
       const [labourRows] = await pool.query("SELECT id FROM labour WHERE name = ?", [assignedLabour]);
-      if (labourRows.length > 0) {
-        labourId = labourRows[0].id;
+      if (labourRows.length > 0) labourId = labourRows[0].id;
+    }
+
+    // For citizens, only allow status updates for feedback on completed issues
+    const citizenUpdate = !isAdmin;
+    if (citizenUpdate) {
+      if (status && status !== 'Completed' && status !== issueOwner[0].status) {
+        return res.status(403).json({ error: "Citizens can only mark issues as completed for feedback" });
       }
     }
 
@@ -132,15 +148,6 @@ export const updateIssue = async (req, res, next) => {
     const [oldIssue] = await pool.query("SELECT status, department_id FROM issues WHERE id = ?", [actualId]);
     const oldStatus = oldIssue[0]?.status;
     const oldDeptId = oldIssue[0]?.department_id;
-
-    // For citizens, only allow status updates for feedback on completed issues
-    const citizenUpdate = !isAdmin;
-    if (citizenUpdate) {
-      // Citizens can only update to 'Completed' (for feedback) or send messages
-      if (status && status !== 'Completed' && status !== oldStatus) {
-        return res.status(403).json({ error: "Citizens can only mark issues as completed for feedback" });
-      }
-    }
 
     let updateResult;
     if (deptId !== undefined && deptId !== null) {
@@ -182,15 +189,13 @@ export const updateIssue = async (req, res, next) => {
 
     // Notification to citizen (if admin updated)
     if (isAdmin && issueOwner.length > 0) {
+      const notifTitle = `${issueIdStr} updated`;
+      const notifBody = finalNote || `Status changed to ${status}`;
       await pool.query(
         "INSERT INTO notifications (user_id, issue_id, title, body) VALUES (?, ?, ?, ?)",
-        [
-          issueOwner[0].citizen_id,
-          actualId,
-          `${issueIdStr} updated`,
-          finalNote || `Status changed to ${status}`,
-        ]
+        [issueOwner[0].citizen_id, actualId, notifTitle, notifBody]
       );
+      emitToUser(issueOwner[0].citizen_id, "notification", { title: notifTitle, body: notifBody });
     }
 
     res.json({ success: true });

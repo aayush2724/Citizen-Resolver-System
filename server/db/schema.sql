@@ -54,6 +54,8 @@ CREATE TABLE IF NOT EXISTS issues (
   sla_hours INT DEFAULT 72,
   gps_lat DECIMAL(10, 8),
   gps_lng DECIMAL(11, 8),
+  ai_department VARCHAR(120),
+  ai_confidence INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_issues_status (status),
