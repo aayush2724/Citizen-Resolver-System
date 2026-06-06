@@ -86,20 +86,36 @@ export default function MobileNav({ currentUser, onLogout }) {
               ))}
               
               {currentUser?.role === 'admin' && (
-                <NavLink
-                  to="/admin"
-                  onClick={() => setIsOpen(false)}
-                  className={({ isActive }) => 
-                    `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                      isActive 
-                        ? 'bg-[#1F345E] text-white' 
-                        : 'text-[#161d1a] dark:text-[#EAF2FF] hover:bg-[#E0EDF8] dark:hover:bg-[#2a322e]'
-                    }`
-                  }
-                >
-                  <span className="material-symbols-outlined">dashboard</span>
-                  Dashboard
-                </NavLink>
+                <>
+                  <NavLink
+                    to="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className={({ isActive }) => 
+                      `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                        isActive 
+                          ? 'bg-[#1F345E] text-white' 
+                          : 'text-[#161d1a] dark:text-[#EAF2FF] hover:bg-[#E0EDF8] dark:hover:bg-[#2a322e]'
+                      }`
+                    }
+                  >
+                    <span className="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                  </NavLink>
+                  <NavLink
+                    to="/analytics"
+                    onClick={() => setIsOpen(false)}
+                    className={({ isActive }) => 
+                      `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                        isActive 
+                          ? 'bg-[#1F345E] text-white' 
+                          : 'text-[#161d1a] dark:text-[#EAF2FF] hover:bg-[#E0EDF8] dark:hover:bg-[#2a322e]'
+                      }`
+                    }
+                  >
+                    <span className="material-symbols-outlined">analytics</span>
+                    Analytics
+                  </NavLink>
+                </>
               )}
             </nav>
 

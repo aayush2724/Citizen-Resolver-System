@@ -1180,9 +1180,9 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
   const areasList = (formData.city && formData.block) ? (locationData[formData.city][formData.block] || []) : [];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-start animate-fade-in-up">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-8 w-full items-start animate-fade-in-up">
       {/* Form Section */}
-      <section className="lg:col-span-7 bg-white/95 dark:bg-[#161d1a]/95 backdrop-blur-md rounded-[2.5rem] p-8 md:p-12 shadow-premium border border-white/50 dark:border-white/10">
+      <section className="lg:col-span-7 bg-white/95 dark:bg-[#161d1a]/95 backdrop-blur-md rounded-[2.5rem] p-4 sm:p-6 md:p-8 md:p-12 shadow-premium border border-white/50 dark:border-white/10">
         <div className="mb-8">
           <span className="text-[#1F345E] font-label-bold text-[12px] uppercase tracking-widest mb-1 block">Citizen Reporting</span>
           <h1 className="font-display-lg text-[32px] md:text-[40px] text-[#161d1a] dark:text-[#E0EDF8]">New Case Record</h1>
@@ -1199,7 +1199,7 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
                   value={formData.city}
                   onChange={handleChange}
                   required
-                  className="w-full bg-[#161d1a] text-white border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#1F345E] text-body-md pr-12"
+                  className="w-full bg-[#E0EDF8] dark:bg-[#2a322e] text-[#161d1a] dark:text-[#E0EDF8] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#1F345E] text-body-md pr-12"
                 >
                   <option value="">Select city</option>
                   {cities.map(c => <option key={c} value={c}>{c}</option>)}
@@ -1406,8 +1406,8 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
       </section>
 
       {/* Preview Section */}
-      <aside className="lg:col-span-5 flex flex-col gap-8 h-full">
-        <div className="bg-[#E0EDF8] dark:bg-[#2a322e]/80 backdrop-blur-md rounded-[2.5rem] p-8 md:p-10 border border-white shadow-premium flex flex-col h-full">
+      <aside className="lg:col-span-5 flex flex-col gap-8 h-full lg:max-h-[calc(100vh-120px)] lg:sticky lg:top-28">
+        <div className="bg-[#E0EDF8] dark:bg-[#2a322e]/80 backdrop-blur-md rounded-[2.5rem] p-4 sm:p-6 md:p-8 md:p-10 border border-white shadow-premium flex flex-col h-full">
           <div className="mb-6 flex justify-between items-center">
             <span className="text-[#1F345E] dark:text-[#7E8AA9] font-label-bold text-[12px] uppercase tracking-widest">Case Preview</span>
             <div className="flex gap-1.5">
@@ -1436,8 +1436,8 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
                 </span>
               </div>
             </div>
-            <div className="p-8 space-y-4 flex-grow flex flex-col">
-              <h3 className="font-display-lg text-2xl text-[#161d1a] dark:text-[#E0EDF8] leading-tight line-clamp-2">
+            <div className="p-4 sm:p-6 md:p-8 space-y-4 flex-grow flex flex-col">
+              <h3 className="font-display-lg text-xl sm:text-2xl text-[#161d1a] dark:text-[#E0EDF8] leading-tight line-clamp-2">
                 {formData.title || "Report title will appear here"}
               </h3>
               <p className="text-[#1F345E] dark:text-[#7E8AA9] text-sm leading-relaxed line-clamp-4 opacity-70 flex-grow">
@@ -1460,17 +1460,17 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
             </div>
           </div>
 
-          {/* Tip */}
-          <div className="mt-8 p-6 bg-white/40 rounded-2xl border border-dashed border-[#7E8AA9] flex items-start gap-4">
-            <span className="material-symbols-outlined text-[#1F345E] text-2xl">lightbulb</span>
-            <p className="text-[13px] text-[#1F345E] dark:text-[#7E8AA9] leading-relaxed">
-              Adding a clear photo and precise location helps local authorities resolve your issue up to <b className="text-[#1F345E]">40% faster</b>.
-            </p>
-          </div>
-        </div>
-      </aside>
-    </div>
-  );
+{/* Tip */}
+           <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-white/40 rounded-2xl border border-dashed border-[#7E8AA9] flex items-start gap-3 sm:gap-4">
+             <span className="material-symbols-outlined text-[#1F345E] text-xl sm:text-2xl">lightbulb</span>
+             <p className="text-[11px] sm:text-[13px] text-[#1F345E] dark:text-[#7E8AA9] leading-relaxed">
+               Adding a clear photo and precise location helps local authorities resolve your issue up to <b className="text-[#1F345E]">40% faster</b>.
+             </p>
+           </div>
+         </div>
+       </aside>
+     </div>
+   );
 };
 
 const Login = () => {
