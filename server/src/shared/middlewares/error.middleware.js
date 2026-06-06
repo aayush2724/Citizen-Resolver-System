@@ -8,5 +8,15 @@ export const apiErrorHandler = (err, req, res, next) => {
     console.error("Failed to write to log file:", e);
   }
   console.error(err.stack);
-  res.status(500).json({ error: err.message || "Internal Server Error" });
+
+  const isProd = process.env.NODE_ENV === "production";
+  const response = {
+    error: isProd ? "Internal Server Error" : (err.message || "Internal Server Error"),
+  };
+
+  if (!isProd && err.code) {
+    response.code = err.code;
+  }
+
+  res.status(500).json(response);
 };

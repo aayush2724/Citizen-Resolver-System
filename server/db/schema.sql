@@ -49,14 +49,17 @@ CREATE TABLE IF NOT EXISTS issues (
   title VARCHAR(180) NOT NULL,
   description TEXT NOT NULL,
   image_url VARCHAR(500),
-  status ENUM('Pending', 'Assigned', 'In Progress', 'Resolved') DEFAULT 'Pending',
+  status ENUM('Pending', 'Assigned', 'In Progress', 'Resolved', 'Completed', 'Rejected') DEFAULT 'Pending',
   priority ENUM('Normal', 'High', 'Urgent') DEFAULT 'Normal',
   sla_hours INT DEFAULT 72,
+  gps_lat DECIMAL(10, 8),
+  gps_lng DECIMAL(11, 8),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_issues_status (status),
   INDEX idx_issues_area_status (area_id, status),
   INDEX idx_issues_department (department_id),
+  INDEX idx_issues_citizen (citizen_id),
   FOREIGN KEY (citizen_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (area_id) REFERENCES areas(id) ON DELETE CASCADE,
   FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL
@@ -128,6 +131,33 @@ CREATE TABLE IF NOT EXISTS bug_reports (
   status ENUM('open', 'reviewed', 'resolved') DEFAULT 'open',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS issue_messages (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  issue_id BIGINT NOT NULL,
+  sender_id BIGINT NOT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_messages_issue (issue_id),
+  INDEX idx_messages_sender (sender_id),
+  FOREIGN KEY (issue_id) REFERENCES issues(id) ON DELETE CASCADE,
+  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  issue_id BIGINT NOT NULL,
+  actor_id BIGINT NOT NULL,
+  action VARCHAR(60) NOT NULL,
+  old_value TEXT,
+  new_value TEXT,
+  note TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_audit_issue (issue_id),
+  INDEX idx_audit_actor (actor_id),
+  FOREIGN KEY (issue_id) REFERENCES issues(id) ON DELETE CASCADE,
+  FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 INSERT IGNORE INTO users (name, email, password_hash, role) VALUES ('Admin User', 'admin@helpline.local', '$2b$10$JlCAjLFBLlnS/KAtflYzEO6fhboV9NAQhhHawYr0jICRKIe/hUKC6', 'admin'); -- password: password

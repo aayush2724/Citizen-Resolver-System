@@ -2,12 +2,17 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import pool from "../../shared/config/db.js";
 
-const signToken = (user) =>
-  jwt.sign(
+const signToken = (user) => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET not configured");
+  }
+  return jwt.sign(
     { id: user.id, role: user.role },
-    process.env.JWT_SECRET, // no fallback — will throw at startup if missing
+    secret,
     { expiresIn: "7d" },
   );
+};
 
 export const login = async (req, res, next) => {
   try {
@@ -57,7 +62,6 @@ export const signup = async (req, res, next) => {
   try {
     const { name, email, phone, password, city, block, area } = req.body;
 
-    // Basic validation
     if (!name?.trim())
       return res.status(400).json({ error: "Full name is required" });
     if (!email?.trim() && !phone?.trim())
@@ -68,8 +72,22 @@ export const signup = async (req, res, next) => {
         .json({ error: "Password must be at least 6 characters" });
     }
 
-    // Re-enabled role selection as per user request
-    const role = req.body.role || "citizen";
+    // Restrict admin signup to those with a valid signup code (or allow in development)
+    let role = req.body.role || "citizen";
+    const isAdminSignup = role === "admin";
+
+    if (isAdminSignup) {
+      const allowPublicSignup = process.env.ALLOW_PUBLIC_ADMIN_SIGNUP === "true";
+      const adminSignupCode = process.env.ADMIN_SIGNUP_CODE;
+      const providedCode = req.body.adminSignupCode || req.body.signupCode;
+
+      const canSignupAdmin = allowPublicSignup ||
+        (adminSignupCode && providedCode === adminSignupCode);
+
+      if (!canSignupAdmin) {
+        return res.status(403).json({ error: "Admin signup is restricted. Please contact your administrator." });
+      }
+    }
 
     const [areaRows] = await pool.query("SELECT id FROM areas WHERE name = ?", [
       area,

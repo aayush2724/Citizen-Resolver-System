@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, NavLink, useNavigate, useLocati
 import { api } from './services/api';
 import IssueCard from './components/IssueCard';
 import IssueModal from './components/IssueModal';
+import MobileNav from './components/MobileNav';
 import { Shield, MapPin, Search, Filter } from 'lucide-react';
 import { getRelevantImage } from './utils/image';
 
@@ -272,6 +273,8 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
         )}
         <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#1F345E] dark:bg-[#284c9a] text-white shadow-md' : 'text-[#1F345E] dark:text-[#EAF2FF] hover:text-[#0f1e3d] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
       </nav>
+
+      <MobileNav currentUser={currentUser} onLogout={onLogout} />
 
       <div className="flex items-center gap-3">
         <button

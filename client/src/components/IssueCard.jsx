@@ -3,7 +3,9 @@ import { priorityTone, progressFor, statusTone } from "../utils/status";
 import { fallbackImage, getRelevantImage } from "../utils/image";
 
 export default function IssueCard({ issue, onOpen }) {
-  const imageSrc = getRelevantImage(issue.title, issue.description, issue.department, `card:${issue.id}`);
+  // Prioritize uploaded image URL over fallback
+  const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department, `card:${issue.id}`);
+  const hasUploadedImage = !!issue.imageUrl;
 
   return (
     <article 
@@ -13,7 +15,7 @@ export default function IssueCard({ issue, onOpen }) {
         <img
           className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
           src={imageSrc}
-          alt=""
+          alt={hasUploadedImage ? "Uploaded evidence" : `${issue.department} issue`}
           loading="lazy"
           onError={(event) => {
             event.currentTarget.onerror = null;
@@ -68,7 +70,7 @@ export default function IssueCard({ issue, onOpen }) {
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-slate-500">
                 <UserRound size={18} />
               </div>
-              <span className="truncate">{issue.assignedLabour}</span>
+              <span className="truncate">{issue.assignedLabour || 'Unassigned'}</span>
             </div>
           </div>
         </div>

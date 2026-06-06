@@ -4,35 +4,49 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-citizen_resolver}
       MYSQL_USER: ${MYSQL_USER:-crs_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
     volumes:
       - db_data:/var/lib/mysql
       - ./server/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-    ports:
-      - "3306:3306"
+    networks:
+      - civicnet
 
   server:
     build: ./server
     ports:
       - "3001:3001"
     environment:
-      DATABASE_HOST: ${DATABASE_HOST:-db}
-      DATABASE_USER: ${DATABASE_USER:-crs_user}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_NAME: ${DATABASE_NAME:-citizen_resolver}
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${MYSQL_USER:-crs_user}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-password}
+      DB_NAME: ${MYSQL_DATABASE:-citizen_resolver}
       PORT: 3001
+      JWT_SECRET: ${JWT_SECRET:-change_me_in_production}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:80}
     depends_on:
       - db
+    networks:
+      - civicnet
 
   client:
     build: ./client
     ports:
       - "8080:80"
+    environment:
+      - NGINX_HOST=localhost
     depends_on:
       - server
+    networks:
+      - civicnet
+
+networks:
+  civicnet:
+    driver: bridge
 
 volumes:
   db_data:

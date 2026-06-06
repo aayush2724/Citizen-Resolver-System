@@ -12,7 +12,7 @@ export const getEntireState = async (req, res, next) => {
     const [issues] = await pool.query(`
       SELECT 
         i.id, i.title, i.description, i.image_url as imageUrl, i.status, i.priority, i.created_at, i.updated_at,
-        i.sla_hours as slaHours, i.citizen_id as citizenId,
+        i.sla_hours as slaHours, i.citizen_id as citizenId, i.gps_lat as gpsLat, i.gps_lng as gpsLng,
         u.name as citizenName,
         a.name as area,
         d.name as department
@@ -46,13 +46,12 @@ export const getEntireState = async (req, res, next) => {
       [req.user.id]
     );
 
-    const completedCount = notifications.filter((n) => typeof n.title === "string" && n.title.endsWith(" Completed")).length;
     const dashboardStats = {
       total: issues.length,
       pending: issues.filter((i) => i.status === "Pending").length,
       inProgress: issues.filter((i) => i.status === "In Progress").length,
-      resolved: issues.filter((i) => i.status === "Resolved").length + completedCount,
-      completed: completedCount,
+      resolved: issues.filter((i) => i.status === "Resolved" || i.status === "Completed").length,
+      completed: issues.filter((i) => i.status === "Completed").length,
     };
 
     res.json({
@@ -65,8 +64,9 @@ export const getEntireState = async (req, res, next) => {
           ...i,
           id: `CHP-${i.id + 1000}`,
           originalId: i.id,
-          assignedLabour: latest.labourName || 'Unassigned',
-          note: latest.note || 'Issue received. Waiting for admin review.',
+          assignedLabour: latest.labourName || null,
+          assignedLabourPhone: latest.labourPhone || null,
+          note: latest.note || null,
           history: history
         };
       }),

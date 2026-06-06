@@ -3,19 +3,28 @@ import pool from "../../shared/config/db.js";
 export const getIssueMessages = async (req, res, next) => {
   try {
     const { issueId } = req.params;
-    // Resolve issue identifier to numeric DB id.
     const asNumber = parseInt(issueId.replace(/^CHP-/i, ""), 10);
     let actualId;
     if (String(issueId).toUpperCase().startsWith("CHP-")) {
       actualId = asNumber - 1000;
     } else if (!Number.isNaN(asNumber)) {
-      // If client sent the display id (e.g. 1013) treat >=1000 as display id
       actualId = asNumber >= 1000 ? asNumber - 1000 : asNumber;
     } else {
       return res.status(400).json({ error: `Invalid issue id: ${issueId}` });
     }
 
     if (actualId < 1) return res.status(404).json({ error: `Issue not found: ${issueId}` });
+
+    // Authorization: only citizen who owns issue or admin can view
+    const [issueRows] = await pool.query("SELECT citizen_id FROM issues WHERE id = ?", [actualId]);
+    if (issueRows.length === 0) {
+      return res.status(404).json({ error: `Issue not found: ${issueId}` });
+    }
+    const isOwner = issueRows[0].citizen_id === req.user.id;
+    const isAdmin = req.user.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ error: "Not authorized to view this conversation" });
+    }
 
     const [messages] = await pool.query(`
       SELECT 
@@ -54,37 +63,39 @@ export const sendMessage = async (req, res, next) => {
     }
 
     // Ensure the referenced issue exists before inserting message
-    const [issueExists] = await pool.query("SELECT id FROM issues WHERE id = ?", [actualId]);
+    const [issueExists] = await pool.query("SELECT id, citizen_id FROM issues WHERE id = ?", [actualId]);
     if (issueExists.length === 0) {
       return res.status(404).json({ error: `Issue ${issueId} not found` });
     }
 
+    // Authorization: only citizen who owns issue or admin can message
+    const isOwner = issueExists[0].citizen_id === req.user.id;
+    const isAdmin = req.user.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ error: "Not authorized to message on this issue" });
+    }
+
     const [result] = await pool.query(
       "INSERT INTO issue_messages (issue_id, sender_id, message) VALUES (?, ?, ?)",
-      [actualId, req.user.id, message]
+      [actualId, req.user.id, message.trim()]
     );
 
     // Notify the other party
-    const [issueRows] = await pool.query("SELECT citizen_id, title FROM issues WHERE id = ?", [actualId]);
-    if (issueRows.length > 0) {
-      const issue = issueRows[0];
-      const isSenderAdmin = req.user.role === 'admin';
-      
-      if (isSenderAdmin) {
-        // Notify citizen
-        await pool.query(
-          "INSERT INTO notifications (user_id, issue_id, title, body) VALUES (?, ?, ?, ?)",
-          [issue.citizen_id, actualId, `Message from Admin`, `Admin replied to your issue: ${message.substring(0, 50)}...`]
-        );
-      } else {
-        // Notify all admins
-        const [admins] = await pool.query("SELECT id FROM users WHERE role = 'admin'");
-        const notificationValues = admins.map(a => [
-          a.id, actualId, `Citizen Reply: CHP-${actualId + 1000}`, `${req.user.name}: ${message.substring(0, 50)}...`
-        ]);
-        if (notificationValues.length > 0) {
-          await pool.query("INSERT INTO notifications (user_id, issue_id, title, body) VALUES ?", [notificationValues]);
-        }
+    const issue = issueExists[0];
+    const isSenderAdmin = req.user.role === 'admin';
+    
+    if (isSenderAdmin) {
+      await pool.query(
+        "INSERT INTO notifications (user_id, issue_id, title, body) VALUES (?, ?, ?, ?)",
+        [issue.citizen_id, actualId, `Message from Admin`, `Admin replied to your issue: ${message.substring(0, 50)}...`]
+      );
+    } else {
+      const [admins] = await pool.query("SELECT id FROM users WHERE role = 'admin'");
+      const notificationValues = admins.map(a => [
+        a.id, actualId, `Citizen Reply`, `${req.user.name}: ${message.substring(0, 50)}...`
+      ]);
+      if (notificationValues.length > 0) {
+        await pool.query("INSERT INTO notifications (user_id, issue_id, title, body) VALUES ?", [notificationValues]);
       }
     }
 

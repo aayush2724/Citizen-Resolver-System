@@ -1,14 +1,24 @@
 import jwt from "jsonwebtoken";
 
+export const AUTH_ERRORS = {
+  NO_TOKEN: "Access token required",
+  INVALID_TOKEN: "Invalid or expired token",
+};
+
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
+  if (token == null) return res.status(401).json({ error: AUTH_ERRORS.NO_TOKEN });
 
-  jwt.verify(token, process.env.JWT_SECRET || "supersecret", (err, user) => {
-    if (err) return res.sendStatus(403);
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("FATAL: JWT_SECRET is not configured");
+    return res.status(500).json({ error: "Server misconfiguration" });
+  }
+
+  jwt.verify(token, secret, (err, user) => {
+    if (err) return res.status(403).json({ error: AUTH_ERRORS.INVALID_TOKEN });
     req.user = user;
-    // Attach tenant context from token if available
     if (user && user.tenant_id) {
       req.tenant = { id: user.tenant_id };
     } else if (req.get('x-tenant-id')) {
@@ -30,7 +40,9 @@ export const optionalAuth = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) return next();
-  jwt.verify(token, process.env.JWT_SECRET || "supersecret", (err, user) => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) return next();
+  jwt.verify(token, secret, (err, user) => {
     if (!err) req.user = user;
     next();
   });
