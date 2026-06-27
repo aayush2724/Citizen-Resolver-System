@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: civicresolve-backend
+    runtime: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && node src/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://civicresolve-jet.vercel.app
+      - key: ALLOW_PUBLIC_ADMIN_SIGNUP
+        value: "true"

@@ -1,0 +1,37 @@
+{
+  "buildCommand": "npm run build --prefix client",
+  "outputDirectory": "client/dist",
+  "installCommand": "npm install && npm install --prefix client",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://civicresolve-backend-rj8o.onrender.com/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://civicresolve-backend-rj8o.onrender.com/uploads/:path*"
+    },
+    {
+      "source": "/socket.io",
+      "destination": "https://civicresolve-backend-rj8o.onrender.com/socket.io"
+    },
+    {
+      "source": "/socket.io/:path*",
+      "destination": "https://civicresolve-backend-rj8o.onrender.com/socket.io/:path*"
+    },
+    {
+      "source": "/((?!api|uploads|socket.io|_next|assets|favicon.ico|robots.txt|manifest.json|sw.js).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization" }
+      ]
+    }
+  ]
+}

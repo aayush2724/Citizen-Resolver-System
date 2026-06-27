@@ -34,6 +34,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check before rate limiter (Render health probes)
+app.use("/api/health", healthRoutes);
+
 // General rate limiting
 app.use(generalLimiter);
 
@@ -57,7 +60,6 @@ app.use("/api/state", stateRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/api/health", healthRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
