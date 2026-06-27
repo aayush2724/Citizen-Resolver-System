@@ -11,7 +11,7 @@ const Badge = forwardRef(function Badge({
   
   const variants = {
     default: "bg-slate-50 text-slate-600 border border-slate-200",
-    primary: "bg-[#1F345E]/10 text-[#1F345E] border border-[#1F345E]/20",
+    primary: "bg-[#342721]/10 text-[#342721] border border-[#342721]/20",
     success: "bg-emerald-50 text-emerald-600 border-emerald-200",
     warning: "bg-amber-50 text-amber-600 border-amber-200",
     danger: "bg-rose-50 text-rose-600 border-rose-200",

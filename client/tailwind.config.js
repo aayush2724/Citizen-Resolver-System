@@ -5,36 +5,42 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary palette (civic-tech blue)
-        primary: "#1F345E",
-        "primary-container": "#213D76",
+        'cocoa-noir': '#342721',
+        'amber-lux': '#DDC5A3',
+        'muted': '#8B7355',
+        'warm-hover': '#4a3830',
+        'warm-light': '#CDB893',
+
+        // Primary palette (cocoa-noir)
+        primary: "#342721",
+        "primary-container": "#342721",
         "primary-fixed-dim": "#3adfab",
         
         // Surface colors
-        surface: "#E0EDF8",
-        "surface-container": "#E0EDF8",
-        "surface-container-low": "#E0EDF8",
-        "surface-container-high": "#7E8AA9",
-        "surface-container-highest": "#dce4de",
+        surface: "#DDC5A3",
+        "surface-container": "#DDC5A3",
+        "surface-container-low": "#DDC5A3",
+        "surface-container-high": "#8B7355",
+        "surface-container-highest": "#CDB893",
         "surface-container-lowest": "#ffffff",
-        "surface-bright": "#E0EDF8",
-        "surface-tint": "#1F345E",
-        "surface-dim": "#d4dcd6",
+        "surface-bright": "#DDC5A3",
+        "surface-tint": "#342721",
+        "surface-dim": "#CDB893",
         
         // Text colors
-        "on-surface": "#161d1a",
-        "on-surface-variant": "#7E8AA9",
+        "on-surface": "#342721",
+        "on-surface-variant": "#8B7355",
         "on-primary": "#ffffff",
         "on-secondary": "#1c1b1b",
         "on-secondary-container": "#636262",
         "on-secondary-fixed-variant": "#00513b",
         "on-tertiary": "#ffffff",
-        "on-tertiary-container": "#344459",
-        "on-tertiary-fixed": "#0b1c30",
+        "on-tertiary-container": "#4a3830",
+        "on-tertiary-fixed": "#342721",
         
         // Outline colors
-        outline: "#7E8AA9",
-        "outline-variant": "#7E8AA9",
+        outline: "#8B7355",
+        "outline-variant": "#8B7355",
         
         // Status colors
         error: "#ba1a1a",
@@ -44,16 +50,16 @@ export default {
         secondary: "#5f5e5e",
         "secondary-container": "#e2dfde",
         "secondary-fixed-dim": "#c8c6c5",
-        tertiary: "#344459",
+        tertiary: "#4a3830",
         "tertiary-fixed": "#d3e4fe",
         "tertiary-fixed-dim": "#b7c8e1",
         
         // Inverse
-        "inverse-surface": "#2a322e",
+        "inverse-surface": "#342721",
         
         // Text dark for compatibility
-        "text-dark": "#161d1a",
-        background: "#F9F7F2",
+        "text-dark": "#342721",
+        background: "#DDC5A3",
       },
       borderRadius: {
         "radius-sm": "0.5rem",
@@ -91,7 +97,7 @@ export default {
         "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
       },
       boxShadow: {
-        "premium": "0 24px 60px -12px rgba(31,52,94,0.15), 0 8px 20px -8px rgba(31,52,94,0.12)",
+        "premium": "0 24px 60px -12px rgba(52,39,33,0.15), 0 8px 20px -8px rgba(52,39,33,0.12)",
       }
     },
   },

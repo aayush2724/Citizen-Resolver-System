@@ -97,18 +97,18 @@ export default function LandingPage({ onGetStarted }) {
     <div className="max-w-6xl mx-auto px-6 py-16">
       <div className="text-center mb-24">
         <FadeIn>
-          <div className="inline-flex items-center gap-2 bg-[#1F345E]/10 rounded-full px-4 py-1.5 mb-6">
-            <Shield className="w-4 h-4 text-[#1F345E]" />
-            <span className="text-[11px] font-bold text-[#1F345E] uppercase tracking-wider">CivicResolve</span>
+          <div className="inline-flex items-center gap-2 bg-[#342721]/10 rounded-full px-4 py-1.5 mb-6">
+            <Shield className="w-4 h-4 text-[#342721]" />
+            <span className="text-[11px] font-bold text-[#342721] uppercase tracking-wider">CivicResolve</span>
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h1 className="font-display-lg text-[48px] md:text-[64px] font-extrabold text-[#1F345E] leading-[1.05] mb-6">
+          <h1 className="font-display-lg text-[48px] md:text-[64px] font-extrabold text-[#342721] leading-[1.05] mb-6">
             Your City.<br />Your Voice.<br />Your Resolution.
           </h1>
         </FadeIn>
         <FadeIn delay={0.2}>
-          <p className="text-[#7E8AA9] text-[16px] max-w-xl mx-auto leading-relaxed mb-10">
+          <p className="text-[#8B7355] text-[16px] max-w-xl mx-auto leading-relaxed mb-10">
             Report civic issues, track their resolution in real-time, and hold authorities accountable — all from one platform.
           </p>
         </FadeIn>
@@ -116,13 +116,13 @@ export default function LandingPage({ onGetStarted }) {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => onGetStarted('signup')}
-              className="bg-[#1F345E] text-white px-8 py-3.5 rounded-2xl font-bold text-[14px] hover:bg-[#2a4a7a] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              className="bg-[#342721] text-white px-8 py-3.5 rounded-2xl font-bold text-[14px] hover:bg-[#4a3830] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
               Get Started Free
             </button>
             <button
               onClick={() => onGetStarted('login')}
-              className="bg-white border-2 border-[#1F345E]/20 text-[#1F345E] px-8 py-3.5 rounded-2xl font-bold text-[14px] hover:border-[#1F345E]/40 transition-all hover:-translate-y-0.5"
+              className="bg-white border-2 border-[#342721]/20 text-[#342721] px-8 py-3.5 rounded-2xl font-bold text-[14px] hover:border-[#342721]/40 transition-all hover:-translate-y-0.5"
             >
               Sign In
             </button>
@@ -138,11 +138,11 @@ export default function LandingPage({ onGetStarted }) {
           { value: 24, suffix: 'h', label: 'Avg. Response' },
         ].map((s, i) => (
           <ScaleIn key={s.label} delay={i * 0.08}>
-            <div className="bg-white/80 rounded-2xl p-6 text-center border border-[#E0EDF8] hover:shadow-md transition-all hover:-translate-y-1">
-              <p className="text-[#1F345E] font-extrabold text-[28px]">
+            <div className="bg-white/80 rounded-2xl p-6 text-center border border-[#DDC5A3] hover:shadow-md transition-all hover:-translate-y-1">
+              <p className="text-[#342721] font-extrabold text-[28px]">
                 <CountUp target={s.value} suffix={s.suffix} />
               </p>
-              <p className="text-[#7E8AA9] text-[11px] uppercase tracking-wider font-bold mt-1">{s.label}</p>
+              <p className="text-[#8B7355] text-[11px] uppercase tracking-wider font-bold mt-1">{s.label}</p>
             </div>
           </ScaleIn>
         ))}
@@ -150,20 +150,20 @@ export default function LandingPage({ onGetStarted }) {
 
       <div className="mb-24">
         <FadeIn>
-          <h2 className="text-center text-[28px] font-extrabold text-[#1F345E] mb-3">How It Works</h2>
-          <p className="text-center text-[#7E8AA9] text-[14px] mb-14">Three simple steps to a better community</p>
+          <h2 className="text-center text-[28px] font-extrabold text-[#342721] mb-3">How It Works</h2>
+          <p className="text-center text-[#8B7355] text-[14px] mb-14">Three simple steps to a better community</p>
         </FadeIn>
         <div className="grid md:grid-cols-3 gap-8">
           {steps.map((s, i) => (
             <FadeIn key={s.num} delay={i * 0.12}>
               <div className="text-center relative">
-                <div className="w-14 h-14 bg-[#1F345E] text-white rounded-2xl flex items-center justify-center text-[18px] font-extrabold mx-auto mb-5 shadow-lg">
+                <div className="w-14 h-14 bg-[#342721] text-white rounded-2xl flex items-center justify-center text-[18px] font-extrabold mx-auto mb-5 shadow-lg">
                   {s.num}
                 </div>
-                <h3 className="font-bold text-[17px] text-[#1F345E] mb-2">{s.title}</h3>
-                <p className="text-[#7E8AA9] text-[13px] leading-relaxed max-w-xs mx-auto">{s.desc}</p>
+                <h3 className="font-bold text-[17px] text-[#342721] mb-2">{s.title}</h3>
+                <p className="text-[#8B7355] text-[13px] leading-relaxed max-w-xs mx-auto">{s.desc}</p>
                 {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-7 left-[60%] w-[80%] h-px bg-gradient-to-r from-[#1F345E]/20 to-transparent" />
+                  <div className="hidden md:block absolute top-7 left-[60%] w-[80%] h-px bg-gradient-to-r from-[#342721]/20 to-transparent" />
                 )}
               </div>
             </FadeIn>
@@ -173,17 +173,17 @@ export default function LandingPage({ onGetStarted }) {
 
       <div className="mb-24">
         <FadeIn>
-          <h2 className="text-center text-[28px] font-extrabold text-[#1F345E] mb-3">What You Can Report</h2>
-          <p className="text-center text-[#7E8AA9] text-[14px] mb-12">Across 6 departments covering all civic services</p>
+          <h2 className="text-center text-[28px] font-extrabold text-[#342721] mb-3">What You Can Report</h2>
+          <p className="text-center text-[#8B7355] text-[14px] mb-12">Across 6 departments covering all civic services</p>
         </FadeIn>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {issueTypes.map((t, i) => (
             <ScaleIn key={t.title} delay={i * 0.06}>
-              <div className="bg-white/80 rounded-2xl p-5 border border-[#E0EDF8] flex items-center gap-4 hover:shadow-md transition-all hover:-translate-y-1 cursor-default">
+              <div className="bg-white/80 rounded-2xl p-5 border border-[#DDC5A3] flex items-center gap-4 hover:shadow-md transition-all hover:-translate-y-1 cursor-default">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${t.color}`}>
                   {t.icon}
                 </div>
-                <span className="font-bold text-[14px] text-[#1F345E]">{t.title}</span>
+                <span className="font-bold text-[14px] text-[#342721]">{t.title}</span>
               </div>
             </ScaleIn>
           ))}
@@ -192,18 +192,18 @@ export default function LandingPage({ onGetStarted }) {
 
       <div className="mb-24">
         <FadeIn>
-          <h2 className="text-center text-[28px] font-extrabold text-[#1F345E] mb-3">Everything You Need</h2>
-          <p className="text-center text-[#7E8AA9] text-[14px] mb-12">A complete civic issue management platform</p>
+          <h2 className="text-center text-[28px] font-extrabold text-[#342721] mb-3">Everything You Need</h2>
+          <p className="text-center text-[#8B7355] text-[14px] mb-12">A complete civic issue management platform</p>
         </FadeIn>
         <div className="grid md:grid-cols-3 gap-5">
           {features.map((f, i) => (
             <FadeIn key={f.title} delay={i * 0.08}>
-              <div className="bg-white/80 rounded-2xl p-7 border border-[#E0EDF8] hover:shadow-lg transition-all hover:-translate-y-1 h-full">
-                <div className="w-10 h-10 bg-[#1F345E]/10 rounded-xl flex items-center justify-center text-[#1F345E] mb-4">
+              <div className="bg-white/80 rounded-2xl p-7 border border-[#DDC5A3] hover:shadow-lg transition-all hover:-translate-y-1 h-full">
+                <div className="w-10 h-10 bg-[#342721]/10 rounded-xl flex items-center justify-center text-[#342721] mb-4">
                   {f.icon}
                 </div>
-                <h3 className="font-bold text-[15px] text-[#1F345E] mb-2">{f.title}</h3>
-                <p className="text-[#7E8AA9] text-[13px] leading-relaxed">{f.desc}</p>
+                <h3 className="font-bold text-[15px] text-[#342721] mb-2">{f.title}</h3>
+                <p className="text-[#8B7355] text-[13px] leading-relaxed">{f.desc}</p>
               </div>
             </FadeIn>
           ))}
@@ -211,7 +211,7 @@ export default function LandingPage({ onGetStarted }) {
       </div>
 
       <FadeIn>
-        <div className="bg-[#1F345E] rounded-[2rem] p-12 text-center relative overflow-hidden">
+        <div className="bg-[#342721] rounded-[2rem] p-12 text-center relative overflow-hidden">
           <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/5" />
           <div className="absolute bottom-10 -left-10 w-40 h-40 rounded-full bg-white/5" />
           <div className="relative z-10">
@@ -221,7 +221,7 @@ export default function LandingPage({ onGetStarted }) {
             </p>
             <button
               onClick={() => onGetStarted('signup')}
-              className="bg-white text-[#1F345E] px-10 py-3.5 rounded-2xl font-bold text-[14px] hover:bg-gray-100 transition-all hover:-translate-y-0.5 shadow-lg"
+              className="bg-white text-[#342721] px-10 py-3.5 rounded-2xl font-bold text-[14px] hover:bg-gray-100 transition-all hover:-translate-y-0.5 shadow-lg"
             >
               Create Your Account
             </button>
