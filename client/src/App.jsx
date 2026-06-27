@@ -8,6 +8,7 @@ import MobileNav from './components/MobileNav';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import { Shield, MapPin, Search, Filter } from 'lucide-react';
 import { getRelevantImage } from './utils/image';
+import LandingPage from './components/LandingPage';
 
 const useCountUp = (end, duration = 1500) => {
   const [count, setCount] = useState(0);
@@ -1705,6 +1706,7 @@ export default function App() {
 
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isAddingAccount, setIsAddingAccount] = useState(false);
+  const [authView, setAuthView] = useState(window.location.pathname === '/' ? 'landing' : 'login');
 
   useEffect(() => {
     const fetchState = async () => {
@@ -1792,17 +1794,32 @@ export default function App() {
           <BackgroundController />
 
           {!portalState.currentUser || isAddingAccount ? (
-            <div className="max-w-container-max mx-auto px-margin-desktop relative z-20">
+            <div className="relative z-20">
               {isAddingAccount && (
-                <button 
-                  onClick={() => setIsAddingAccount(false)}
-                  className="absolute -top-12 left-margin-desktop flex items-center gap-2 text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E] font-bold text-sm transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                  Back to Dashboard
-                </button>
+                <div className="max-w-container-max mx-auto px-margin-desktop">
+                  <button 
+                    onClick={() => setIsAddingAccount(false)}
+                    className="flex items-center gap-2 text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E] font-bold text-sm transition-colors mb-4"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Back to Dashboard
+                  </button>
+                </div>
               )}
-              <Login />
+              {authView === 'landing' ? (
+                <LandingPage onGetStarted={(mode) => setAuthView(mode)} />
+              ) : (
+                <div className="max-w-container-max mx-auto px-margin-desktop">
+                  <button
+                    onClick={() => setAuthView('landing')}
+                    className="flex items-center gap-2 text-[#1F345E] dark:text-[#7E8AA9] hover:text-[#1F345E] font-bold text-sm transition-colors mb-4"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Back
+                  </button>
+                  <Login />
+                </div>
+              )}
             </div>
           ) : (
             <Routes>
