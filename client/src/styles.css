@@ -10,7 +10,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Light Mode Palette ── */
 :root {
   color-scheme: light;
   font-synthesis: none;
@@ -32,21 +31,6 @@
   --cream-white: #FAF7F2;
 }
 
-/* ── Dark Mode Palette ── */
-.dark {
-  color-scheme: dark;
-  --bg-main: #342721;
-  --surface: #4a3830;
-  --surface-raised: #8B7355;
-  --text-dark: #DDC5A3;
-  --text-muted: #CDB893;
-  --primary: #DDC5A3;
-  --primary-accent: #8B7355;
-  --border: rgba(139, 115, 85, 0.12);
-  --shadow-primary: rgba(52, 39, 33, 0.20);
-}
-
-/* ── Light Mode Base Overrides ── */
 body {
   background-color: var(--bg-main);
 }
@@ -89,12 +73,6 @@ body {
   box-shadow: 0 8px 32px rgba(52, 39, 33, 0.08);
 }
 
-.dark .glass-panel {
-  background: rgba(52, 39, 33, 0.8);
-  border-color: rgba(139, 115, 85, 0.14);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
 /* ── Cards ── */
 .floating-img {
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -104,10 +82,6 @@ body {
 .bento-grid-bg {
     background-image: radial-gradient(#34272120 1px, transparent 1px);
     background-size: 32px 32px;
-}
-
-.dark .bento-grid-bg {
-    background-image: radial-gradient(#DDC5A318 1px, transparent 1px);
 }
 
 /* ── Tilted Card ── */
@@ -126,10 +100,6 @@ body {
     background-size: 24px 24px;
 }
 
-.dark .map-bg {
-    background-image: radial-gradient(circle at 2px 2px, #4a3830 1px, transparent 0);
-}
-
 /* ── Scrollbars ── */
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
@@ -141,17 +111,8 @@ body {
     background: rgba(52, 39, 33, 0.12);
     border-radius: 10px;
 }
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(139, 115, 85, 0.18);
-}
-
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* ── Light mode: improve cards & surfaces ── */
-.dark\:bg-\[\#342721\] {
-  /* dark mode will use the class, light stays white */
-}
 
 /* Better focus rings */
 *:focus-visible {
@@ -163,10 +124,6 @@ body {
 ::selection {
   background: rgba(52, 39, 33, 0.25);
   color: inherit;
-}
-
-.dark ::selection {
-  background: rgba(221, 197, 163, 0.30);
 }
 
 /* ── Landing 3D scene ── */

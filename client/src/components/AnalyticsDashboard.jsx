@@ -16,7 +16,7 @@ const BarChart = ({ data, labelKey, valueKey, title }) => {
   const max = Math.max(...data.map(d => Number(d[valueKey]) || 0), 1);
   return (
     <div>
-      <h3 className="text-[13px] font-bold text-[#342721] dark:text-[#DDC5A3] uppercase tracking-widest mb-4">{title}</h3>
+      <h3 className="text-[13px] font-bold text-[#342721] uppercase tracking-widest mb-4">{title}</h3>
       <div className="space-y-3">
         {data.map((item, i) => {
           const val = Number(item[valueKey]) || 0;
@@ -25,12 +25,12 @@ const BarChart = ({ data, labelKey, valueKey, title }) => {
           return (
             <div key={item[labelKey] || i}>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[12px] font-semibold text-[#342721] dark:text-[#DDC5A3] truncate max-w-[60%]">
+                <span className="text-[12px] font-semibold text-[#342721] truncate max-w-[60%]">
                   {item[labelKey] || 'Unknown'}
                 </span>
-                <span className="text-[12px] font-black text-[#342721] dark:text-[#DDC5A3]">{val}</span>
+                <span className="text-[12px] font-black text-[#342721]">{val}</span>
               </div>
-              <div className="h-2.5 rounded-full bg-[#DDC5A3] dark:bg-[#4a3830] overflow-hidden">
+              <div className="h-2.5 rounded-full bg-[#DDC5A3] overflow-hidden">
                 <div
                   data-bar
                   className="h-full rounded-full transition-all duration-700"
@@ -82,7 +82,7 @@ const DonutChart = ({ data, labelKey, valueKey, title }) => {
 
   return (
     <div>
-      <h3 className="text-[13px] font-bold text-[#342721] dark:text-[#DDC5A3] uppercase tracking-widest mb-4">{title}</h3>
+      <h3 className="text-[13px] font-bold text-[#342721] uppercase tracking-widest mb-4">{title}</h3>
       <div className="flex items-center gap-6">
         <svg width="100" height="100" viewBox="0 0 100 100">
           {slices.map((slice, i) => {
@@ -90,7 +90,7 @@ const DonutChart = ({ data, labelKey, valueKey, title }) => {
             if (!d) return null;
             return <path key={i} d={d} fill={slice.color} />;
           })}
-          <circle cx="50" cy="50" r="24" fill="white" className="dark:fill-[#342721]" />
+          <circle cx="50" cy="50" r="24" fill="white" />
           <text x="50" y="53" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#342721">{total}</text>
         </svg>
         <div className="space-y-2 flex-1">
@@ -98,7 +98,7 @@ const DonutChart = ({ data, labelKey, valueKey, title }) => {
             <div key={i} className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: slice.color }} />
               <span className="text-[11px] text-[#8B7355] truncate">{slice[labelKey] || 'Unknown'}</span>
-              <span className="ml-auto text-[11px] font-bold text-[#342721] dark:text-[#DDC5A3]">{slice.val}</span>
+              <span className="ml-auto text-[11px] font-bold text-[#342721]">{slice.val}</span>
             </div>
           ))}
         </div>
@@ -124,7 +124,7 @@ const TimelineChart = ({ data }) => {
 
   return (
     <div>
-      <h3 className="text-[13px] font-bold text-[#342721] dark:text-[#DDC5A3] uppercase tracking-widest mb-4">Issues Over Time (Last 30 Days)</h3>
+      <h3 className="text-[13px] font-bold text-[#342721] uppercase tracking-widest mb-4">Issues Over Time (Last 30 Days)</h3>
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="overflow-visible">
         <defs>
           <linearGradient id="timeGrad" x1="0" y1="0" x2="0" y2="1">
@@ -220,7 +220,7 @@ export default function AnalyticsDashboard() {
       <div>
         <span className="text-[#342721] font-bold text-[11px] uppercase tracking-widest block mb-1">Administration</span>
         <div className="flex items-center gap-3">
-          <h1 className="text-[34px] md:text-[44px] font-black text-[#342721] dark:text-[#DDC5A3] leading-none tracking-[-0.04em]">
+          <h1 className="text-[34px] md:text-[44px] font-black text-[#342721] leading-none tracking-[-0.04em]">
             Analytics
           </h1>
           <span className="relative flex h-2.5 w-2.5">
@@ -234,11 +234,11 @@ export default function AnalyticsDashboard() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map(k => (
-          <div key={k.label} className="bg-white/90 dark:bg-[#342721]/90 backdrop-blur-md rounded-[1.75rem] p-6 shadow-sm border border-white/60 dark:border-white/10">
+          <div key={k.label} className="bg-white/90 backdrop-blur-md rounded-[1.75rem] p-6 shadow-sm border border-white/60">
             <div className={`w-11 h-11 ${k.bg} rounded-2xl flex items-center justify-center mb-4`}>
               <span className={`material-symbols-outlined ${k.color} text-xl`}>{k.icon}</span>
             </div>
-            <p className="text-[36px] font-black text-[#342721] dark:text-[#DDC5A3] leading-none">{k.value}</p>
+            <p className="text-[36px] font-black text-[#342721] leading-none">{k.value}</p>
             <p className="text-[11px] font-semibold text-[#8B7355] uppercase tracking-wider mt-2">{k.label}</p>
           </div>
         ))}
@@ -246,29 +246,29 @@ export default function AnalyticsDashboard() {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white/90 dark:bg-[#342721]/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60 dark:border-white/10">
+        <div className="bg-white/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60">
           <DonutChart data={data.byStatus} labelKey="status" valueKey="count" title="By Status" />
         </div>
-        <div className="bg-white/90 dark:bg-[#342721]/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60 dark:border-white/10">
+        <div className="bg-white/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60">
           <BarChart data={data.byDepartment} labelKey="department" valueKey="count" title="By Department" />
         </div>
-        <div className="bg-white/90 dark:bg-[#342721]/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60 dark:border-white/10">
+        <div className="bg-white/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60">
           <BarChart data={data.byPriority} labelKey="priority" valueKey="count" title="By Priority" />
         </div>
       </div>
 
       {/* Timeline */}
-      <div className="bg-white/90 dark:bg-[#342721]/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60 dark:border-white/10">
+      <div className="bg-white/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60">
         <TimelineChart data={data.timeline} />
       </div>
 
       {/* Top Areas */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white/90 dark:bg-[#342721]/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60 dark:border-white/10">
+        <div className="bg-white/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60">
           <BarChart data={data.byArea} labelKey="area" valueKey="count" title="Issues by Area" />
         </div>
-        <div className="bg-white/90 dark:bg-[#342721]/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60 dark:border-white/10">
-          <h3 className="text-[13px] font-bold text-[#342721] dark:text-[#DDC5A3] uppercase tracking-widest mb-4">Department Performance</h3>
+        <div className="bg-white/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm border border-white/60">
+          <h3 className="text-[13px] font-bold text-[#342721] uppercase tracking-widest mb-4">Department Performance</h3>
           <div className="space-y-4">
             {(data.topDepts || []).map((d, i) => {
               const total = Number(d.count) || 0;
@@ -277,10 +277,10 @@ export default function AnalyticsDashboard() {
               return (
                 <div key={i} className="flex items-center gap-4">
                   <div className="w-28 text-[11px] font-semibold text-[#8B7355] truncate">{d.department}</div>
-                  <div className="flex-1 h-2.5 rounded-full bg-[#DDC5A3] dark:bg-[#4a3830] overflow-hidden">
+                  <div className="flex-1 h-2.5 rounded-full bg-[#DDC5A3] overflow-hidden">
                     <div data-bar className="h-full rounded-full bg-emerald-500 transition-all duration-700" style={{ width: `${rate}%` }} />
                   </div>
-                  <div className="w-12 text-right text-[11px] font-black text-[#342721] dark:text-[#DDC5A3]">{rate}%</div>
+                  <div className="w-12 text-right text-[11px] font-black text-[#342721]">{rate}%</div>
                 </div>
               );
             })}

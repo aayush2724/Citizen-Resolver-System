@@ -222,22 +222,6 @@ const RippleButton = ({ to, className, style, children, onClick }) => {
 
 const Header = ({ currentUser, onLogout, notifications = [] }) => {
   const [notifOpen, setNotifOpen] = useState(false);
-  
-  const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDark]);
-
-  const toggleTheme = () => setIsDark(!isDark);
 
   const handleNotificationClick = async (n) => {
     try {
@@ -250,55 +234,46 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
   const unreadCount = notifications?.filter(n => !n.read).length || 0;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-3 max-w-container-max mx-auto bg-white/80 dark:bg-[#342721]/95 backdrop-blur-md rounded-full mt-4 w-[95%] shadow-sm flex-shrink-0 border border-[#8B7355]/30 dark:border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-3 max-w-container-max mx-auto bg-white/80 backdrop-blur-md rounded-full mt-4 w-[95%] shadow-sm flex-shrink-0 border border-[#8B7355]/30">
       <div className="flex items-center gap-3">
         <div className="bg-[#342721] p-2 rounded-xl flex items-center justify-center shadow-sm shadow-[#342721]/20">
           <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
         </div>
         <div className="flex flex-col">
           <span
-            className="text-lg md:text-xl font-black text-[#342721] dark:text-[#DDC5A3] leading-none tracking-[-0.03em]"
+            className="text-lg md:text-xl font-black text-[#342721] leading-none tracking-[-0.03em]"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
             CivicResolve
           </span>
-          <span className="text-[9px] uppercase tracking-[0.28em] font-bold text-[#342721] opacity-80 dark:text-[#DDC5A3] dark:opacity-100" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <span className="text-[9px] uppercase tracking-[0.28em] font-bold text-[#342721] opacity-80" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             Empowering Communities
           </span>
         </div>
       </div>
-      <nav className="hidden md:flex items-center bg-[#DDC5A3] dark:bg-[#111b2d]/95 rounded-full p-1 ml-4 dark:border dark:border-white/10">
-        <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] dark:bg-[#4a3830] text-white shadow-md' : 'text-[#342721] dark:text-[#DDC5A3] hover:text-[#4a3830] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
-        <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] dark:bg-[#4a3830] text-white shadow-md' : 'text-[#342721] dark:text-[#DDC5A3] hover:text-[#4a3830] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
-        <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] dark:bg-[#4a3830] text-white shadow-md' : 'text-[#342721] dark:text-[#DDC5A3] hover:text-[#4a3830] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
-        <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] dark:bg-[#4a3830] text-white shadow-md' : 'text-[#342721] dark:text-[#DDC5A3] hover:text-[#4a3830] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
+      <nav className="hidden md:flex items-center bg-[#DDC5A3] rounded-full p-1 ml-4">
+        <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
+        <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
+        <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
+        <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
         {currentUser?.role === 'admin' && (
-          <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] dark:bg-[#4a3830] text-white shadow-md' : 'text-[#342721] dark:text-[#DDC5A3] hover:text-[#4a3830] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
+          <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
         )}
         {currentUser?.role === 'admin' && (
-          <NavLink to="/analytics" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] dark:bg-[#4a3830] text-white shadow-md' : 'text-[#342721] dark:text-[#DDC5A3] hover:text-[#4a3830] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Analytics</NavLink>
+          <NavLink to="/analytics" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Analytics</NavLink>
         )}
-        <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] dark:bg-[#4a3830] text-white shadow-md' : 'text-[#342721] dark:text-[#DDC5A3] hover:text-[#4a3830] dark:hover:text-white'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
+        <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
       </nav>
 
       <MobileNav currentUser={currentUser} onLogout={onLogout} />
 
       <div className="flex items-center gap-3">
-        <button
-          onClick={toggleTheme}
-          className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white dark:bg-[#342721] shadow-sm hover:bg-[#DDC5A3] dark:hover:bg-[#4a3830] transition-all border border-[#8B7355]/20 dark:border-white/10"
-        >
-          <span className="material-symbols-outlined text-[#342721] dark:text-[#DDC5A3] text-xl">
-            {isDark ? 'light_mode' : 'dark_mode'}
-          </span>
-        </button>
-
         <div className="relative">
           <button
             onClick={() => setNotifOpen(!notifOpen)}
-            className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white dark:bg-[#342721] shadow-sm hover:bg-[#DDC5A3] dark:hover:bg-[#4a3830] transition-all border border-[#8B7355]/20 dark:border-white/10 relative"
+            className="w-10 h-10 hidden md:flex items-center justify-center rounded-full bg-white shadow-sm hover:bg-[#DDC5A3] transition-all border border-[#8B7355]/20 relative"
           >
-            <span className="material-symbols-outlined text-[#342721] dark:text-[#DDC5A3] text-xl">notifications</span>
+            <span className="material-symbols-outlined text-[#342721] text-xl">notifications</span>
             {unreadCount > 0 && (
               <span className="absolute top-0 right-0 bg-[#d84315] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[20px] text-center leading-none shadow-sm">
                 {unreadCount > 9 ? '9+' : unreadCount}
@@ -308,9 +283,9 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
 
           {/* Notifications Dropdown */}
           {notifOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white/95 dark:bg-[#342721]/98 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 dark:border-white/10 flex flex-col overflow-hidden z-50">
-              <div className="px-4 py-3 bg-[#DDC5A3] dark:bg-[#4a3830] border-b border-[#8B7355]/20 dark:border-white/10 flex items-center justify-between">
-                <p className="text-[10px] font-bold text-[#342721] dark:text-[#DDC5A3] uppercase tracking-wider">Notifications</p>
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 flex flex-col overflow-hidden z-50">
+              <div className="px-4 py-3 bg-[#DDC5A3] border-b border-[#8B7355]/20 flex items-center justify-between">
+                <p className="text-[10px] font-bold text-[#342721] uppercase tracking-wider">Notifications</p>
                 {unreadCount > 0 && (
                   <span className="bg-[#342721] text-white text-[10px] font-black px-2 py-0.5 rounded-full">{unreadCount} new</span>
                 )}
@@ -318,7 +293,7 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
               
               <div className="max-h-80 overflow-y-auto">
                 {(notifications || []).length === 0 ? (
-                  <p className="text-center text-[#8B7355] dark:text-[#DDC5A3] text-sm py-6">No notifications</p>
+                  <p className="text-center text-[#8B7355] text-sm py-6">No notifications</p>
                 ) : (
                   notifications.slice(0, 10).map(n => (
                     <button
@@ -327,18 +302,18 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
                         handleNotificationClick(n);
                         setNotifOpen(false);
                       }}
-                      className={`w-full text-left flex items-start gap-3 p-3 border-b border-[#8B7355]/10 hover:bg-[#DDC5A3] dark:bg-[#342721] transition-all group ${
-                        n.read ? 'opacity-50' : 'bg-white dark:bg-[#342721]'
+                      className={`w-full text-left flex items-start gap-3 p-3 border-b border-[#8B7355]/10 hover:bg-[#DDC5A3] transition-all group ${
+                        n.read ? 'opacity-50' : 'bg-white'
                       }`}
                     >
                       <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
                         n.read ? 'bg-[#8B7355]' : 'bg-[#342721]'
                       }`}></span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[12px] font-bold text-[#342721] dark:text-[#DDC5A3] truncate group-hover:text-[#342721]">
+                        <p className="text-[12px] font-bold text-[#342721] truncate group-hover:text-[#342721]">
                           {n.title || 'New Notification'}
                         </p>
-                        <p className="text-[11px] text-[#8B7355] dark:text-[#DDC5A3] mt-0.5 line-clamp-2">
+                        <p className="text-[11px] text-[#8B7355] mt-0.5 line-clamp-2">
                           {n.message || n.body || ''}
                         </p>
                       </div>
@@ -360,21 +335,21 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
         
         {currentUser && (
           <div className="relative group">
-            <button className="flex items-center gap-3 bg-white dark:bg-[#342721] px-3 py-1.5 rounded-full shadow-sm border border-[#8B7355]/30 dark:border-white/10 hover:bg-[#DDC5A3] dark:hover:bg-[#4a3830] transition-all">
+            <button className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-full shadow-sm border border-[#8B7355]/30 hover:bg-[#DDC5A3] transition-all">
               <div className="w-8 h-8 rounded-full bg-[#342721] flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-[#342721]/20">
                 {currentUser.name?.[0].toUpperCase() || 'U'}
               </div>
               <div className="hidden lg:flex flex-col items-start text-left">
-                <span className="text-[10px] font-bold text-[#342721] dark:text-[#DDC5A3] leading-tight">{currentUser.name}</span>
-                <span className="text-[8px] uppercase text-[#8B7355] dark:text-[#DDC5A3] font-bold">{currentUser.role || 'Citizen'}</span>
+                <span className="text-[10px] font-bold text-[#342721] leading-tight">{currentUser.name}</span>
+                <span className="text-[8px] uppercase text-[#8B7355] font-bold">{currentUser.role || 'Citizen'}</span>
               </div>
-              <span className="material-symbols-outlined text-[#8B7355] dark:text-[#DDC5A3] text-sm ml-1 group-hover:text-[#342721] dark:group-hover:text-white">expand_more</span>
+              <span className="material-symbols-outlined text-[#8B7355] text-sm ml-1 group-hover:text-[#342721]">expand_more</span>
             </button>
 
             {/* Dropdown Menu */}
-            <div className="absolute right-0 top-full mt-2 w-64 bg-white/95 dark:bg-[#342721]/98 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 dark:border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 flex flex-col overflow-hidden z-50">
-              <div className="px-4 py-3 bg-[#DDC5A3] dark:bg-[#4a3830] border-b border-[#8B7355]/20 dark:border-white/10">
-                <p className="text-[10px] font-bold text-[#342721] dark:text-[#DDC5A3] uppercase tracking-wider">Active Accounts</p>
+            <div className="absolute right-0 top-full mt-2 w-64 bg-white/95 backdrop-blur-md rounded-2xl shadow-premium border border-outline-variant/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 flex flex-col overflow-hidden z-50">
+              <div className="px-4 py-3 bg-[#DDC5A3] border-b border-[#8B7355]/20">
+                <p className="text-[10px] font-bold text-[#342721] uppercase tracking-wider">Active Accounts</p>
               </div>
               
               <div className="max-h-48 overflow-y-auto">
@@ -397,19 +372,19 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
                       {session.name?.[0].toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-[12px] font-bold truncate ${session.email === currentUser.email ? 'text-[#342721] dark:text-[#DDC5A3]' : 'text-[#342721] dark:text-[#DDC5A3]'}`}>
+                      <p className={`text-[12px] font-bold truncate ${session.email === currentUser.email ? 'text-[#342721]' : 'text-[#342721]'}`}>
                         {session.name}
                       </p>
-                      <p className="text-[10px] text-[#8B7355] dark:text-[#DDC5A3] truncate">{session.email}</p>
+                      <p className="text-[10px] text-[#8B7355] truncate">{session.email}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {session.email === currentUser.email && (
-                        <span className="material-symbols-outlined text-[#342721] dark:text-[#8B7355] text-sm">check_circle</span>
+                        <span className="material-symbols-outlined text-[#342721] text-sm">check_circle</span>
                       )}
                       <button
                         onClick={(e) => { e.stopPropagation(); api.logoutSession(session.email); }}
                         title="Sign out this account"
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-[#8B7355] dark:text-[#DDC5A3] hover:bg-[#ffecec] hover:text-red-600 transition-colors"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-[#8B7355] hover:bg-[#ffecec] hover:text-red-600 transition-colors"
                       >
                         <span className="material-symbols-outlined">logout</span>
                       </button>
@@ -418,10 +393,10 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
                 ))}
               </div>
 
-              <div className="border-t border-[#8B7355]/20 dark:border-white/10 p-2">
+              <div className="border-t border-[#8B7355]/20 p-2">
                 <button
                   onClick={() => window.dispatchEvent(new Event("trigger-add-account"))}
-                  className="w-full text-left px-3 py-2 text-[12px] font-bold text-[#342721] dark:text-[#DDC5A3] hover:bg-[#DDC5A3] dark:bg-[#342721] rounded-xl flex items-center gap-2 transition-colors"
+                  className="w-full text-left px-3 py-2 text-[12px] font-bold text-[#342721] hover:bg-[#DDC5A3] rounded-xl flex items-center gap-2 transition-colors"
                 >
                   <span className="material-symbols-outlined text-[16px]">person_add</span>
                   Add Another Account
@@ -443,7 +418,7 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
 };
 
 const Footer = () => (
-  <footer className="relative z-50 bg-[#DDC5A3] dark:bg-[#342721]/50 backdrop-blur-md border-t border-[#8B7355]/30 dark:border-white/10 py-6 mt-auto">
+  <footer className="relative z-50 bg-[#DDC5A3] backdrop-blur-md border-t border-[#8B7355]/30 py-6 mt-auto">
     <div className="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center px-margin-desktop">
       <div className="flex items-center gap-4 mb-4 md:mb-0">
         <div className="flex items-center gap-2">
@@ -452,20 +427,20 @@ const Footer = () => (
           </div>
           <span className="font-bold text-[#342721] text-sm">CivicResolve</span>
         </div>
-        <span className="hidden md:inline text-[11px] text-[#342721] dark:text-[#8B7355] opacity-60">© 2024 CivicResolve System</span>
+        <span className="hidden md:inline text-[11px] text-[#342721] opacity-60">© 2024 CivicResolve System</span>
       </div>
       
       <div className="flex items-center gap-6">
         <div className="flex gap-4">
-          <a className="text-[#342721] dark:text-[#8B7355] hover:text-[#342721] transition-colors font-label-bold text-[11px]" href="#">Privacy</a>
-          <a className="text-[#342721] dark:text-[#8B7355] hover:text-[#342721] transition-colors font-label-bold text-[11px]" href="#">Terms</a>
-          <a className="text-[#342721] dark:text-[#8B7355] hover:text-[#342721] transition-colors font-label-bold text-[11px]" href="#">Support</a>
+          <a className="text-[#342721] hover:text-[#342721] transition-colors font-label-bold text-[11px]" href="#">Privacy</a>
+          <a className="text-[#342721] hover:text-[#342721] transition-colors font-label-bold text-[11px]" href="#">Terms</a>
+          <a className="text-[#342721] hover:text-[#342721] transition-colors font-label-bold text-[11px]" href="#">Support</a>
         </div>
         <div className="flex gap-2">
-          <a className="w-8 h-8 rounded-full bg-white dark:bg-[#342721] flex items-center justify-center hover:bg-[#342721] hover:text-white transition-all shadow-sm" href="#">
+          <a className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-[#342721] hover:text-white transition-all shadow-sm" href="#">
             <span className="material-symbols-outlined text-sm">public</span>
           </a>
-          <a className="w-8 h-8 rounded-full bg-white dark:bg-[#342721] flex items-center justify-center hover:bg-[#342721] hover:text-white transition-all shadow-sm" href="#">
+          <a className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-[#342721] hover:text-white transition-all shadow-sm" href="#">
             <span className="material-symbols-outlined text-sm">mail</span>
           </a>
         </div>
@@ -1115,12 +1090,12 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
         <div className="w-24 h-24 bg-[#342721] text-white rounded-full flex items-center justify-center mb-8 shadow-lg shadow-[#342721]/20">
           <span className="material-symbols-outlined text-5xl">check</span>
         </div>
-        <h2 className="text-display-lg text-[#342721] dark:text-[#DDC5A3] mb-4">Report Submitted!</h2>
-        <p className="text-body-lg text-[#342721] dark:text-[#8B7355] max-w-md mx-auto mb-10 opacity-70">
+        <h2 className="text-display-lg text-[#342721] mb-4">Report Submitted!</h2>
+        <p className="text-body-lg text-[#342721] max-w-md mx-auto mb-10 opacity-70">
           Your case has been recorded. Our team will review and assign it to the appropriate department shortly.
         </p>
         <div className="flex gap-4">
-          <button onClick={() => setSubmitted(false)} className="bg-[#DDC5A3] dark:bg-[#342721] text-[#342721] px-10 py-4 rounded-full font-label-bold hover:bg-[#342721] hover:text-white transition-all">
+          <button onClick={() => setSubmitted(false)} className="bg-[#DDC5A3] text-[#342721] px-10 py-4 rounded-full font-label-bold hover:bg-[#342721] hover:text-white transition-all">
             Submit Another
           </button>
           <button onClick={() => navigate('/my-issues')} className="bg-[#342721] text-white px-10 py-4 rounded-full font-label-bold hover:shadow-lg transition-all">
@@ -1186,33 +1161,33 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
   return (
     <div data-testid="page-report-issue" className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-8 w-full items-start animate-fade-in-up">
       {/* Form Section */}
-      <section className="lg:col-span-7 bg-white/95 dark:bg-[#342721]/95 backdrop-blur-md rounded-[2.5rem] p-4 sm:p-6 md:p-8 md:p-12 shadow-premium border border-white/50 dark:border-white/10">
+      <section className="lg:col-span-7 bg-white/95 backdrop-blur-md rounded-[2.5rem] p-4 sm:p-6 md:p-8 md:p-12 shadow-premium border border-white/50">
         <div className="mb-8">
           <span className="text-[#342721] font-label-bold text-[12px] uppercase tracking-widest mb-1 block">Citizen Reporting</span>
-          <h1 className="font-display-lg text-[32px] md:text-[40px] text-[#342721] dark:text-[#DDC5A3]">New Case Record</h1>
+          <h1 className="font-display-lg text-[32px] md:text-[40px] text-[#342721]">New Case Record</h1>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Location Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-1">
-              <label className="font-label-bold text-[12px] text-[#342721] dark:text-[#8B7355] uppercase tracking-wide px-1">City</label>
+              <label className="font-label-bold text-[12px] text-[#342721] uppercase tracking-wide px-1">City</label>
               <div className="relative">
                 <select 
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
                   required
-                  className="w-full bg-[#DDC5A3] dark:bg-[#342721] text-[#342721] dark:text-[#DDC5A3] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12"
+                  className="w-full bg-[#DDC5A3] text-[#342721] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12"
                 >
                   <option value="">Select city</option>
                   {cities.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] dark:text-[#DDC5A3] brightness-200">expand_more</span>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] brightness-200">expand_more</span>
               </div>
             </div>
             <div className="space-y-1">
-              <label className="font-label-bold text-[12px] text-[#342721] dark:text-[#8B7355] uppercase tracking-wide px-1">Block</label>
+              <label className="font-label-bold text-[12px] text-[#342721] uppercase tracking-wide px-1">Block</label>
               <div className="relative">
                 <select 
                   name="block"
@@ -1220,16 +1195,16 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
                   onChange={handleChange}
                   required
                   disabled={!formData.city}
-                  className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12 disabled:opacity-50"
+                  className="w-full bg-[#DDC5A3] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12 disabled:opacity-50"
                 >
                   <option value="">Select block</option>
                   {blocks.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] dark:text-[#DDC5A3]">expand_more</span>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721]">expand_more</span>
               </div>
             </div>
             <div className="space-y-1">
-              <label className="font-label-bold text-[12px] text-[#342721] dark:text-[#8B7355] uppercase tracking-wide px-1">Area</label>
+              <label className="font-label-bold text-[12px] text-[#342721] uppercase tracking-wide px-1">Area</label>
               <div className="relative">
                 <select 
                   name="area"
@@ -1237,25 +1212,25 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
                   onChange={handleChange}
                   required
                   disabled={!formData.block}
-                  className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12 disabled:opacity-50"
+                  className="w-full bg-[#DDC5A3] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12 disabled:opacity-50"
                 >
                   <option value="">Select area</option>
                   {areasList.map(a => <option key={a} value={a}>{a}</option>)}
                 </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] dark:text-[#DDC5A3]">expand_more</span>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721]">expand_more</span>
               </div>
             </div>
           </div>
 
           {/* GPS Location */}
-          <div className="flex items-center gap-3 p-3 bg-[#DDC5A3]/60 dark:bg-[#342721]/60 rounded-2xl border border-[#8B7355]/20">
+          <div className="flex items-center gap-3 p-3 bg-[#DDC5A3]/60 rounded-2xl border border-[#8B7355]/20">
             <button type="button" onClick={handleGetGPS} disabled={gpsLoading}
               className="flex items-center gap-2 px-4 py-2 bg-[#342721] text-white rounded-xl text-[12px] font-bold hover:bg-[#342721] transition-all disabled:opacity-50 flex-shrink-0">
               <span className="material-symbols-outlined text-[16px]">my_location</span>
               {gpsLoading ? 'Locating...' : 'GPS Location'}
             </button>
             {gpsCoords ? (
-              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">📍 {gpsCoords.lat}, {gpsCoords.lng}</span>
+              <span className="text-[11px] text-emerald-700 font-semibold">📍 {gpsCoords.lat}, {gpsCoords.lng}</span>
             ) : (
               <span className="text-[11px] text-[#8B7355]">Optional — tags your report with GPS coordinates</span>
             )}
@@ -1268,13 +1243,13 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
 
           {/* Issue Title */}
           <div className="space-y-1">
-            <label className="font-label-bold text-[12px] text-[#342721] dark:text-[#8B7355] uppercase tracking-wide px-1">Issue Title</label>
+            <label className="font-label-bold text-[12px] text-[#342721] uppercase tracking-wide px-1">Issue Title</label>
             <input 
               name="title"
               value={formData.title}
               onChange={handleChange}
               required
-              className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md placeholder:text-[#8B7355] transition-all"
+              className="w-full bg-[#DDC5A3] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md placeholder:text-[#8B7355] transition-all"
               placeholder="e.g. Major pothole on Sector 4 main road"
             />
           </div>
@@ -1282,72 +1257,72 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
           {/* Priority & Department */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
-              <label className="font-label-bold text-[12px] text-[#342721] dark:text-[#8B7355] uppercase tracking-wide px-1">Priority Level</label>
+              <label className="font-label-bold text-[12px] text-[#342721] uppercase tracking-wide px-1">Priority Level</label>
               <div className="relative">
                 <select 
                   name="priority"
                   value={formData.priority}
                   onChange={handleChange}
-                  className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12"
+                  className="w-full bg-[#DDC5A3] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12"
                 >
                   <option value="Normal">Normal</option>
                   <option value="High">High</option>
                   <option value="Urgent">Urgent</option>
                 </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] dark:text-[#DDC5A3]">expand_more</span>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721]">expand_more</span>
               </div>
             </div>
             <div className="space-y-1">
-              <label className="font-label-bold text-[12px] text-[#342721] dark:text-[#8B7355] uppercase tracking-wide px-1">Department</label>
+              <label className="font-label-bold text-[12px] text-[#342721] uppercase tracking-wide px-1">Department</label>
               <div className="relative">
                 <select 
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
                   required
-                  className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12"
+                  className="w-full bg-[#DDC5A3] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12"
                 >
                   <option value="">Select department</option>
                   {departments.map(d => <option key={d.id || d._id} value={d.name}>{d.name}</option>)}
                 </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] dark:text-[#DDC5A3]">expand_more</span>
+                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721]">expand_more</span>
               </div>
             </div>
           </div>
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="font-label-bold text-[12px] text-[#342721] dark:text-[#8B7355] uppercase tracking-wide px-1">Description of Problem</label>
+            <label className="font-label-bold text-[12px] text-[#342721] uppercase tracking-wide px-1">Description of Problem</label>
             <textarea 
               name="description"
               value={formData.description}
               onChange={handleChange}
               required
               rows="4"
-              className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md placeholder:text-[#8B7355] resize-none transition-all"
+              className="w-full bg-[#DDC5A3] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md placeholder:text-[#8B7355] resize-none transition-all"
               placeholder="Please provide specific landmarks and severity details..."
             ></textarea>
           </div>
 
           {/* AI Classification Suggestion */}
           {(aiSuggestion?.department || aiLoading) && (
-            <div className="flex items-start gap-3 p-4 bg-[#342721]/5 dark:bg-[#342721]/15 rounded-2xl border border-[#342721]/20">
-              <span className="material-symbols-outlined text-[#342721] dark:text-[#DDC5A3] text-xl mt-0.5">smart_toy</span>
+            <div className="flex items-start gap-3 p-4 bg-[#342721]/5 rounded-2xl border border-[#342721]/20">
+              <span className="material-symbols-outlined text-[#342721] text-xl mt-0.5">smart_toy</span>
               <div className="flex-1">
                 {aiLoading ? (
                   <span className="text-[12px] text-[#8B7355] animate-pulse">Analyzing issue...</span>
                 ) : (
                   <>
-                    <p className="text-[12px] font-bold text-[#342721] dark:text-[#DDC5A3]">
+                    <p className="text-[12px] font-bold text-[#342721]">
                       AI Suggestion — <span className="text-[#342721]">{aiSuggestion.confidence}% match</span>
                     </p>
                     <p className="text-[11px] text-[#8B7355] mt-0.5">
-                      Dept: <b className="text-[#342721] dark:text-[#DDC5A3]">{aiSuggestion.department}</b>
+                      Dept: <b className="text-[#342721]">{aiSuggestion.department}</b>
                       {aiSuggestion.priority !== 'Normal' && <> · Priority: <b className="text-orange-600">{aiSuggestion.priority}</b></>}
                     </p>
                     <button type="button"
                       onClick={() => setFormData(prev => ({ ...prev, department: aiSuggestion.department || prev.department, priority: aiSuggestion.priority || prev.priority }))}
-                      className="mt-2 text-[11px] font-bold text-[#342721] dark:text-[#DDC5A3] underline">
+                      className="mt-2 text-[11px] font-bold text-[#342721] underline">
                       Apply suggestion
                     </button>
                   </>
@@ -1359,14 +1334,14 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
           {/* Visual Evidence */}
           <div className="space-y-1">
             <div className="flex items-center justify-between px-1 mb-2">
-              <label className="font-label-bold text-[12px] text-[#342721] dark:text-[#8B7355] uppercase tracking-wide">Visual Evidence</label>
-              <div className="flex gap-1 bg-[#DDC5A3] dark:bg-[#342721] rounded-xl p-1">
+              <label className="font-label-bold text-[12px] text-[#342721] uppercase tracking-wide">Visual Evidence</label>
+              <div className="flex gap-1 bg-[#DDC5A3] rounded-xl p-1">
                 <button type="button" onClick={() => setImageMode('url')}
-                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${imageMode === 'url' ? 'bg-white dark:bg-[#342721] text-[#342721] shadow-sm' : 'text-[#8B7355]'}`}>
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${imageMode === 'url' ? 'bg-white text-[#342721] shadow-sm' : 'text-[#8B7355]'}`}>
                   URL
                 </button>
                 <button type="button" onClick={() => setImageMode('upload')}
-                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${imageMode === 'upload' ? 'bg-white dark:bg-[#342721] text-[#342721] shadow-sm' : 'text-[#8B7355]'}`}>
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${imageMode === 'upload' ? 'bg-white text-[#342721] shadow-sm' : 'text-[#8B7355]'}`}>
                   Upload
                 </button>
               </div>
@@ -1374,12 +1349,12 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
             {imageMode === 'url' ? (
               <div className="relative">
                 <input name="imageUrl" value={formData.imageUrl} onChange={handleChange}
-                  className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12"
+                  className="w-full bg-[#DDC5A3] border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#342721] text-body-md pr-12"
                   placeholder="https://image-url.com/photo.jpg" />
                 <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#8B7355]">link</span>
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center gap-3 p-6 bg-[#DDC5A3] dark:bg-[#342721] rounded-2xl cursor-pointer hover:bg-[#CDB893] transition-all border-2 border-dashed border-[#8B7355]/40">
+              <label className="flex flex-col items-center justify-center gap-3 p-6 bg-[#DDC5A3] rounded-2xl cursor-pointer hover:bg-[#CDB893] transition-all border-2 border-dashed border-[#8B7355]/40">
                 <span className="material-symbols-outlined text-[#342721] text-3xl">upload_file</span>
                 <span className="text-[12px] font-semibold text-[#8B7355]">
                   {uploadLoading ? 'Uploading...' : (formData.imageUrl.startsWith('/uploads/') ? '✅ Image uploaded' : 'Click to upload image (max 10MB)')}
@@ -1389,11 +1364,11 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
             )}
           </div>
 
-          <div className="pt-6 border-t border-[#8B7355]/30 dark:border-white/10 flex flex-col sm:flex-row justify-end gap-4">
+          <div className="pt-6 border-t border-[#8B7355]/30 flex flex-col sm:flex-row justify-end gap-4">
             <button 
               type="button" 
               onClick={() => navigate('/')}
-              className="px-8 py-4 rounded-full border border-[#8B7355] text-[#342721] dark:text-[#8B7355] font-label-bold hover:bg-[#DDC5A3] transition-all"
+              className="px-8 py-4 rounded-full border border-[#8B7355] text-[#342721] font-label-bold hover:bg-[#DDC5A3] transition-all"
             >
               Cancel
             </button>
@@ -1411,9 +1386,9 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
 
       {/* Preview Section */}
       <aside className="lg:col-span-5 flex flex-col gap-8 h-full lg:max-h-[calc(100vh-120px)] lg:sticky lg:top-28">
-        <div className="bg-[#DDC5A3] dark:bg-[#342721]/80 backdrop-blur-md rounded-[2.5rem] p-4 sm:p-6 md:p-8 md:p-10 border border-white shadow-premium flex flex-col h-full">
+        <div className="bg-[#DDC5A3] backdrop-blur-md rounded-[2.5rem] p-4 sm:p-6 md:p-8 md:p-10 border border-white shadow-premium flex flex-col h-full">
           <div className="mb-6 flex justify-between items-center">
-            <span className="text-[#342721] dark:text-[#8B7355] font-label-bold text-[12px] uppercase tracking-widest">Case Preview</span>
+            <span className="text-[#342721] font-label-bold text-[12px] uppercase tracking-widest">Case Preview</span>
             <div className="flex gap-1.5">
               <div className="w-2 h-2 rounded-full bg-[#342721]/20"></div>
               <div className="w-2 h-2 rounded-full bg-[#342721]"></div>
@@ -1422,8 +1397,8 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
           </div>
 
           {/* Preview Card */}
-          <div className="bg-white dark:bg-[#342721] rounded-[2.5rem] overflow-hidden shadow-xl flex flex-col flex-grow">
-            <div className="relative h-48 w-full bg-[#DDC5A3] dark:bg-[#342721] flex items-center justify-center overflow-hidden">
+          <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl flex flex-col flex-grow">
+            <div className="relative h-48 w-full bg-[#DDC5A3] flex items-center justify-center overflow-hidden">
               {formData.imageUrl ? (
                 <img className="w-full h-full object-cover" src={formData.imageUrl} alt="Preview" />
               ) : (
@@ -1441,18 +1416,18 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
               </div>
             </div>
             <div className="p-4 sm:p-6 md:p-8 space-y-4 flex-grow flex flex-col">
-              <h3 className="font-display-lg text-xl sm:text-2xl text-[#342721] dark:text-[#DDC5A3] leading-tight line-clamp-2">
+              <h3 className="font-display-lg text-xl sm:text-2xl text-[#342721] leading-tight line-clamp-2">
                 {formData.title || "Report title will appear here"}
               </h3>
-              <p className="text-[#342721] dark:text-[#8B7355] text-sm leading-relaxed line-clamp-4 opacity-70 flex-grow">
+              <p className="text-[#342721] text-sm leading-relaxed line-clamp-4 opacity-70 flex-grow">
                 {formData.description || "Enter details to see how your report will look to the administration."}
               </p>
-              <div className="pt-6 border-t border-[#8B7355]/20 dark:border-white/10 flex items-center justify-between">
+              <div className="pt-6 border-t border-[#8B7355]/20 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#DDC5A3] dark:bg-[#342721] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-[#DDC5A3] flex items-center justify-center">
                     <span className="material-symbols-outlined text-lg text-[#342721]">location_on</span>
                   </div>
-                  <span className="text-[10px] font-bold text-[#8B7355] dark:text-[#8B7355] uppercase tracking-wider">
+                  <span className="text-[10px] font-bold text-[#8B7355] uppercase tracking-wider">
                     {formData.city || "Location Pending"}
                   </span>
                 </div>
@@ -1467,7 +1442,7 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
 {/* Tip */}
            <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-white/40 rounded-2xl border border-dashed border-[#8B7355] flex items-start gap-3 sm:gap-4">
              <span className="material-symbols-outlined text-[#342721] text-xl sm:text-2xl">lightbulb</span>
-             <p className="text-[11px] sm:text-[13px] text-[#342721] dark:text-[#8B7355] leading-relaxed">
+             <p className="text-[11px] sm:text-[13px] text-[#342721] leading-relaxed">
                Adding a clear photo and precise location helps local authorities resolve your issue up to <b className="text-[#342721]">40% faster</b>.
              </p>
            </div>
@@ -1506,12 +1481,12 @@ const Login = () => {
     }
   };
 
-  const inputClass = "w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl px-4 py-3.5 text-[14px] text-[#342721] dark:text-[#DDC5A3] placeholder:text-[#8B7355] focus:ring-2 focus:ring-[#342721] transition-all outline-none";
-  const labelClass = "block text-[11px] font-bold text-[#342721] dark:text-[#8B7355] uppercase tracking-wider mb-1.5 px-1";
+  const inputClass = "w-full bg-[#DDC5A3] border-none rounded-2xl px-4 py-3.5 text-[14px] text-[#342721] placeholder:text-[#8B7355] focus:ring-2 focus:ring-[#342721] transition-all outline-none";
+  const labelClass = "block text-[11px] font-bold text-[#342721] uppercase tracking-wider mb-1.5 px-1";
 
   return (
     <div data-testid="page-auth" className="min-h-[80vh] flex items-center justify-center py-12 px-4">
-      <div className="w-full max-w-4xl bg-white/95 dark:bg-[#342721]/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-white/60 overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+      <div className="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-white/60 overflow-hidden grid grid-cols-1 lg:grid-cols-2">
 
         {/* Left Branding Panel */}
         <div className="bg-[#342721] p-10 lg:p-14 flex flex-col justify-between relative overflow-hidden hidden lg:flex">
@@ -1566,24 +1541,24 @@ const Login = () => {
           </div>
 
           {/* Tab Toggle */}
-          <div className="flex bg-[#DDC5A3] dark:bg-[#342721] rounded-2xl p-1 mb-8">
+          <div className="flex bg-[#DDC5A3] rounded-2xl p-1 mb-8">
             <button
               type="button"
               onClick={() => setMode('login')}
-              className={`flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all ${mode === 'login' ? 'bg-white dark:bg-[#342721] text-[#342721] shadow-sm' : 'text-[#8B7355] dark:text-[#8B7355] hover:text-[#342721]'}`}
+              className={`flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all ${mode === 'login' ? 'bg-white text-[#342721] shadow-sm' : 'text-[#8B7355] hover:text-[#342721]'}`}
             >Sign In</button>
             <button
               type="button"
               onClick={() => setMode('signup')}
-              className={`flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all ${mode === 'signup' ? 'bg-white dark:bg-[#342721] text-[#342721] shadow-sm' : 'text-[#8B7355] dark:text-[#8B7355] hover:text-[#342721]'}`}
+              className={`flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all ${mode === 'signup' ? 'bg-white text-[#342721] shadow-sm' : 'text-[#8B7355] hover:text-[#342721]'}`}
             >Create Account</button>
           </div>
 
           <div className="mb-6">
-            <h3 className="font-display-lg text-[26px] text-[#342721] dark:text-[#DDC5A3] font-extrabold">
+            <h3 className="font-display-lg text-[26px] text-[#342721] font-extrabold">
               {mode === 'login' ? 'Welcome back' : 'Join the platform'}
             </h3>
-            <p className="text-[#8B7355] dark:text-[#8B7355] text-[13px] mt-1">
+            <p className="text-[#8B7355] text-[13px] mt-1">
               {mode === 'login' ? 'Sign in to your account to continue.' : 'Create your account to start reporting issues.'}
             </p>
           </div>
@@ -1600,8 +1575,8 @@ const Login = () => {
                     onClick={() => setForm(p => ({ ...p, role: r }))}
                     className={`flex items-center gap-2 p-3 rounded-2xl border-2 text-[13px] font-bold transition-all ${
                       form.role === r
-                        ? 'border-[#342721] bg-[#DDC5A3] dark:bg-[#342721] text-[#342721]'
-                        : 'border-[#e0ebe3] text-[#8B7355] dark:text-[#8B7355] hover:border-[#342721]/40'
+                        ? 'border-[#342721] bg-[#DDC5A3] text-[#342721]'
+                        : 'border-[#e0ebe3] text-[#8B7355] hover:border-[#342721]/40'
                     }`}
                   >
                     <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: `'FILL' ${form.role === r ? 1 : 0}` }}>
@@ -1672,7 +1647,7 @@ const Login = () => {
               )}
             </button>
 
-            <p className="text-center text-[12px] text-[#8B7355] dark:text-[#8B7355] pt-2">
+            <p className="text-center text-[12px] text-[#8B7355] pt-2">
               {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
               <button type="button" onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
                 className="text-[#342721] font-bold hover:underline">
@@ -1724,6 +1699,8 @@ export default function App() {
 
   useEffect(() => {
     document.body.style.cursor = '';
+    document.documentElement.classList.remove('dark');
+    localStorage.removeItem('theme');
   }, []);
 
   useEffect(() => {
@@ -1780,7 +1757,7 @@ export default function App() {
   if (portalState.error) {
     return (
       <div className="h-screen flex items-center justify-center bg-[#DDC5A3] p-6">
-        <div className="max-w-md w-full bg-white dark:bg-[#342721] rounded-[2.5rem] shadow-premium p-10 text-center border border-error/10">
+        <div className="max-w-md w-full bg-white rounded-[2.5rem] shadow-premium p-10 text-center border border-error/10">
           <div className="w-20 h-20 bg-error/10 text-error rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="material-symbols-outlined text-4xl">cloud_off</span>
           </div>
@@ -1804,7 +1781,7 @@ export default function App() {
   return (
     <Router>
       <style>{globalStyles}</style>
-      <div className="font-body-md text-on-surface bg-[#DDC5A3] dark:bg-[#342721] dark:text-[#DDC5A3] min-h-screen flex flex-col">
+      <div className="font-body-md text-on-surface bg-[#DDC5A3] min-h-screen flex flex-col">
         <Header currentUser={portalState.currentUser} onLogout={handleLogout} notifications={portalState.notifications} />
 
         <main className="relative flex-1 pt-24 md:pt-32 pb-24 w-full overflow-x-hidden">
@@ -1822,7 +1799,7 @@ export default function App() {
                   <div className="max-w-container-max mx-auto px-margin-desktop">
                     <button 
                       onClick={() => setIsAddingAccount(false)}
-                      className="flex items-center gap-2 text-[#342721] dark:text-[#8B7355] hover:text-[#342721] font-bold text-sm transition-colors mb-4"
+                      className="flex items-center gap-2 text-[#342721] hover:text-[#342721] font-bold text-sm transition-colors mb-4"
                     >
                       <span className="material-symbols-outlined text-[18px]">arrow_back</span>
                       Back to Dashboard
@@ -1835,7 +1812,7 @@ export default function App() {
                   <div className="max-w-container-max mx-auto px-margin-desktop">
                     <button
                       onClick={() => setAuthView('landing')}
-                      className="flex items-center gap-2 text-[#342721] dark:text-[#8B7355] hover:text-[#342721] font-bold text-sm transition-colors mb-4"
+                      className="flex items-center gap-2 text-[#342721] hover:text-[#342721] font-bold text-sm transition-colors mb-4"
                     >
                       <span className="material-symbols-outlined text-[18px]">arrow_back</span>
                       Back
@@ -1949,7 +1926,7 @@ const PublicIssues = ({ issues, onOpenIssue }) => {
             placeholder="Search issues..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white dark:bg-[#342721] border border-outline-variant/30 rounded-full py-3 pl-12 pr-6 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface shadow-sm"
+            className="w-full bg-white border border-outline-variant/30 rounded-full py-3 pl-12 pr-6 focus:ring-2 focus:ring-primary transition-all font-body-md text-on-surface shadow-sm"
           />
         </div>
       </div>
@@ -1960,18 +1937,18 @@ const PublicIssues = ({ issues, onOpenIssue }) => {
             <IssueCard key={issue.id} issue={issue} onOpen={onOpenIssue} />
           ))
         ) : (
-          <div className="col-span-full relative overflow-hidden rounded-[2rem] border border-[#DDC5A3] dark:border-white/10">
+          <div className="col-span-full relative overflow-hidden rounded-[2rem] border border-[#DDC5A3]">
             <div className="absolute inset-0 grid grid-cols-4">
               {['/images/Roads/Roads.jpg', '/images/Sanitation/Sanitation.jpg', '/images/Drainage/Drainage.jpg', '/images/PublicParks/PublicParks.jpg'].map((src, i) => (
-                <img key={i} src={src} alt="" className="w-full h-full object-cover opacity-15 dark:opacity-10" style={{ filter: 'saturate(0.4)' }} />
+                <img key={i} src={src} alt="" className="w-full h-full object-cover opacity-15" style={{ filter: 'saturate(0.4)' }} />
               ))}
             </div>
-            <div className="absolute inset-0 bg-white/85 dark:bg-[#342721]/88 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-white/85 backdrop-blur-sm" />
             <div className="relative z-10 py-16 text-center">
-              <div className="w-16 h-16 bg-[#DDC5A3] dark:bg-[#342721] rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="material-symbols-outlined text-[#342721] dark:text-[#8B7355] text-3xl">search_off</span>
+              <div className="w-16 h-16 bg-[#DDC5A3] rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-[#342721] text-3xl">search_off</span>
               </div>
-              <h3 className="text-[18px] font-extrabold text-[#342721] dark:text-[#DDC5A3] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>No issues found</h3>
+              <h3 className="text-[18px] font-extrabold text-[#342721] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>No issues found</h3>
               <p className="text-[13px] text-[#8B7355]">Try adjusting your search or filters.</p>
             </div>
           </div>
@@ -1998,23 +1975,23 @@ const MyIssues = ({ issues, currentUser, onOpenIssue }) => {
           ))}
         </div>
       ) : (
-        <div className="relative overflow-hidden rounded-[2rem] border border-[#DDC5A3] dark:border-white/10">
+        <div className="relative overflow-hidden rounded-[2rem] border border-[#DDC5A3]">
           {/* Background collage */}
           <div className="absolute inset-0 grid grid-cols-3">
             {['/images/Roads/Roads.jpg', '/images/Drainage/Drainage.jpg', '/images/StreetLights/StreetLights.jpg'].map((src, i) => (
-              <img key={i} src={src} alt="" className="w-full h-full object-cover opacity-20 dark:opacity-10" style={{ filter: 'saturate(0.5)' }} />
+              <img key={i} src={src} alt="" className="w-full h-full object-cover opacity-20" style={{ filter: 'saturate(0.5)' }} />
             ))}
           </div>
-          <div className="absolute inset-0 bg-white/80 dark:bg-[#342721]/85 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm" />
           <div className="relative z-10 py-20 text-center px-6">
-            <div className="w-20 h-20 bg-[#DDC5A3] dark:bg-[#342721] rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-              <span className="material-symbols-outlined text-[#342721] dark:text-[#8B7355] text-4xl">shield_person</span>
+            <div className="w-20 h-20 bg-[#DDC5A3] rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+              <span className="material-symbols-outlined text-[#342721] text-4xl">shield_person</span>
             </div>
-            <h3 className="text-[22px] font-extrabold text-[#342721] dark:text-[#DDC5A3] mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>No reports yet</h3>
+            <h3 className="text-[22px] font-extrabold text-[#342721] mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>No reports yet</h3>
             <p className="text-[14px] text-[#8B7355] mb-8 max-w-xs mx-auto">You haven't submitted any civic issues. Be the first to make a difference in your community.</p>
             <div className="flex flex-wrap justify-center gap-3 mb-8">
               {['Potholes', 'Street Lights', 'Drainage', 'Sanitation'].map(tag => (
-                <span key={tag} className="px-3 py-1 rounded-full bg-[#DDC5A3] dark:bg-[#342721] text-[#342721] dark:text-[#8B7355] text-[11px] font-bold uppercase tracking-wider">{tag}</span>
+                <span key={tag} className="px-3 py-1 rounded-full bg-[#DDC5A3] text-[#342721] text-[11px] font-bold uppercase tracking-wider">{tag}</span>
               ))}
             </div>
             <NavLink to="/report" className="inline-flex items-center gap-2 bg-[#342721] text-white px-10 py-4 rounded-full font-bold text-[13px] uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-105 transition-all">
@@ -2044,7 +2021,7 @@ const ReportBug = () => {
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto bg-white dark:bg-[#342721] rounded-[2.5rem] p-12 text-center shadow-premium border border-outline-variant/20">
+      <div className="max-w-2xl mx-auto bg-white rounded-[2.5rem] p-12 text-center shadow-premium border border-outline-variant/20">
         <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <Shield className="text-primary" size={40} />
         </div>
@@ -2058,7 +2035,7 @@ const ReportBug = () => {
   }
 
   return (
-    <div data-testid="page-report-bug" className="max-w-3xl mx-auto bg-white/95 dark:bg-[#342721]/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-outline-variant/20 overflow-hidden">
+    <div data-testid="page-report-bug" className="max-w-3xl mx-auto bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-outline-variant/20 overflow-hidden">
       <div className="bg-primary p-10 text-white">
         <h2 className="text-headline-md font-display-lg tracking-tight">Report a System Bug</h2>
         <p className="opacity-80 font-body-md">Encountered a technical issue? Let us know and we'll squash it.</p>
@@ -2222,13 +2199,13 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
     if (status === 'Resolved' || status === 'Completed') return 'bg-[#342721]/15 text-[#342721]';
     if (status === 'In Progress') return 'bg-blue-100 text-blue-700';
     if (status === 'Rejected') return 'bg-red-100 text-red-700';
-    return 'bg-[#DDC5A3] dark:bg-[#342721] text-[#342721] dark:text-[#8B7355]';
+    return 'bg-[#DDC5A3] text-[#342721]';
   };
 
   const priorityColor = (p) => {
     if (p === 'Urgent') return 'text-red-600 bg-red-50';
     if (p === 'High') return 'text-orange-600 bg-orange-50';
-    return 'text-[#342721] bg-[#DDC5A3] dark:bg-[#342721]';
+    return 'text-[#342721] bg-[#DDC5A3]';
   };
 
   return (
@@ -2237,15 +2214,15 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span className="text-[#342721] font-label-bold text-[11px] uppercase tracking-widest block mb-1">Administration</span>
-          <h1 className="font-display-lg text-[34px] md:text-[44px] text-[#342721] dark:text-[#DDC5A3] leading-[1] tracking-[-0.04em]">Admin Dashboard</h1>
-          <p className="text-[#342721] dark:text-[#8B7355] text-sm opacity-70 mt-2 font-medium tracking-[-0.01em]">Manage civic issues, assign labour, and monitor resolutions.</p>
+          <h1 className="font-display-lg text-[34px] md:text-[44px] text-[#342721] leading-[1] tracking-[-0.04em]">Admin Dashboard</h1>
+          <p className="text-[#342721] text-sm opacity-70 mt-2 font-medium tracking-[-0.01em]">Manage civic issues, assign labour, and monitor resolutions.</p>
         </div>
-        <div className="flex items-center gap-3 bg-white/80 dark:bg-[#342721]/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-[#8B7355]/30 dark:border-white/10 shadow-sm">
+        <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-[#8B7355]/30 shadow-sm">
           <div className="w-8 h-8 rounded-full bg-[#342721] flex items-center justify-center text-white font-bold text-xs">
             {currentUser?.name?.[0]?.toUpperCase()}
           </div>
           <div>
-            <p className="text-[12px] font-bold text-[#342721] dark:text-[#DDC5A3] leading-none">{currentUser?.name}</p>
+            <p className="text-[12px] font-bold text-[#342721] leading-none">{currentUser?.name}</p>
             <p className="text-[10px] text-[#342721] font-bold uppercase tracking-wider">Administrator</p>
           </div>
         </div>
@@ -2254,7 +2231,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Reports', value: stats.total, icon: 'folder_open', color: 'text-[#342721]', bg: 'bg-[#DDC5A3] dark:bg-[#342721]' },
+          { label: 'Total Reports', value: stats.total, icon: 'folder_open', color: 'text-[#342721]', bg: 'bg-[#DDC5A3]' },
           { label: 'Pending', value: stats.pending, icon: 'schedule', color: 'text-orange-600', bg: 'bg-orange-50' },
           { label: 'In Progress', value: stats.inProgress, icon: 'engineering', color: 'text-blue-600', bg: 'bg-blue-50' },
           { label: 'Resolved', value: stats.resolved, icon: 'check_circle', color: 'text-[#342721]', bg: 'bg-[#342721]/10' },
@@ -2263,8 +2240,8 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
             <div className={`w-11 h-11 ${s.bg} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
               <span className={`material-symbols-outlined ${s.color} text-xl`}>{s.icon}</span>
             </div>
-            <p className="text-[36px] font-display-lg font-black text-[#342721] dark:text-[#DDC5A3] leading-none tracking-[-0.05em]">{s.value}</p>
-            <p className="text-[11px] font-semibold text-[#8B7355] dark:text-[#8B7355] uppercase tracking-[0.28em] mt-2">{s.label}</p>
+            <p className="text-[36px] font-display-lg font-black text-[#342721] leading-none tracking-[-0.05em]">{s.value}</p>
+            <p className="text-[11px] font-semibold text-[#8B7355] uppercase tracking-[0.28em] mt-2">{s.label}</p>
           </div>
         ))}
       </div>
@@ -2275,7 +2252,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
         {/* Issues Table */}
         <div className="xl:col-span-2 bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 overflow-hidden">
           <div className="p-6 border-b border-[#DDC5A3] flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-              <h2 className="font-display-lg text-[18px] text-[#342721] dark:text-[#DDC5A3] font-extrabold tracking-[-0.03em]">Issue Reports</h2>
+              <h2 className="font-display-lg text-[18px] text-[#342721] font-extrabold tracking-[-0.03em]">Issue Reports</h2>
             <div className="flex gap-3 flex-wrap">
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8B7355] text-sm">search</span>
@@ -2284,18 +2261,18 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
                   placeholder="Search issues..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-xl pl-9 pr-4 py-2 text-sm text-[#342721] dark:text-[#DDC5A3] focus:ring-2 focus:ring-[#342721] w-48"
+                  className="bg-[#DDC5A3] border-none rounded-xl pl-9 pr-4 py-2 text-sm text-[#342721] focus:ring-2 focus:ring-[#342721] w-48"
                 />
               </div>
               <div className="relative">
                 <select
                   value={filterStatus}
                   onChange={e => setFilterStatus(e.target.value)}
-                  className="bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-xl px-4 py-2 text-sm text-[#342721] dark:text-[#DDC5A3] pr-8 focus:ring-2 focus:ring-[#342721]"
+                  className="bg-[#DDC5A3] border-none rounded-xl px-4 py-2 text-sm text-[#342721] pr-8 focus:ring-2 focus:ring-[#342721]"
                 >
                   {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] dark:text-[#DDC5A3] text-sm">expand_more</span>
+                <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] text-sm">expand_more</span>
               </div>
             </div>
           </div>
@@ -2303,8 +2280,8 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
           <div className="divide-y divide-[#DDC5A3] max-h-[520px] overflow-y-auto">
             {filtered.length === 0 ? (
               <div className="py-14 text-center">
-                <div className="w-14 h-14 bg-[#DDC5A3] dark:bg-[#342721] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="material-symbols-outlined text-[#342721] dark:text-[#8B7355] text-2xl">inbox</span>
+                <div className="w-14 h-14 bg-[#DDC5A3] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="material-symbols-outlined text-[#342721] text-2xl">inbox</span>
                 </div>
                 <p className="text-sm font-bold text-[#8B7355]">No issues match your filter</p>
                 <p className="text-[11px] text-[#8B7355]/60 mt-1">Try a different status or search term</p>
@@ -2313,9 +2290,9 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
               <div
                 key={issue.id}
                 onClick={() => setSelectedIssue(issue)}
-                className={`p-5 flex items-start gap-4 cursor-pointer hover:bg-[#DDC5A3] transition-all ${selectedIssue?.id === issue.id ? 'bg-[#DDC5A3] dark:bg-[#342721]' : ''}`}
+                className={`p-5 flex items-start gap-4 cursor-pointer hover:bg-[#DDC5A3] transition-all ${selectedIssue?.id === issue.id ? 'bg-[#DDC5A3]' : ''}`}
               >
-                <div className="w-10 h-10 rounded-xl bg-[#DDC5A3] dark:bg-[#342721] flex-shrink-0 overflow-hidden ring-1 ring-[#8B7355]/20 relative">
+                <div className="w-10 h-10 rounded-xl bg-[#DDC5A3] flex-shrink-0 overflow-hidden ring-1 ring-[#8B7355]/20 relative">
                   <img src={getRelevantImage(issue.title, issue.description, issue.department, `thumb:${issue.id}`)} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -2323,9 +2300,9 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
                     <span className="inline-flex items-center justify-center rounded-full bg-[#342721]/10 text-[#342721] text-[10px] font-black px-2 py-0.5 tracking-[0.22em] flex-shrink-0">
                       #{String(index + 1).padStart(2, '0')}
                     </span>
-                    <p className="font-bold text-[#342721] dark:text-[#DDC5A3] text-sm truncate tracking-[-0.02em]">{issue.title}</p>
+                    <p className="font-bold text-[#342721] text-sm truncate tracking-[-0.02em]">{issue.title}</p>
                   </div>
-                  <p className="text-[11px] text-[#8B7355] dark:text-[#8B7355] mt-0.5 font-medium">{issue.area} · {issue.department} · {issue.id}</p>
+                  <p className="text-[11px] text-[#8B7355] mt-0.5 font-medium">{issue.area} · {issue.department} · {issue.id}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1.5">
                   <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${statusColor(issue.status)}`}>{issue.status}</span>
@@ -2341,68 +2318,68 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
 
           {/* Assign Labour Panel */}
           <div className="bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 p-6">
-            <h2 className="font-display-lg text-[16px] text-[#342721] dark:text-[#DDC5A3] font-extrabold tracking-[-0.03em] mb-4 flex items-center gap-2">
+            <h2 className="font-display-lg text-[16px] text-[#342721] font-extrabold tracking-[-0.03em] mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-[#342721]">engineering</span>
               Assign Labour
             </h2>
             {selectedIssue ? (
               <div className="space-y-4">
-                <div className="flex bg-[#DDC5A3] dark:bg-[#342721] rounded-xl p-1">
-                  <button onClick={() => setActiveTab('assign')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'assign' ? 'bg-white dark:bg-[#342721] text-[#342721] shadow-sm' : 'text-[#8B7355] dark:text-[#8B7355]'}`}>Update Status</button>
-                  <button onClick={() => setActiveTab('history')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'history' ? 'bg-white dark:bg-[#342721] text-[#342721] shadow-sm' : 'text-[#8B7355] dark:text-[#8B7355]'}`}>Audit Trail</button>
-                  <button onClick={() => setActiveTab('chat')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'chat' ? 'bg-white dark:bg-[#342721] text-[#342721] shadow-sm' : 'text-[#8B7355] dark:text-[#8B7355]'}`}>Conversation</button>
+                <div className="flex bg-[#DDC5A3] rounded-xl p-1">
+                  <button onClick={() => setActiveTab('assign')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'assign' ? 'bg-white text-[#342721] shadow-sm' : 'text-[#8B7355]'}`}>Update Status</button>
+                  <button onClick={() => setActiveTab('history')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'history' ? 'bg-white text-[#342721] shadow-sm' : 'text-[#8B7355]'}`}>Audit Trail</button>
+                  <button onClick={() => setActiveTab('chat')} className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${activeTab === 'chat' ? 'bg-white text-[#342721] shadow-sm' : 'text-[#8B7355]'}`}>Conversation</button>
                 </div>
 
                 {activeTab === 'assign' ? (
                   <form onSubmit={handleAssign} className="space-y-4">
-                    <div className="bg-[#DDC5A3] dark:bg-[#342721] rounded-2xl p-4">
-                      <p className="font-bold text-[#342721] dark:text-[#DDC5A3] text-sm line-clamp-2 tracking-[-0.02em]">{selectedIssue.title}</p>
-                      <p className="text-[11px] text-[#8B7355] dark:text-[#8B7355] mt-1 font-medium">{selectedIssue.area} · {selectedIssue.department} · {selectedIssue.id}</p>
+                    <div className="bg-[#DDC5A3] rounded-2xl p-4">
+                      <p className="font-bold text-[#342721] text-sm line-clamp-2 tracking-[-0.02em]">{selectedIssue.title}</p>
+                      <p className="text-[11px] text-[#8B7355] mt-1 font-medium">{selectedIssue.area} · {selectedIssue.department} · {selectedIssue.id}</p>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-[#342721] dark:text-[#8B7355] uppercase tracking-wide">Assign Worker</label>
+                      <label className="text-[11px] font-bold text-[#342721] uppercase tracking-wide">Assign Worker</label>
                       <div className="relative">
                         <select
                           required
                           value={assignForm.labourId}
                           onChange={e => setAssignForm(p => ({ ...p, labourId: e.target.value }))}
-                          className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#342721]"
+                          className="w-full bg-[#DDC5A3] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#342721]"
                         >
                           <option value="">Select worker...</option>
                           {(labour || []).map(l => (
                             <option key={l.id} value={l.id}>{l.name} {l.phone ? `(${l.phone})` : ''} — {l.department}</option>
                           ))}
                         </select>
-                        <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] dark:text-[#DDC5A3] text-sm">expand_more</span>
+                        <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] text-sm">expand_more</span>
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-[#342721] dark:text-[#8B7355] uppercase tracking-wide">Admin Note</label>
+                      <label className="text-[11px] font-bold text-[#342721] uppercase tracking-wide">Admin Note</label>
                       <textarea
                         rows="3"
                         value={assignForm.note}
                         onChange={e => setAssignForm(p => ({ ...p, note: e.target.value }))}
-                        className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-xl p-3 text-sm resize-none focus:ring-2 focus:ring-[#342721]"
+                        className="w-full bg-[#DDC5A3] border-none rounded-xl p-3 text-sm resize-none focus:ring-2 focus:ring-[#342721]"
                         placeholder="Add a note for the field worker..."
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-[#342721] dark:text-[#8B7355] uppercase tracking-wide">Quick Status Update</label>
+                      <label className="text-[11px] font-bold text-[#342721] uppercase tracking-wide">Quick Status Update</label>
                       <div className="relative">
                         <select
                           onChange={e => handleStatusUpdate(selectedIssue.id, e.target.value)}
                           value={selectedIssue.status}
-                          className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#342721]"
+                          className="w-full bg-[#DDC5A3] border-none rounded-xl p-3 text-sm pr-8 focus:ring-2 focus:ring-[#342721]"
                         >
                           {['Pending', 'In Progress', 'Resolved', 'Completed', 'Rejected'].map(s => (
                             <option key={s} value={s}>{s}</option>
                           ))}
                         </select>
-                        <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] dark:text-[#DDC5A3] text-sm">expand_more</span>
+                        <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#342721] text-sm">expand_more</span>
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button type="button" onClick={() => setSelectedIssue(null)} className="flex-1 py-3 rounded-xl border border-[#8B7355] text-[#342721] dark:text-[#8B7355] text-sm font-bold hover:bg-[#DDC5A3] transition-all">Cancel</button>
+                      <button type="button" onClick={() => setSelectedIssue(null)} className="flex-1 py-3 rounded-xl border border-[#8B7355] text-[#342721] text-sm font-bold hover:bg-[#DDC5A3] transition-all">Cancel</button>
                       <button type="submit" disabled={updating} className="flex-1 py-3 rounded-xl bg-[#342721] text-white text-sm font-bold hover:bg-[#4a3830] transition-all disabled:opacity-50">{updating ? 'Saving...' : 'Assign & Save'}</button>
                     </div>
                   </form>
@@ -2416,18 +2393,18 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
                         </div>
                       ) : selectedIssue.history.map((h, idx) => (
                         <div key={idx} className="relative pl-6 pb-4 border-l-2 border-[#DDC5A3] last:pb-0">
-                          <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white dark:bg-[#342721] border-2 border-[#342721]"></div>
+                          <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-[#342721]"></div>
                           <p className="text-[10px] font-bold text-[#342721] uppercase tracking-wider leading-none">{new Date(h.assigned_at).toLocaleString()}</p>
-                          <p className="text-[12px] font-bold text-[#342721] dark:text-[#DDC5A3] mt-1">
+                          <p className="text-[12px] font-bold text-[#342721] mt-1">
                             {h.labourName ? `Assigned to ${h.labourName}` : 'Status Changed'}
                             {h.labourPhone && <span className="ml-2 text-[#342721] font-normal text-[11px]">— {h.labourPhone}</span>}
                           </p>
-                          <p className="text-[11px] text-[#8B7355] dark:text-[#8B7355] mt-1 italic">"{h.note}"</p>
+                          <p className="text-[11px] text-[#8B7355] mt-1 italic">"{h.note}"</p>
                           <p className="text-[9px] text-[#8B7355] mt-1">Updated by {h.adminName}</p>
                         </div>
                       ))}
                     </div>
-                    <button onClick={() => setActiveTab('assign')} className="w-full py-3 rounded-xl border border-[#342721] text-[#342721] text-sm font-bold hover:bg-[#DDC5A3] dark:bg-[#342721] transition-all">Back to Actions</button>
+                    <button onClick={() => setActiveTab('assign')} className="w-full py-3 rounded-xl border border-[#342721] text-[#342721] text-sm font-bold hover:bg-[#DDC5A3] transition-all">Back to Actions</button>
                   </div>
                 ) : (
                   <div className="space-y-4 flex flex-col h-[400px]">
@@ -2442,7 +2419,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
                       ) : messages.map((m, idx) => (
                         <div key={idx} className={`flex flex-col ${m.sender_id === currentUser.id ? 'items-end' : 'items-start'}`}>
                           <div className={`max-w-[85%] p-3 rounded-2xl text-[12px] ${
-                            m.sender_id === currentUser.id ? 'bg-[#342721] text-white rounded-tr-none' : 'bg-[#DDC5A3] dark:bg-[#342721] text-[#342721] dark:text-[#DDC5A3] rounded-tl-none'
+                            m.sender_id === currentUser.id ? 'bg-[#342721] text-white rounded-tr-none' : 'bg-[#DDC5A3] text-[#342721] rounded-tl-none'
                           }`}>
                             <p className="font-medium leading-relaxed">{m.message}</p>
                           </div>
@@ -2458,7 +2435,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
                         value={newMessage}
                         onChange={e => setNewMessage(e.target.value)}
                         placeholder="Type a message..."
-                        className="w-full bg-[#DDC5A3] dark:bg-[#342721] border-none rounded-2xl pl-4 pr-12 py-3.5 text-sm focus:ring-2 focus:ring-[#342721] outline-none"
+                        className="w-full bg-[#DDC5A3] border-none rounded-2xl pl-4 pr-12 py-3.5 text-sm focus:ring-2 focus:ring-[#342721] outline-none"
                       />
                       <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#342721] text-white rounded-xl flex items-center justify-center hover:bg-[#4a3830] transition-all shadow-sm">
                         <span className="material-symbols-outlined text-[18px]">send</span>
@@ -2477,7 +2454,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
 
           {/* Notifications */}
           <div className="bg-white/90 backdrop-blur-md rounded-[2rem] shadow-sm border border-white/60 p-6">
-            <h2 className="font-display-lg text-[16px] text-[#342721] dark:text-[#DDC5A3] font-extrabold tracking-[-0.03em] mb-4 flex items-center gap-2">
+            <h2 className="font-display-lg text-[16px] text-[#342721] font-extrabold tracking-[-0.03em] mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-[#342721]">notifications</span>
               Recent Alerts
               {notifications?.filter(n => !n.read).length > 0 && (
@@ -2491,12 +2468,12 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
                 <button
                   key={n.id}
                   onClick={() => handleNotificationClick(n)}
-                  className={`w-full text-left flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-white dark:bg-[#342721] hover:shadow-sm group ${n.read ? 'opacity-50' : 'bg-[#DDC5A3] dark:bg-[#342721]'}`}
+                  className={`w-full text-left flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-white hover:shadow-sm group ${n.read ? 'opacity-50' : 'bg-[#DDC5A3]'}`}
                 >
                   <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? 'bg-[#8B7355]' : 'bg-[#342721]'}`}></span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[12px] font-bold text-[#342721] dark:text-[#DDC5A3] truncate group-hover:text-[#342721]">{n.title || 'New Issue Submitted'}</p>
-                    <p className="text-[11px] text-[#8B7355] dark:text-[#8B7355] mt-0.5">{n.message || n.body || ''}</p>
+                    <p className="text-[12px] font-bold text-[#342721] truncate group-hover:text-[#342721]">{n.title || 'New Issue Submitted'}</p>
+                    <p className="text-[11px] text-[#8B7355] mt-0.5">{n.message || n.body || ''}</p>
                   </div>
                 </button>
               ))}

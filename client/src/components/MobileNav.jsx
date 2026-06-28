@@ -3,10 +3,6 @@ import { NavLink } from "react-router-dom";
 
 export default function MobileNav({ currentUser, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark' ||
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  });
 
   useEffect(() => {
     if (isOpen) {
@@ -16,18 +12,6 @@ export default function MobileNav({ currentUser, onLogout }) {
     }
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDark]);
-
-  const toggleTheme = () => setIsDark(!isDark);
 
   const navItems = [
     { to: "/", label: "Home", icon: "home" },
@@ -41,11 +25,11 @@ export default function MobileNav({ currentUser, onLogout }) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-[#342721] shadow-sm border border-[#8B7355]/20 dark:border-white/10"
+        className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm border border-[#8B7355]/20"
         aria-label="Open menu"
         data-testid="mobile-nav-open"
       >
-        <span className="material-symbols-outlined text-[#342721] dark:text-[#DDC5A3]">
+        <span className="material-symbols-outlined text-[#342721]">
           menu
         </span>
       </button>
@@ -56,12 +40,12 @@ export default function MobileNav({ currentUser, onLogout }) {
             className="fixed inset-0 bg-black/50 z-40 md:hidden"
             onClick={() => setIsOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-72 bg-white dark:bg-[#342721] z-50 md:hidden flex flex-col p-6 shadow-xl transform transition-transform duration-300 ease-out" data-testid="mobile-nav-drawer">
+          <div className="fixed top-0 right-0 h-full w-72 bg-white z-50 md:hidden flex flex-col p-6 shadow-xl transform transition-transform duration-300 ease-out" data-testid="mobile-nav-drawer">
             <div className="flex items-center justify-between mb-8">
-              <span className="font-bold text-lg text-[#342721] dark:text-[#DDC5A3]">Menu</span>
+              <span className="font-bold text-lg text-[#342721]">Menu</span>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#DDC5A3] dark:hover:bg-[#4a3830]"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#DDC5A3]"
               >
                 <span className="material-symbols-outlined text-[#8B7355]">close</span>
               </button>
@@ -77,7 +61,7 @@ export default function MobileNav({ currentUser, onLogout }) {
                     `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                       isActive 
                         ? 'bg-[#342721] text-white' 
-                        : 'text-[#342721] dark:text-[#DDC5A3] hover:bg-[#DDC5A3] dark:hover:bg-[#4a3830]'
+                        : 'text-[#342721] hover:bg-[#DDC5A3]'
                     }`
                   }
                 >
@@ -95,7 +79,7 @@ export default function MobileNav({ currentUser, onLogout }) {
                       `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                         isActive 
                           ? 'bg-[#342721] text-white' 
-                          : 'text-[#342721] dark:text-[#DDC5A3] hover:bg-[#DDC5A3] dark:hover:bg-[#4a3830]'
+                          : 'text-[#342721] hover:bg-[#DDC5A3]'
                       }`
                     }
                   >
@@ -109,7 +93,7 @@ export default function MobileNav({ currentUser, onLogout }) {
                       `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                         isActive 
                           ? 'bg-[#342721] text-white' 
-                          : 'text-[#342721] dark:text-[#DDC5A3] hover:bg-[#DDC5A3] dark:hover:bg-[#4a3830]'
+                          : 'text-[#342721] hover:bg-[#DDC5A3]'
                       }`
                     }
                   >
@@ -121,14 +105,6 @@ export default function MobileNav({ currentUser, onLogout }) {
             </nav>
 
             <div className="mt-auto pt-6 border-t border-[#8B7355]/20 space-y-2">
-              <button
-                onClick={toggleTheme}
-                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold text-[#342721] dark:text-[#DDC5A3] hover:bg-[#DDC5A3] dark:hover:bg-[#4a3830]"
-              >
-                <span className="material-symbols-outlined">{isDark ? 'light_mode' : 'dark_mode'}</span>
-                {isDark ? 'Light Mode' : 'Dark Mode'}
-              </button>
-              
               <button
                 onClick={() => {
                   onLogout();
