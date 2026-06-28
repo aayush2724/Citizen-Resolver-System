@@ -30,3 +30,4 @@ server/logs/
 server/scripts/scratch/
 server/error.log
 
+.vercel
