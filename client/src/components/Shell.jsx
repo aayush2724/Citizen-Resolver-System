@@ -36,7 +36,7 @@ function AppHeader({ activePage, setActivePage, currentUser, unreadCount, onLogo
             className={`font-extrabold text-lg transition-colors duration-500 ${scrolled ? 'text-[#342721]' : 'text-white'}`}
             style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}
           >
-            Citizen Resolver System
+            CivicResolve
           </span>
         </button>
 
@@ -110,8 +110,8 @@ function AppFooter() {
     <footer className="bg-surface-container-low border-t border-outline-variant/30 py-12 px-margin-desktop mt-auto">
       <div className="max-w-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex flex-col gap-2">
-          <p className="font-headline-md font-extrabold text-on-surface tracking-tighter text-lg">Citizen Resolver System</p>
-          <p className="font-body-md text-label-md text-on-surface-variant">© 2024 Citizen Resolver System. Empowering communities through transparency.</p>
+          <p className="font-headline-md font-extrabold text-on-surface tracking-tighter text-lg">CivicResolve</p>
+          <p className="font-body-md text-label-md text-on-surface-variant">© 2024 CivicResolve. Empowering communities through transparency.</p>
         </div>
         <div className="flex gap-8">
           <a className="text-on-surface-variant hover:text-primary transition-all text-label-md font-black uppercase tracking-widest" href="#">Privacy Policy</a>
