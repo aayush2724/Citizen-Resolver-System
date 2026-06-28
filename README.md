@@ -1,187 +1,167 @@
-# Citizen Resolver System (CRS)
+# CivicResolve
 
-Citizen Resolver System is a full-stack civic issue reporting platform.
-Citizens can sign up, report local problems, and track progress. Admins can
-review, assign, and manage resolution workflows with notifications.
+CivicResolve is a full-stack civic issue reporting platform for citizens and city teams. Citizens can report local issues, track progress, receive notifications, and chat on issue threads. Admins can review reports, assign labour, update status, and monitor analytics.
+
+Production frontend:
+https://civicresolve-jet.vercel.app
+
+Backend:
+https://civicresolve-backend-rj8o.onrender.com
 
 ## Features
 
-- JWT-based authentication (citizen and admin)
-- Issue reporting with priority, department, location, and optional image URL
-- Admin assignment flow (department, labour, status updates, notes)
-- Citizen notification feed for report and status updates
-- Public issue board with filtering
-- Master data management (areas, departments, labour)
-- Real-time messaging between citizens and admins
+- Citizen and admin authentication with JWT
+- Issue reporting with area, department, priority, GPS coordinates, and image evidence
+- AI-assisted issue classification
+- Admin dashboard for assignment, status updates, notes, and audit history
+- Public issue board and citizen "My Issues" view
+- Real-time notifications with Socket.IO
+- Issue conversation threads
+- Analytics dashboard for SLA, department, and timeline insights
+- Bug report flow
+- Single light theme UI
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Client | React 19, Vite, Tailwind CSS v3, Lucide React |
-| Server | Node.js, Express 5, MySQL (mysql2/promise) |
+| Client | React 19, Vite, Tailwind CSS, Lucide React, GSAP |
+| Server | Node.js, Express 5, Socket.IO |
+| Database | SQLite via better-sqlite3 |
 | Auth | bcrypt, jsonwebtoken |
-| Dev tooling | nodemon, concurrently |
+| Deployment | Vercel frontend, Render backend |
 
 ## Repository Layout
 
 ```text
 .
-├── client/                   # React + Vite frontend
-│   ├── public/
-│   │   └── images/
-│   ├── src/
-│   │   ├── components/       # IssueCard, IssueModal, Shell, …
-│   │   ├── data/             # mockData.js
-│   │   ├── services/         # api.js (fetch wrapper)
-│   │   ├── utils/            # image.js, status.js
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── index.html
-│   ├── tailwind.config.js
-│   └── vite.config.js        # Proxies /api → localhost:5000
-│
-├── server/                   # Express REST API (SaaS modular architecture)
-│   ├── db/
-│   │   └── schema.sql
-│   ├── logs/
-│   │   └── debug_issue.json
-│   ├── scripts/
-│   │   ├── init_db.js        # DB initializer / seeder
-│   │   └── scratch/          # local one-off debug scripts
-│   ├── src/
-│   │   ├── modules/          # Domain-driven feature modules
-│   │   │   ├── auth/         # Authentication module (login, signup)
-│   │   │   ├── issues/       # Issues module (create, update)
-│   │   │   ├── entities/     # Master data (areas, departments, labour)
-│   │   │   ├── state/        # Portal state aggregator
-│   │   │   ├── notifications/# Notifications (mark read)
-│   │   │   ├── messages/     # Chat messaging
-│   │   │   └── bug-reports/  # User feedback
-│   │   ├── shared/           # Shared utilities & middleware
-│   │   │   ├── config/       # db.js (MySQL pool)
-│   │   │   └── middlewares/  # auth, error handling
-│   │   ├── app.js            # Express app setup
-│   │   └── server.js         # Entry point
-│   ├── .env                  # ← copy from .env.example (not committed)
-│   └── .env.example
-│
-├── docs/
-│   ├── FEATURE_TESTING_GUIDE.md
-│   └── IMPLEMENTATION_SUMMARY.md
-├── package.json              # Root orchestrator (concurrently)
-└── README.md
+├── client/                  # React + Vite frontend
+│   ├── public/images/       # Civic issue imagery
+│   ├── src/components/      # UI and feature components
+│   ├── src/services/api.js  # API wrapper
+│   ├── src/App.jsx
+│   └── src/main.jsx
+├── server/                  # Express API
+│   ├── src/modules/         # Auth, issues, state, notifications, analytics, etc.
+│   ├── src/shared/          # DB config, middleware, utilities
+│   ├── scripts/init_db.js
+│   └── src/server.js
+├── data/                    # Local SQLite database
+├── uploads/                 # Uploaded issue images
+├── vercel.json              # Frontend deploy and API rewrites
+├── render.yaml              # Backend deploy config
+└── package.json             # Root orchestration scripts
 ```
 
-## Documentation
+## Local Setup
 
-- [Feature Testing Guide](docs/FEATURE_TESTING_GUIDE.md)
-- [Implementation Summary](docs/IMPLEMENTATION_SUMMARY.md)
-- [Backend Architecture (SaaS Modular)](docs/BACKEND_ARCHITECTURE.md)
-
-## Prerequisites
-
-- Node.js 18+
-- npm 9+
-- MySQL 8+
-
-## Setup
-
-### 1. Install all dependencies
+Install dependencies:
 
 ```bash
 npm run install:all
 ```
 
-This installs root devDeps (`concurrently`) plus all packages for `server/` and `client/`.
-
-### 2. Configure the server
+Create the server environment file:
 
 ```bash
 cp server/.env.example server/.env
 ```
 
-Then edit `server/.env` with your MySQL credentials and a JWT secret:
+Minimum useful values:
 
 ```env
-PORT=5000
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=citizen_resolver
-JWT_SECRET=your_random_secret_string
+PORT=3001
+JWT_SECRET=replace_with_a_random_32_byte_secret
+CORS_ORIGIN=http://localhost:5173
+ALLOW_PUBLIC_ADMIN_SIGNUP=true
 ```
 
-### 3. Initialize the database
+The app uses SQLite locally. The database file is created at `data/civicresolve.db` when the server starts.
 
-```bash
-npm run init:db
-```
+## Run Locally
 
-This creates the `citizen_resolver` database, runs the schema, and seeds demo accounts.
-
-## Run the Application
-
-Start both the API server and the Vite dev server with a single command:
+Start frontend and backend together:
 
 ```bash
 npm run dev
 ```
 
+Services:
+
 | Service | URL |
 |---|---|
-| Client (Vite) | http://127.0.0.1:5173 |
-| Server (Express) | http://localhost:5000 |
+| Client | http://localhost:5173 |
+| Backend API | http://localhost:3001 |
+| Health check | http://localhost:3001/api/health |
 
-To run them individually:
+Run individually:
 
 ```bash
-npm run dev --prefix server   # API only
-npm run dev --prefix client   # Vite only
+npm run dev --prefix client
+npm run dev --prefix server
 ```
 
-## Build (Production)
+## Build
 
 ```bash
 npm run build --prefix client
 ```
 
+## Deploy
+
+Frontend production deploy uses the linked Vercel project:
+
+```bash
+vercel deploy --prod
+```
+
+`vercel.json` builds `client/`, serves `client/dist`, and rewrites `/api`, `/uploads`, and `/socket.io` traffic to the Render backend.
+
+Backend deployment is described by `render.yaml`. Ensure Render has production values for:
+
+- `NODE_ENV=production`
+- `JWT_SECRET`
+- `CORS_ORIGIN=https://civicresolve-jet.vercel.app`
+- `ALLOW_PUBLIC_ADMIN_SIGNUP` as appropriate
+
 ## Demo Accounts
+
+Seeded local accounts:
 
 | Role | Email | Password |
 |---|---|---|
-| Admin | admin@helpline.local | password |
+| Admin | admin@civicresolve.local | password |
 | Citizen | aarav@example.com | password |
 
 ## Core API Endpoints
 
 | Method | Path | Description |
 |---|---|---|
-| POST | /api/auth/login | Login |
-| POST | /api/auth/signup | Register |
-| GET | /api/state | Full portal state (auth-gated) |
-| POST | /api/issues | Create issue |
-| PATCH | /api/issues/:id | Update issue (admin) |
-| POST | /api/entities/:type | Add area / department / labour |
-| PATCH | /api/notifications/:id/read | Mark notification read |
-| GET | /api/messages/:issueId | Get chat messages |
-| POST | /api/messages/:issueId | Send chat message |
+| GET | `/api/health` | Health check |
+| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/signup` | Register |
+| GET | `/api/state` | Full portal state |
+| POST | `/api/issues` | Create issue |
+| PATCH | `/api/issues/:id` | Update issue |
+| POST | `/api/entities/:type` | Add area, department, or labour |
+| PATCH | `/api/notifications/:id/read` | Mark notification read |
+| GET | `/api/messages/:issueId` | Get issue messages |
+| POST | `/api/messages/:issueId` | Send issue message |
+| GET | `/api/analytics/*` | Analytics data |
+| POST | `/api/upload` | Upload image |
+| POST | `/api/bug-reports` | Submit bug report |
 
-## Manual End-to-End Test Flow
+## Manual Test Flow
 
-1. Sign up a new citizen account.
-2. Log in as that citizen and create a new issue.
-3. Log in as admin and open the Dashboard.
-4. Assign a department/labour, update the status, and add a note.
-5. Log back in as the citizen and confirm:
-   - Status has changed
-   - Assignment note appears in the modal
-   - Notification appears in the feed
-   - Issue image is shown (uploaded URL or relevant fallback)
+1. Sign up or log in as a citizen.
+2. Submit a civic issue with location, department, priority, and optional image.
+3. Log in as an admin.
+4. Open the dashboard and assign labour or update issue status.
+5. Return to the citizen account and confirm the notification, status update, and conversation history.
 
 ## Troubleshooting
 
-- **`ENOENT: could not read package.json` at repo root** — Use `npm run install:all` from the repo root, or `npm --prefix server install` / `npm --prefix client install` individually.
-- **Server cannot connect to DB** — Check `server/.env` credentials. Ensure MySQL is running and the DB user has `CREATE`/`USE` privileges on `citizen_resolver`.
-- **UI shows no data after login** — Confirm the server is running on port 5000 and check browser DevTools → Network → `/api/state`.
+- If `/api/state` fails, restart the backend and check the server logs. Startup migrations add missing SQLite columns such as `gps_lat` and `gps_lng`.
+- If the frontend cannot reach the API locally, confirm the backend is running on `http://localhost:3001`.
+- If login fails immediately, make sure `JWT_SECRET` is set in `server/.env`.
+- If production API calls fail, check `vercel.json` rewrites and Render `CORS_ORIGIN`.
