@@ -1,31 +1,55 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Shield, MapPin, Bell, BarChart3, Users, MessageCircle, Droplets, Zap, TreePine, Lightbulb, Bug, Construction } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ArrowRight,
+  BarChart3,
+  Bell,
+  CheckCircle2,
+  Construction,
+  Droplets,
+  Layers3,
+  Lightbulb,
+  MapPin,
+  MessageCircle,
+  Shield,
+  Sparkles,
+  TreePine,
+  Users,
+  Zap,
+} from 'lucide-react';
 
-const useInView = (threshold = 0.15) => {
+const useInView = (threshold = 0.16) => {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
+    const element = ref.current;
+    if (!element) return undefined;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.disconnect();
+      }
     }, { threshold });
-    obs.observe(el);
-    return () => obs.disconnect();
+
+    observer.observe(element);
+    return () => observer.disconnect();
   }, [threshold]);
+
   return [ref, visible];
 };
 
-const FadeIn = ({ children, delay = 0, className = '' }) => {
+const Reveal = ({ children, delay = 0, className = '', eager = false }) => {
   const [ref, visible] = useInView();
+  const isVisible = eager || visible;
   return (
     <div
       ref={ref}
       className={className}
       style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(32px)',
-        transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translate3d(0,0,0)' : 'translate3d(0,28px,0)',
+        transition: `opacity 720ms cubic-bezier(.16,1,.3,1) ${delay}ms, transform 720ms cubic-bezier(.16,1,.3,1) ${delay}ms`,
       }}
     >
       {children}
@@ -33,201 +57,240 @@ const FadeIn = ({ children, delay = 0, className = '' }) => {
   );
 };
 
-const ScaleIn = ({ children, delay = 0, className = '' }) => {
-  const [ref, visible] = useInView(0.2);
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'scale(1)' : 'scale(0.9)',
-        transition: `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  );
-};
+const Metric = ({ value, label, tone }) => (
+  <div className="rounded-lg border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-xl">
+    <div className={`text-[24px] font-black leading-none ${tone}`}>{value}</div>
+    <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/52">{label}</div>
+  </div>
+);
 
-const CountUp = ({ target, suffix = '', duration = 1500 }) => {
-  const [count, setCount] = useState(0);
-  const [ref, visible] = useInView(0.3);
+const CityScene = () => {
+  const [pointer, setPointer] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
-    if (!visible) return;
-    let start = null;
-    const step = (ts) => {
-      if (!start) start = ts;
-      const progress = Math.min((ts - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(ease * target));
-      if (progress < 1) requestAnimationFrame(step);
+    const handlePointer = (event) => {
+      const x = (event.clientX / window.innerWidth - 0.5) * 2;
+      const y = (event.clientY / window.innerHeight - 0.5) * 2;
+      setPointer({ x, y });
     };
-    requestAnimationFrame(step);
-  }, [visible, target, duration]);
-  return <span ref={ref}>{count}{suffix}</span>;
+
+    window.addEventListener('pointermove', handlePointer);
+    return () => window.removeEventListener('pointermove', handlePointer);
+  }, []);
+
+  const blocks = useMemo(() => ([
+    { x: 8, y: 50, h: 96, tone: 'from-cyan-300 to-sky-500', delay: '0s' },
+    { x: 21, y: 32, h: 138, tone: 'from-amber-200 to-orange-500', delay: '-1.8s' },
+    { x: 35, y: 58, h: 82, tone: 'from-emerald-300 to-teal-600', delay: '-.8s' },
+    { x: 49, y: 24, h: 166, tone: 'from-fuchsia-300 to-rose-500', delay: '-2.7s' },
+    { x: 64, y: 46, h: 112, tone: 'from-blue-300 to-indigo-600', delay: '-1.2s' },
+    { x: 78, y: 36, h: 146, tone: 'from-lime-300 to-emerald-600', delay: '-2.2s' },
+  ]), []);
+
+  const reports = [
+    { icon: Construction, label: 'Road fixed', pos: 'left-[6%] top-[16%]', color: 'text-amber-200' },
+    { icon: Droplets, label: 'Leak mapped', pos: 'right-[4%] top-[30%]', color: 'text-cyan-200' },
+    { icon: Lightbulb, label: 'Lights restored', pos: 'left-[12%] bottom-[22%]', color: 'text-yellow-200' },
+  ];
+
+  return (
+    <div className="landing-scene relative min-h-[420px] md:min-h-[560px] overflow-hidden rounded-lg border border-white/14 bg-slate-950/38 shadow-[0_34px_120px_rgba(0,0,0,0.42)] backdrop-blur-xl">
+      <div className="absolute inset-0 opacity-70 landing-grid" />
+      <div
+        className="absolute inset-0 landing-scene-plane"
+        style={{
+          transform: `rotateX(${62 - pointer.y * 2}deg) rotateZ(${-28 + pointer.x * 3}deg) translate3d(-4%, 10%, 0)`,
+        }}
+      >
+        <div className="absolute left-[7%] top-[46%] h-[2px] w-[86%] bg-cyan-200/40 shadow-[0_0_20px_rgba(125,211,252,.55)]" />
+        <div className="absolute left-[12%] top-[28%] h-[2px] w-[70%] rotate-90 bg-amber-200/28 shadow-[0_0_18px_rgba(253,224,71,.4)]" />
+        <div className="absolute left-[16%] top-[18%] h-[2px] w-[76%] rotate-[34deg] bg-emerald-200/25" />
+        <div className="absolute left-[18%] top-[72%] h-[2px] w-[70%] -rotate-[28deg] bg-rose-200/25" />
+
+        {blocks.map((block) => (
+          <span
+            key={`${block.x}-${block.y}`}
+            className={`city-block absolute bg-gradient-to-t ${block.tone}`}
+            style={{
+              left: `${block.x}%`,
+              top: `${block.y}%`,
+              height: block.h,
+              animationDelay: block.delay,
+            }}
+          />
+        ))}
+      </div>
+
+      <div
+        className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/28 landing-ring"
+        style={{ transform: `translate(-50%, -50%) rotateX(${64 - pointer.y * 3}deg) rotateZ(${pointer.x * 18}deg)` }}
+      />
+      <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/40 landing-ring-fast" />
+
+      {reports.map(({ icon: Icon, label, pos, color }) => (
+        <div
+          key={label}
+          className={`absolute ${pos} hidden sm:flex items-center gap-2 rounded-lg border border-white/15 bg-black/32 px-3 py-2 text-white shadow-2xl backdrop-blur-xl landing-float`}
+        >
+          <Icon className={`h-4 w-4 ${color}`} />
+          <span className="text-[11px] font-extrabold uppercase tracking-[0.12em]">{label}</span>
+        </div>
+      ))}
+
+      <div className="absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-3">
+        <Metric value="2.4k" label="Resolved" tone="text-emerald-200" />
+        <Metric value="18m" label="Avg triage" tone="text-cyan-200" />
+        <Metric value="98%" label="Satisfaction" tone="text-amber-200" />
+      </div>
+    </div>
+  );
 };
 
 export default function LandingPage({ onGetStarted }) {
   const issueTypes = [
-    { icon: <Construction className="w-5 h-5" />, title: 'Roads & Potholes', color: 'bg-orange-50 text-orange-600' },
-    { icon: <Droplets className="w-5 h-5" />, title: 'Water Supply', color: 'bg-blue-50 text-blue-600' },
-    { icon: <Zap className="w-5 h-5" />, title: 'Street Lights', color: 'bg-yellow-50 text-yellow-600' },
-    { icon: <Bug className="w-5 h-5" />, title: 'Sanitation', color: 'bg-green-50 text-green-600' },
-    { icon: <TreePine className="w-5 h-5" />, title: 'Public Parks', color: 'bg-emerald-50 text-emerald-600' },
-    { icon: <Lightbulb className="w-5 h-5" />, title: 'Drainage', color: 'bg-purple-50 text-purple-600' },
+    { icon: Construction, title: 'Roads', desc: 'Potholes, broken medians, unsafe turns', color: 'text-amber-300' },
+    { icon: Droplets, title: 'Water', desc: 'Leakage, supply gaps, burst pipes', color: 'text-cyan-300' },
+    { icon: Zap, title: 'Lights', desc: 'Dark streets, damaged poles, outages', color: 'text-yellow-300' },
+    { icon: TreePine, title: 'Parks', desc: 'Damaged play areas and public spaces', color: 'text-lime-300' },
+  ];
+
+  const flow = [
+    { icon: MapPin, title: 'Capture', desc: 'Photo, GPS, priority, and department context are collected in one pass.' },
+    { icon: Shield, title: 'Route', desc: 'Reports move to the right administrator queue with traceable status changes.' },
+    { icon: Bell, title: 'Close', desc: 'Citizens receive live updates until evidence-backed resolution is complete.' },
   ];
 
   const features = [
-    { icon: <Shield className="w-6 h-6" />, title: 'Report Issues', desc: 'Report civic problems with photos, GPS location, and priority levels.' },
-    { icon: <Bell className="w-6 h-6" />, title: 'Real-Time Updates', desc: 'Get instant notifications as your issue progresses through resolution.' },
-    { icon: <Users className="w-6 h-6" />, title: 'Admin Dashboard', desc: 'Admins assign departments, track labor, and manage the full workflow.' },
-    { icon: <BarChart3 className="w-6 h-6" />, title: 'Analytics', desc: 'Track resolution rates, SLA compliance, and department performance.' },
-    { icon: <MessageCircle className="w-6 h-6" />, title: 'Messaging', desc: 'Direct communication between citizens and administrators.' },
-    { icon: <MapPin className="w-6 h-6" />, title: 'GPS Tracking', desc: 'Pin exact locations of issues for faster on-ground response.' },
-  ];
-
-  const steps = [
-    { num: '01', title: 'Report', desc: 'Spot an issue? Snap a photo, drop a pin, and submit in seconds.' },
-    { num: '02', title: 'Assign', desc: 'Admins review and assign the right department and team.' },
-    { num: '03', title: 'Resolve', desc: 'Track progress in real-time with status updates and messaging.' },
+    { icon: Layers3, title: '3D civic overview', desc: 'A visual operating layer for categories, workloads, and city zones.' },
+    { icon: MessageCircle, title: 'Threaded messages', desc: 'Citizen and admin communication stays attached to each report.' },
+    { icon: BarChart3, title: 'Performance analytics', desc: 'Resolution velocity, SLA health, and department load stay visible.' },
+    { icon: Users, title: 'Role-aware flow', desc: 'Citizens, admins, and labour teams see the tools that matter to them.' },
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16">
-      <div className="text-center mb-24">
-        <FadeIn>
-          <div className="inline-flex items-center gap-2 bg-[#342721]/10 rounded-full px-4 py-1.5 mb-6">
-            <Shield className="w-4 h-4 text-[#342721]" />
-            <span className="text-[11px] font-bold text-[#342721] uppercase tracking-wider">CivicResolve</span>
+    <div data-testid="page-landing" className="relative mx-auto w-full max-w-[1240px] px-4 pb-24 pt-4 text-white sm:px-6 lg:px-8">
+      <section className="relative z-10 grid min-h-[calc(100vh-160px)] items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <Reveal eager className="relative z-10 max-w-2xl">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/10 px-4 py-2 backdrop-blur-xl">
+            <Sparkles className="h-4 w-4 text-cyan-200" />
+            <span className="text-[11px] font-black uppercase tracking-[0.18em] text-white/72">Smart Civic Command</span>
           </div>
-        </FadeIn>
-        <FadeIn delay={0.1}>
-          <h1 className="font-display-lg text-[48px] md:text-[64px] font-extrabold text-[#342721] leading-[1.05] mb-6">
-            Your City.<br />Your Voice.<br />Your Resolution.
+          <h1 className="font-display-lg text-[48px] font-black leading-[0.98] text-white drop-shadow-2xl sm:text-[64px] lg:text-[84px]">
+            CivicResolve
           </h1>
-        </FadeIn>
-        <FadeIn delay={0.2}>
-          <p className="text-[#8B7355] text-[16px] max-w-xl mx-auto leading-relaxed mb-10">
-            Report civic issues, track their resolution in real-time, and hold authorities accountable — all from one platform.
+          <p className="mt-6 max-w-xl text-[15px] font-medium leading-7 text-white/66 md:text-[18px]">
+            Report public issues through a fast, visual, real-time flow built for citizens and city teams.
           </p>
-        </FadeIn>
-        <FadeIn delay={0.3}>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <button
+              type="button"
               onClick={() => onGetStarted('signup')}
-              className="bg-[#342721] text-white px-8 py-3.5 rounded-2xl font-bold text-[14px] hover:bg-[#4a3830] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              className="group inline-flex items-center justify-center gap-3 rounded-lg bg-white px-6 py-4 text-[13px] font-black uppercase tracking-[0.14em] text-[#342721] shadow-[0_18px_50px_rgba(255,255,255,0.22)] transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-50 active:translate-y-0"
             >
-              Get Started Free
+              Start reporting
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
             <button
+              type="button"
               onClick={() => onGetStarted('login')}
-              className="bg-white border-2 border-[#342721]/20 text-[#342721] px-8 py-3.5 rounded-2xl font-bold text-[14px] hover:border-[#342721]/40 transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/10 px-6 py-4 text-[13px] font-black uppercase tracking-[0.14em] text-white backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/16 active:translate-y-0"
             >
-              Sign In
+              Sign in
             </button>
           </div>
-        </FadeIn>
-      </div>
+          <div className="mt-10 grid max-w-lg grid-cols-3 gap-3">
+            <Metric value="24h" label="Response" tone="text-cyan-200" />
+            <Metric value="6" label="Departments" tone="text-amber-200" />
+            <Metric value="Live" label="Updates" tone="text-emerald-200" />
+          </div>
+        </Reveal>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-24">
-        {[
-          { value: 2400, suffix: '+', label: 'Issues Resolved' },
-          { value: 98, suffix: '%', label: 'Satisfaction Rate' },
-          { value: 6, suffix: '', label: 'Departments' },
-          { value: 24, suffix: 'h', label: 'Avg. Response' },
-        ].map((s, i) => (
-          <ScaleIn key={s.label} delay={i * 0.08}>
-            <div className="bg-white/80 rounded-2xl p-6 text-center border border-[#DDC5A3] hover:shadow-md transition-all hover:-translate-y-1">
-              <p className="text-[#342721] font-extrabold text-[28px]">
-                <CountUp target={s.value} suffix={s.suffix} />
-              </p>
-              <p className="text-[#8B7355] text-[11px] uppercase tracking-wider font-bold mt-1">{s.label}</p>
+        <Reveal eager delay={120} className="relative z-10">
+          <CityScene />
+        </Reveal>
+      </section>
+
+      <section className="grid gap-4 py-16 md:grid-cols-4">
+        {issueTypes.map(({ icon: Icon, title, desc, color }, index) => (
+          <Reveal key={title} delay={index * 80}>
+            <div className="group h-full rounded-lg border border-white/14 bg-white/[0.08] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:bg-white/[0.13]">
+              <Icon className={`h-6 w-6 ${color} transition-transform duration-300 group-hover:scale-110`} />
+              <h3 className="mt-5 text-[15px] font-black uppercase tracking-[0.08em] text-white">{title}</h3>
+              <p className="mt-2 text-[13px] leading-6 text-white/54">{desc}</p>
             </div>
-          </ScaleIn>
+          </Reveal>
         ))}
-      </div>
+      </section>
 
-      <div className="mb-24">
-        <FadeIn>
-          <h2 className="text-center text-[28px] font-extrabold text-[#342721] mb-3">How It Works</h2>
-          <p className="text-center text-[#8B7355] text-[14px] mb-14">Three simple steps to a better community</p>
-        </FadeIn>
-        <div className="grid md:grid-cols-3 gap-8">
-          {steps.map((s, i) => (
-            <FadeIn key={s.num} delay={i * 0.12}>
-              <div className="text-center relative">
-                <div className="w-14 h-14 bg-[#342721] text-white rounded-2xl flex items-center justify-center text-[18px] font-extrabold mx-auto mb-5 shadow-lg">
-                  {s.num}
-                </div>
-                <h3 className="font-bold text-[17px] text-[#342721] mb-2">{s.title}</h3>
-                <p className="text-[#8B7355] text-[13px] leading-relaxed max-w-xs mx-auto">{s.desc}</p>
-                {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-7 left-[60%] w-[80%] h-px bg-gradient-to-r from-[#342721]/20 to-transparent" />
-                )}
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-
-      <div className="mb-24">
-        <FadeIn>
-          <h2 className="text-center text-[28px] font-extrabold text-[#342721] mb-3">What You Can Report</h2>
-          <p className="text-center text-[#8B7355] text-[14px] mb-12">Across 6 departments covering all civic services</p>
-        </FadeIn>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {issueTypes.map((t, i) => (
-            <ScaleIn key={t.title} delay={i * 0.06}>
-              <div className="bg-white/80 rounded-2xl p-5 border border-[#DDC5A3] flex items-center gap-4 hover:shadow-md transition-all hover:-translate-y-1 cursor-default">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${t.color}`}>
-                  {t.icon}
-                </div>
-                <span className="font-bold text-[14px] text-[#342721]">{t.title}</span>
-              </div>
-            </ScaleIn>
-          ))}
-        </div>
-      </div>
-
-      <div className="mb-24">
-        <FadeIn>
-          <h2 className="text-center text-[28px] font-extrabold text-[#342721] mb-3">Everything You Need</h2>
-          <p className="text-center text-[#8B7355] text-[14px] mb-12">A complete civic issue management platform</p>
-        </FadeIn>
-        <div className="grid md:grid-cols-3 gap-5">
-          {features.map((f, i) => (
-            <FadeIn key={f.title} delay={i * 0.08}>
-              <div className="bg-white/80 rounded-2xl p-7 border border-[#DDC5A3] hover:shadow-lg transition-all hover:-translate-y-1 h-full">
-                <div className="w-10 h-10 bg-[#342721]/10 rounded-xl flex items-center justify-center text-[#342721] mb-4">
-                  {f.icon}
-                </div>
-                <h3 className="font-bold text-[15px] text-[#342721] mb-2">{f.title}</h3>
-                <p className="text-[#8B7355] text-[13px] leading-relaxed">{f.desc}</p>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-
-      <FadeIn>
-        <div className="bg-[#342721] rounded-[2rem] p-12 text-center relative overflow-hidden">
-          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/5" />
-          <div className="absolute bottom-10 -left-10 w-40 h-40 rounded-full bg-white/5" />
-          <div className="relative z-10">
-            <h2 className="text-white text-[28px] font-extrabold mb-3">Ready to Make a Difference?</h2>
-            <p className="text-white/70 text-[14px] mb-8 max-w-md mx-auto">
-              Join thousands of citizens who are already improving their communities.
+      <section className="py-14">
+        <Reveal>
+          <div className="mb-8 flex flex-col justify-between gap-3 md:flex-row md:items-end">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-cyan-200/80">Smooth Flow</p>
+              <h2 className="mt-3 text-[32px] font-black leading-tight md:text-[44px]">From street problem to closed case.</h2>
+            </div>
+            <p className="max-w-md text-[14px] leading-7 text-white/58">
+              The product flow is built around short decisions, visible progress, and zero guesswork for the next action.
             </p>
-            <button
-              onClick={() => onGetStarted('signup')}
-              className="bg-white text-[#342721] px-10 py-3.5 rounded-2xl font-bold text-[14px] hover:bg-gray-100 transition-all hover:-translate-y-0.5 shadow-lg"
-            >
-              Create Your Account
-            </button>
           </div>
+        </Reveal>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {flow.map(({ icon: Icon, title, desc }, index) => (
+            <Reveal key={title} delay={index * 90}>
+              <div className="relative h-full rounded-lg border border-white/14 bg-black/24 p-6 backdrop-blur-xl">
+                <div className="mb-8 flex items-center justify-between">
+                  <Icon className="h-7 w-7 text-amber-200" />
+                  <span className="text-[12px] font-black text-white/36">0{index + 1}</span>
+                </div>
+                <h3 className="text-[20px] font-black text-white">{title}</h3>
+                <p className="mt-3 text-[13px] leading-6 text-white/56">{desc}</p>
+              </div>
+            </Reveal>
+          ))}
         </div>
-      </FadeIn>
+      </section>
+
+      <section className="grid gap-4 py-14 lg:grid-cols-[0.8fr_1.2fr]">
+        <Reveal>
+          <div className="rounded-lg border border-white/14 bg-white/[0.08] p-7 backdrop-blur-xl">
+            <CheckCircle2 className="h-8 w-8 text-emerald-200" />
+            <h2 className="mt-5 text-[30px] font-black leading-tight">Built for clean daily operations.</h2>
+            <p className="mt-4 text-[14px] leading-7 text-white/58">
+              Citizens get a polished reporting path. Admins get assignment, monitoring, and resolution tools without a messy handoff.
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {features.map(({ icon: Icon, title, desc }, index) => (
+            <Reveal key={title} delay={index * 70}>
+              <div className="h-full rounded-lg border border-white/14 bg-black/24 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-black/32">
+                <Icon className="h-6 w-6 text-cyan-200" />
+                <h3 className="mt-5 text-[15px] font-black uppercase tracking-[0.08em] text-white">{title}</h3>
+                <p className="mt-2 text-[13px] leading-6 text-white/54">{desc}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <Reveal>
+        <section className="mt-10 flex flex-col items-start justify-between gap-6 rounded-lg border border-white/16 bg-white/[0.1] p-7 backdrop-blur-xl md:flex-row md:items-center">
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-200/80">Ready</p>
+            <h2 className="mt-2 text-[28px] font-black leading-tight text-white">Open the portal and start resolving faster.</h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => onGetStarted('signup')}
+            className="inline-flex w-full items-center justify-center gap-3 rounded-lg bg-white px-6 py-4 text-[13px] font-black uppercase tracking-[0.14em] text-[#342721] transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-50 md:w-auto"
+          >
+            Create account
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </section>
+      </Reveal>
     </div>
   );
 }

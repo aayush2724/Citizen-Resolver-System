@@ -473,7 +473,7 @@ const Footer = () => (
   </footer>
 );
 
-const ParallaxBackground = () => {
+const ParallaxBackground = ({ showBadges = true }) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [hoveredBadge, setHoveredBadge] = useState(null);
 
@@ -609,6 +609,7 @@ const ParallaxBackground = () => {
       </div>
 
       {/* ── Floating badges — own layer above content so hover events work ── */}
+      {showBadges && (
       <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden select-none">
 
         {/* Roads & Potholes — top left */}
@@ -720,6 +721,7 @@ const ParallaxBackground = () => {
           </div>
         )}
       </div>
+      )}
     </>
   );
 };
@@ -836,7 +838,7 @@ const Home = ({ issues = [] }) => {
   ];
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-80px)] flex flex-col items-center justify-center overflow-hidden py-16 md:py-24">
+    <div data-testid="page-home" className="relative w-full min-h-[calc(100vh-80px)] flex flex-col items-center justify-center overflow-hidden py-16 md:py-24">
 
       {/* ── Hero Content ── */}
       <div className="relative z-10 flex flex-col items-center text-center px-6 w-full max-w-5xl mx-auto">
@@ -1181,7 +1183,7 @@ const ReportIssue = ({ areas = [], departments = [], currentUser }) => {
   const areasList = (formData.city && formData.block) ? (locationData[formData.city][formData.block] || []) : [];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-8 w-full items-start animate-fade-in-up">
+    <div data-testid="page-report-issue" className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-8 w-full items-start animate-fade-in-up">
       {/* Form Section */}
       <section className="lg:col-span-7 bg-white/95 dark:bg-[#342721]/95 backdrop-blur-md rounded-[2.5rem] p-4 sm:p-6 md:p-8 md:p-12 shadow-premium border border-white/50 dark:border-white/10">
         <div className="mb-8">
@@ -1507,7 +1509,7 @@ const Login = () => {
   const labelClass = "block text-[11px] font-bold text-[#342721] dark:text-[#8B7355] uppercase tracking-wider mb-1.5 px-1";
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
+    <div data-testid="page-auth" className="min-h-[80vh] flex items-center justify-center py-12 px-4">
       <div className="w-full max-w-4xl bg-white/95 dark:bg-[#342721]/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-white/60 overflow-hidden grid grid-cols-1 lg:grid-cols-2">
 
         {/* Left Branding Panel */}
@@ -1685,10 +1687,10 @@ const Login = () => {
 
 // --- Main App Component ---
 // Render decorative background only when on Home route (uses hooks correctly inside component)
-function BackgroundController() {
+function BackgroundController({ showInteractiveBadges }) {
   const location = useLocation();
   return (
-    location.pathname === '/' ? <ParallaxBackground /> : <NonHomeBackground />
+    location.pathname === '/' ? <ParallaxBackground showBadges={showInteractiveBadges} /> : <NonHomeBackground />
   );
 }
 
@@ -1791,10 +1793,10 @@ export default function App() {
 
         <main className="relative flex-1 pt-24 md:pt-32 pb-24 w-full overflow-x-hidden">
           {/* BackgroundController renders decorative background only on Home route */}
-          <BackgroundController />
+          <BackgroundController showInteractiveBadges={!!portalState.currentUser} />
 
           {!portalState.currentUser || isAddingAccount ? (
-            <div className="relative z-20">
+            <div className="relative z-[45]">
               {isAddingAccount && (
                 <div className="max-w-container-max mx-auto px-margin-desktop">
                   <button 
@@ -1880,7 +1882,7 @@ export default function App() {
               )}
               {portalState.currentUser?.role === 'admin' && (
                 <Route path="/analytics" element={
-                  <div className="max-w-container-max mx-auto px-margin-desktop">
+                  <div data-testid="page-analytics" className="max-w-container-max mx-auto px-margin-desktop">
                     <AnalyticsDashboard />
                   </div>
                 } />
@@ -1912,7 +1914,7 @@ const PublicIssues = ({ issues, onOpenIssue }) => {
   );
 
   return (
-    <div className="space-y-8">
+    <div data-testid="page-public-issues" className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
         <div>
           <h2 className="text-headline-lg font-display-lg text-on-surface tracking-tighter">Public Issues</h2>
@@ -1961,7 +1963,7 @@ const MyIssues = ({ issues, currentUser, onOpenIssue }) => {
   const myIssues = issues.filter(i => i.citizenId === currentUser.id);
 
   return (
-    <div className="space-y-8">
+    <div data-testid="page-my-issues" className="space-y-8">
       <div>
         <h2 className="text-headline-lg font-display-lg text-on-surface tracking-tighter">My Reported Issues</h2>
         <p className="text-body-md text-on-surface-variant">Track the progress of issues you've submitted.</p>
@@ -2034,7 +2036,7 @@ const ReportBug = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto bg-white/95 dark:bg-[#342721]/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-outline-variant/20 overflow-hidden">
+    <div data-testid="page-report-bug" className="max-w-3xl mx-auto bg-white/95 dark:bg-[#342721]/95 backdrop-blur-md rounded-[2.5rem] shadow-premium border border-outline-variant/20 overflow-hidden">
       <div className="bg-primary p-10 text-white">
         <h2 className="text-headline-md font-display-lg tracking-tight">Report a System Bug</h2>
         <p className="opacity-80 font-body-md">Encountered a technical issue? Let us know and we'll squash it.</p>
@@ -2208,7 +2210,7 @@ const AdminDashboard = ({ issues, departments, labour, notifications, dashboardS
   };
 
   return (
-    <div className="space-y-8 animate-fade-in-up" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div data-testid="page-admin-dashboard" className="space-y-8 animate-fade-in-up" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
