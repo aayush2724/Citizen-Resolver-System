@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { gsap, ScrollTrigger } from '../lib/scroll';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { gsap } from '../lib/scroll';
 import {
   ArrowRight,
   BarChart3,
@@ -151,6 +151,42 @@ const CityScene = () => {
 };
 
 export default function LandingPage({ onGetStarted }) {
+  const handleCtaClick = useCallback((e, callback) => {
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    // Create 16 particles
+    Array.from({ length: 16 }).forEach((_, i) => {
+      const particle = document.createElement('div');
+      particle.style.cssText = `
+      position: fixed; z-index: 9998;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #E8C97A;
+      left: ${cx}px; top: ${cy}px;
+      pointer-events: none;
+    `;
+      document.body.appendChild(particle);
+
+      const angle = (i / 16) * Math.PI * 2;
+      const dist = 60 + Math.random() * 60;
+      gsap.to(particle, {
+        x: Math.cos(angle) * dist,
+        y: Math.sin(angle) * dist,
+        opacity: 0,
+        scale: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        delay: Math.random() * 0.1,
+        onComplete: () => particle.remove(),
+      });
+    });
+
+    callback();
+  }, []);
+
   const issueTypes = [
     { icon: Construction, title: 'Roads', desc: 'Potholes, broken medians, unsafe turns', color: 'text-[#E8C97A]' },
     { icon: Droplets, title: 'Water', desc: 'Leakage, supply gaps, burst pipes', color: 'text-[#DDC5A3]' },
@@ -188,7 +224,7 @@ export default function LandingPage({ onGetStarted }) {
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
-              onClick={() => onGetStarted('signup')}
+              onClick={(e) => handleCtaClick(e, () => onGetStarted('signup'))}
               className="group inline-flex items-center justify-center gap-3 rounded-lg bg-white px-6 py-4 text-[13px] font-black uppercase tracking-[0.14em] text-[#342721] shadow-[0_18px_50px_rgba(255,255,255,0.22)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#FAF7F2] active:translate-y-0"
             >
               Start reporting
@@ -293,7 +329,7 @@ export default function LandingPage({ onGetStarted }) {
           </div>
           <button
             type="button"
-            onClick={() => onGetStarted('signup')}
+            onClick={(e) => handleCtaClick(e, () => onGetStarted('signup'))}
             className="inline-flex w-full items-center justify-center gap-3 rounded-lg bg-white px-6 py-4 text-[13px] font-black uppercase tracking-[0.14em] text-[#342721] transition-all duration-300 hover:-translate-y-1 hover:bg-[#FAF7F2] md:w-auto"
           >
             Create account

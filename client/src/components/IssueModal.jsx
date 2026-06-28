@@ -1,10 +1,13 @@
 import { X, Calendar, MapPin, User, Shield, Info, Send } from "lucide-react";
 import { progressFor, statusOrder, statusTone } from "../utils/status";
 import { fallbackImage, getRelevantImage } from "../utils/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { gsap } from "../lib/scroll";
 import { api } from "../services/api";
 
 export default function IssueModal({ issue, onClose }) {
+  const backdropRef = useRef(null);
+  const panelRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,6 +25,20 @@ export default function IssueModal({ issue, onClose }) {
       fetchMessages();
     }
   }, [issue]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(backdropRef.current,
+        { backdropFilter: 'blur(0px)', backgroundColor: 'rgba(0,0,0,0)' },
+        { backdropFilter: 'blur(12px)', backgroundColor: 'rgba(0,0,0,0.5)', duration: 0.35, ease: 'power2.out' }
+      );
+      gsap.fromTo(panelRef.current,
+        { y: 48, scale: 0.95, opacity: 0 },
+        { y: 0, scale: 1, opacity: 1, duration: 0.45, ease: 'power3.out' }
+      );
+    });
+    return () => ctx.revert();
+  }, []);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -45,9 +62,9 @@ export default function IssueModal({ issue, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/20 backdrop-blur-xl animate-fade-in" onClick={onClose} />
+      <div ref={backdropRef} className="absolute inset-0" onClick={onClose} />
       
-      <section className="relative z-10 w-full max-w-5xl max-h-[92vh] overflow-hidden rounded-[3rem] border border-white/20 bg-white shadow-premium animate-rise flex flex-col">
+      <section ref={panelRef} className="relative z-10 w-full max-w-5xl max-h-[92vh] overflow-hidden rounded-[3rem] border border-white/20 bg-white shadow-premium flex flex-col">
         {/* Header */}
         <header className="flex items-center justify-between border-b border-outline-variant/20 bg-surface-container-lowest px-10 py-8">
           <div className="flex items-center gap-6">

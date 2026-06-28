@@ -10,4 +10,5 @@ createRoot(document.getElementById("root")).render(
   </React.StrictMode>,
 );
 
-initSmoothScroll();
+const lenis = initSmoothScroll();
+window.addEventListener("beforeunload", () => lenis.destroy());

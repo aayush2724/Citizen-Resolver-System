@@ -47,6 +47,7 @@ export default function Cursor() {
 
     return () => {
       document.body.style.cursor = '';
+      gsap.killTweensOf([dot, ring]);
       window.removeEventListener('mousemove', onMove);
       interactives.forEach(el => {
         el.removeEventListener('mouseenter', onEnterInteractive);

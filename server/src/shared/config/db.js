@@ -52,7 +52,7 @@ if (tableCount.cnt === 0) {
       title TEXT NOT NULL, description TEXT NOT NULL, image_url TEXT,
       status TEXT DEFAULT 'Pending' CHECK(status IN ('Pending','Assigned','In Progress','Resolved','Completed','Rejected')),
       priority TEXT DEFAULT 'Normal' CHECK(priority IN ('Normal','High','Urgent')),
-      sla_hours INTEGER DEFAULT 72, lat REAL, lng REAL,
+      sla_hours INTEGER DEFAULT 72, gps_lat REAL, gps_lng REAL,
       ai_department TEXT, ai_confidence INTEGER,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -118,6 +118,28 @@ if (tableCount.cnt === 0) {
   insertUser.run("Aarav Sharma", "aarav@example.com", adminHash, "citizen", area1?.id || null);
 
   console.log("✅ Database initialized with schema and seed data");
+}
+
+const issueColumns = db.prepare("PRAGMA table_info(issues)").all();
+const issueColumnNames = new Set(issueColumns.map((column) => column.name));
+
+if (!issueColumnNames.has("gps_lat")) {
+  db.prepare("ALTER TABLE issues ADD COLUMN gps_lat REAL").run();
+  issueColumnNames.add("gps_lat");
+}
+
+if (!issueColumnNames.has("gps_lng")) {
+  db.prepare("ALTER TABLE issues ADD COLUMN gps_lng REAL").run();
+  issueColumnNames.add("gps_lng");
+}
+
+if (issueColumnNames.has("lat") && issueColumnNames.has("lng")) {
+  db.prepare(`
+    UPDATE issues
+    SET gps_lat = COALESCE(gps_lat, lat),
+        gps_lng = COALESCE(gps_lng, lng)
+    WHERE gps_lat IS NULL OR gps_lng IS NULL
+  `).run();
 }
 
 function flattenParams(params) {

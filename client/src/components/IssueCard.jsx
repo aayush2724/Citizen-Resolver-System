@@ -1,15 +1,44 @@
+import { useRef, useCallback } from "react";
 import { CalendarDays, MapPin, UserRound } from "lucide-react";
+import { gsap } from "../lib/scroll";
 import { priorityTone, progressFor, statusTone } from "../utils/status";
 import { fallbackImage, getRelevantImage } from "../utils/image";
 
 export default function IssueCard({ issue, onOpen }) {
+  const cardRef = useRef(null);
   // Prioritize uploaded image URL over fallback
   const imageSrc = issue.imageUrl || getRelevantImage(issue.title, issue.description, issue.department, `card:${issue.id}`);
   const hasUploadedImage = !!issue.imageUrl;
 
+  const handleMouseMove = useCallback((e) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    gsap.to(card, {
+      rotateX: -y * 6,
+      rotateY: x * 6,
+      transformPerspective: 800,
+      duration: 0.4,
+      ease: 'power2.out',
+    });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    gsap.to(cardRef.current, {
+      rotateX: 0, rotateY: 0,
+      duration: 0.6, ease: 'power3.out',
+    });
+  }, []);
+
   return (
-    <article 
-      className="group relative flex flex-col overflow-hidden rounded-[3.5rem] border border-black/5 bg-white shadow-premium transition-all duration-700 hover:-translate-y-3 hover:shadow-2xl"
+    <article
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
+      className="group relative flex flex-col overflow-hidden rounded-[3.5rem] border border-black/5 bg-white shadow-premium transition-all duration-700 hover:shadow-2xl"
     >
       <div className="relative h-64 overflow-hidden">
         <img

@@ -10,6 +10,7 @@ import { Shield, MapPin, Search, Filter } from 'lucide-react';
 import { getRelevantImage } from './utils/image';
 import LandingPage from './components/LandingPage';
 import Cursor from './components/ui/Cursor';
+import PageTransition from './components/ui/PageTransition';
 
 const useCountUp = (end, duration = 1500) => {
   const [count, setCount] = useState(0);
@@ -1695,6 +1696,17 @@ function BackgroundController({ showInteractiveBadges }) {
   );
 }
 
+function RoutePageTransition({ authView, isAddingAccount, isAuthenticated, children }) {
+  const location = useLocation();
+  const pageKey = `${location.pathname}:${authView}:${isAddingAccount ? 'adding-account' : isAuthenticated ? 'authenticated' : 'guest'}`;
+
+  return (
+    <PageTransition pageKey={pageKey}>
+      {children}
+    </PageTransition>
+  );
+}
+
 export default function App() {
   const [portalState, setPortalState] = useState({
     issues: [],
@@ -1797,100 +1809,106 @@ export default function App() {
           {/* BackgroundController renders decorative background only on Home route */}
           <BackgroundController showInteractiveBadges={!!portalState.currentUser} />
 
-          {!portalState.currentUser || isAddingAccount ? (
-            <div className="relative z-[45]">
-              {isAddingAccount && (
-                <div className="max-w-container-max mx-auto px-margin-desktop">
-                  <button 
-                    onClick={() => setIsAddingAccount(false)}
-                    className="flex items-center gap-2 text-[#342721] dark:text-[#8B7355] hover:text-[#342721] font-bold text-sm transition-colors mb-4"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                    Back to Dashboard
-                  </button>
-                </div>
-              )}
-              {authView === 'landing' ? (
-                <LandingPage onGetStarted={(mode) => setAuthView(mode)} />
-              ) : (
-                <div className="max-w-container-max mx-auto px-margin-desktop">
-                  <button
-                    onClick={() => setAuthView('landing')}
-                    className="flex items-center gap-2 text-[#342721] dark:text-[#8B7355] hover:text-[#342721] font-bold text-sm transition-colors mb-4"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                    Back
-                  </button>
-                  <Login />
-                </div>
-              )}
-            </div>
-          ) : (
-            <Routes>
-              <Route path="/" element={<Home issues={portalState.issues} />} />
-              <Route 
-                path="/report" 
-                element={
+          <RoutePageTransition
+            authView={authView}
+            isAddingAccount={isAddingAccount}
+            isAuthenticated={!!portalState.currentUser}
+          >
+            {!portalState.currentUser || isAddingAccount ? (
+              <div className="relative z-[45]">
+                {isAddingAccount && (
                   <div className="max-w-container-max mx-auto px-margin-desktop">
-                    <ReportIssue 
-                      areas={portalState.areas} 
-                      departments={portalState.departments} 
-                      currentUser={portalState.currentUser} 
-                    />
+                    <button 
+                      onClick={() => setIsAddingAccount(false)}
+                      className="flex items-center gap-2 text-[#342721] dark:text-[#8B7355] hover:text-[#342721] font-bold text-sm transition-colors mb-4"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+                      Back to Dashboard
+                    </button>
                   </div>
-                } 
-              />
-              <Route 
-                path="/my-issues" 
-                element={
+                )}
+                {authView === 'landing' ? (
+                  <LandingPage onGetStarted={(mode) => setAuthView(mode)} />
+                ) : (
                   <div className="max-w-container-max mx-auto px-margin-desktop">
-                    <MyIssues 
-                      issues={portalState.issues} 
-                      currentUser={portalState.currentUser} 
-                      onOpenIssue={setSelectedIssue}
-                    />
+                    <button
+                      onClick={() => setAuthView('landing')}
+                      className="flex items-center gap-2 text-[#342721] dark:text-[#8B7355] hover:text-[#342721] font-bold text-sm transition-colors mb-4"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+                      Back
+                    </button>
+                    <Login />
                   </div>
-                } 
-              />
-              <Route 
-                path="/public-issues" 
-                element={
+                )}
+              </div>
+            ) : (
+              <Routes>
+                <Route path="/" element={<Home issues={portalState.issues} />} />
+                <Route 
+                  path="/report" 
+                  element={
+                    <div className="max-w-container-max mx-auto px-margin-desktop">
+                      <ReportIssue 
+                        areas={portalState.areas} 
+                        departments={portalState.departments} 
+                        currentUser={portalState.currentUser} 
+                      />
+                    </div>
+                  } 
+                />
+                <Route 
+                  path="/my-issues" 
+                  element={
+                    <div className="max-w-container-max mx-auto px-margin-desktop">
+                      <MyIssues 
+                        issues={portalState.issues} 
+                        currentUser={portalState.currentUser} 
+                        onOpenIssue={setSelectedIssue}
+                      />
+                    </div>
+                  } 
+                />
+                <Route 
+                  path="/public-issues" 
+                  element={
+                    <div className="max-w-container-max mx-auto px-margin-desktop">
+                      <PublicIssues 
+                        issues={portalState.issues} 
+                        onOpenIssue={setSelectedIssue}
+                      />
+                    </div>
+                  } 
+                />
+                <Route path="/report-bug" element={
                   <div className="max-w-container-max mx-auto px-margin-desktop">
-                    <PublicIssues 
-                      issues={portalState.issues} 
-                      onOpenIssue={setSelectedIssue}
-                    />
-                  </div>
-                } 
-              />
-              <Route path="/report-bug" element={
-                <div className="max-w-container-max mx-auto px-margin-desktop">
-                  <ReportBug />
-                </div>
-              } />
-              {portalState.currentUser?.role === 'admin' && (
-                <Route path="/admin" element={
-                  <div className="max-w-container-max mx-auto px-margin-desktop">
-                    <AdminDashboard
-                      issues={portalState.issues}
-                      departments={portalState.departments}
-                      labour={portalState.labour}
-                      notifications={portalState.notifications}
-                      dashboardStats={portalState.dashboardStats}
-                      currentUser={portalState.currentUser}
-                    />
+                    <ReportBug />
                   </div>
                 } />
-              )}
-              {portalState.currentUser?.role === 'admin' && (
-                <Route path="/analytics" element={
-                  <div data-testid="page-analytics" className="max-w-container-max mx-auto px-margin-desktop">
-                    <AnalyticsDashboard />
-                  </div>
-                } />
-              )}
-            </Routes>
-          )}
+                {portalState.currentUser?.role === 'admin' && (
+                  <Route path="/admin" element={
+                    <div className="max-w-container-max mx-auto px-margin-desktop">
+                      <AdminDashboard
+                        issues={portalState.issues}
+                        departments={portalState.departments}
+                        labour={portalState.labour}
+                        notifications={portalState.notifications}
+                        dashboardStats={portalState.dashboardStats}
+                        currentUser={portalState.currentUser}
+                      />
+                    </div>
+                  } />
+                )}
+                {portalState.currentUser?.role === 'admin' && (
+                  <Route path="/analytics" element={
+                    <div data-testid="page-analytics" className="max-w-container-max mx-auto px-margin-desktop">
+                      <AnalyticsDashboard />
+                    </div>
+                  } />
+                )}
+              </Routes>
+            )}
+          </RoutePageTransition>
         </main>
 
         <Footer onLogout={handleLogout} />

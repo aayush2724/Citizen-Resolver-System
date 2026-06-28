@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { gsap, ScrollTrigger } from '../lib/scroll';
 
 const COLORS = ['#342721', '#4a3830', '#8B7355', '#CDB893', '#DDC5A3', '#ffffff'];
 const DEPT_COLORS = {
@@ -31,6 +32,7 @@ const BarChart = ({ data, labelKey, valueKey, title }) => {
               </div>
               <div className="h-2.5 rounded-full bg-[#DDC5A3] dark:bg-[#4a3830] overflow-hidden">
                 <div
+                  data-bar
                   className="h-full rounded-full transition-all duration-700"
                   style={{ width: `${pct}%`, backgroundColor: color }}
                 />
@@ -145,6 +147,7 @@ const TimelineChart = ({ data }) => {
 };
 
 export default function AnalyticsDashboard() {
+  const chartRef = useRef(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -167,6 +170,34 @@ export default function AnalyticsDashboard() {
     load();
   }, []);
 
+  useEffect(() => {
+    if (!data || !chartRef.current) return undefined;
+
+    const ctx = gsap.context(() => {
+      // Reveal the chart section
+      gsap.fromTo(chartRef.current,
+        { opacity: 0, y: 32 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: chartRef.current, start: 'top 85%', once: true }
+        }
+      );
+
+      // Animate bar heights from 0
+      const bars = chartRef.current?.querySelectorAll('[data-bar]');
+      if (bars?.length) {
+        gsap.fromTo(bars,
+          { scaleY: 0, transformOrigin: 'bottom' },
+          { scaleY: 1, duration: 0.9, stagger: 0.06, ease: 'power3.out',
+            scrollTrigger: { trigger: chartRef.current, start: 'top 80%', once: true }
+          }
+        );
+      }
+
+      ScrollTrigger.refresh();
+    }, chartRef);
+    return () => ctx.revert();
+  }, [data]);
+
   if (loading) return (
     <div className="flex items-center justify-center py-24">
       <div className="w-10 h-10 border-4 border-[#342721] border-t-transparent rounded-full animate-spin" />
@@ -185,12 +216,18 @@ export default function AnalyticsDashboard() {
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
+    <div ref={chartRef} className="space-y-8">
       <div>
         <span className="text-[#342721] font-bold text-[11px] uppercase tracking-widest block mb-1">Administration</span>
-        <h1 className="text-[34px] md:text-[44px] font-black text-[#342721] dark:text-[#DDC5A3] leading-none tracking-[-0.04em]">
-          Analytics
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-[34px] md:text-[44px] font-black text-[#342721] dark:text-[#DDC5A3] leading-none tracking-[-0.04em]">
+            Analytics
+          </h1>
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E8C97A] opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#E8C97A]" />
+          </span>
+        </div>
         <p className="text-[#8B7355] text-sm mt-2">Real-time insights into CivicResolve activity</p>
       </div>
 
@@ -241,7 +278,7 @@ export default function AnalyticsDashboard() {
                 <div key={i} className="flex items-center gap-4">
                   <div className="w-28 text-[11px] font-semibold text-[#8B7355] truncate">{d.department}</div>
                   <div className="flex-1 h-2.5 rounded-full bg-[#DDC5A3] dark:bg-[#4a3830] overflow-hidden">
-                    <div className="h-full rounded-full bg-emerald-500 transition-all duration-700" style={{ width: `${rate}%` }} />
+                    <div data-bar className="h-full rounded-full bg-emerald-500 transition-all duration-700" style={{ width: `${rate}%` }} />
                   </div>
                   <div className="w-12 text-right text-[11px] font-black text-[#342721] dark:text-[#DDC5A3]">{rate}%</div>
                 </div>
