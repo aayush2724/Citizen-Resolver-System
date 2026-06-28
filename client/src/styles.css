@@ -27,6 +27,9 @@
   --primary-accent: #4a3830;
   --border: rgba(52, 39, 33, 0.10);
   --shadow-primary: rgba(52, 39, 33, 0.15);
+  --amber-glow: #E8C97A;
+  --cocoa-ink: #1C120F;
+  --cream-white: #FAF7F2;
 }
 
 /* ── Dark Mode Palette ── */
@@ -191,7 +194,7 @@ body {
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.5),
     0 18px 34px rgba(0,0,0,0.36),
-    0 0 26px rgba(103,232,249,0.2);
+    0 0 26px rgba(232,201,122,0.35);
   transform: translateZ(34px);
   animation: cityPulse 4.8s ease-in-out infinite;
 }
@@ -211,12 +214,12 @@ body {
 
 .landing-ring {
   animation: landingRing 9s linear infinite;
-  box-shadow: 0 0 40px rgba(125,211,252,0.25);
+  box-shadow: 0 0 40px rgba(232,201,122,0.3);
 }
 
 .landing-ring-fast {
   animation: landingRing 4.8s linear infinite reverse;
-  box-shadow: 0 0 28px rgba(253,224,71,0.28);
+  box-shadow: 0 0 28px rgba(221,197,163,0.25);
 }
 
 .landing-float {

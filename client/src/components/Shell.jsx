@@ -11,15 +11,31 @@ const NAV_ITEMS = [
 ];
 
 function AppHeader({ activePage, setActivePage, currentUser, unreadCount, onLogout }) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-md border border-outline-variant/30 px-10 py-4 shadow-xl rounded-full flex justify-between items-center w-[90%] max-w-[1200px] h-16">
+    <nav className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 px-10 py-4 shadow-xl rounded-full flex justify-between items-center w-[90%] max-w-[1200px] h-16 transition-all duration-500 ${
+      scrolled
+        ? 'bg-[#FAF7F2]/92 backdrop-blur-xl border border-[#342721]/10 shadow-[0_8px_32px_rgba(52,39,33,0.12)]'
+        : 'bg-transparent border border-transparent shadow-none'
+    }`}>
       <div className="flex items-center gap-12">
         <button
           className="flex items-center gap-2"
           onClick={() => setActivePage("home")}
           type="button"
         >
-          <span className="font-extrabold text-primary text-lg" style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}>
+          <span
+            className={`font-extrabold text-lg transition-colors duration-500 ${scrolled ? 'text-[#342721]' : 'text-white'}`}
+            style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}
+          >
             Citizen Resolver System
           </span>
         </button>
@@ -35,10 +51,8 @@ function AppHeader({ activePage, setActivePage, currentUser, unreadCount, onLogo
               type="button"
               onClick={() => setActivePage(item.id)}
               className={`text-sm font-bold tracking-tight transition-all relative ${
-                activePage === item.id
-                  ? "text-primary after:absolute after:-bottom-[10px] after:left-0 after:right-0 after:h-[2px] after:bg-primary"
-                  : "text-on-surface-variant hover:text-primary"
-              }`}
+                scrolled ? 'text-[#342721]' : 'text-white/80'
+              } ${activePage === item.id ? 'after:absolute after:-bottom-[10px] after:left-0 after:right-0 after:h-[2px] after:bg-[#E8C97A]' : ''}`}
             >
               {item.label}
               {item.id === "my" && unreadCount > 0 && (
@@ -53,7 +67,7 @@ function AppHeader({ activePage, setActivePage, currentUser, unreadCount, onLogo
 
       <div className="flex items-center gap-6">
         <button
-          className="relative text-on-surface-variant hover:text-primary transition-colors"
+          className={`relative transition-colors ${scrolled ? 'text-[#342721]' : 'text-white/80'}`}
           onClick={() => setActivePage("my")}
           type="button"
         >
@@ -79,7 +93,7 @@ function AppHeader({ activePage, setActivePage, currentUser, unreadCount, onLogo
           </div>
         ) : (
           <button
-            className="text-sm font-bold text-primary"
+            className={`text-sm font-bold transition-colors ${scrolled ? 'text-[#342721]' : 'text-white'}`}
             onClick={() => setActivePage("auth")}
             type="button"
           >

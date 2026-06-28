@@ -9,6 +9,7 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 import { Shield, MapPin, Search, Filter } from 'lucide-react';
 import { getRelevantImage } from './utils/image';
 import LandingPage from './components/LandingPage';
+import Cursor from './components/ui/Cursor';
 
 const useCountUp = (end, duration = 1500) => {
   const [count, setCount] = useState(0);
@@ -1789,6 +1790,7 @@ export default function App() {
     <Router>
       <style>{globalStyles}</style>
       <div className="font-body-md text-on-surface bg-[#DDC5A3] dark:bg-[#342721] dark:text-[#DDC5A3] min-h-screen flex flex-col">
+        <Cursor />
         <Header currentUser={portalState.currentUser} onLogout={handleLogout} notifications={portalState.notifications} />
 
         <main className="relative flex-1 pt-24 md:pt-32 pb-24 w-full overflow-x-hidden">

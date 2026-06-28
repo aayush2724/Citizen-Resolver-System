@@ -5,6 +5,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        'amber-glow': '#E8C97A',
+        'cocoa-ink': '#1C120F',
+        'cream-white': '#FAF7F2',
         'cocoa-noir': '#342721',
         'amber-lux': '#DDC5A3',
         'muted': '#8B7355',
