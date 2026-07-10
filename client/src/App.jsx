@@ -251,32 +251,28 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
           </span>
         </div>
       </div>
-      <nav className={`hidden md:flex items-center ml-4 ${currentUser ? 'bg-[#DDC5A3] rounded-full p-1' : 'gap-2'}`}>
-        {currentUser ? (
-          <>
-            <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
-            <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
-            <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
-            <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
-            {currentUser?.role === 'admin' && (
-              <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
-            )}
-            {currentUser?.role === 'admin' && (
-              <NavLink to="/analytics" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Analytics</NavLink>
-            )}
-            <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
-          </>
-        ) : (
-          <>
-            <button onClick={() => window.dispatchEvent(new Event("trigger-login"))} className="px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] text-[#342721] hover:bg-[#DDC5A3]/50" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sign In</button>
-            <button onClick={() => window.dispatchEvent(new Event("trigger-signup"))} className="px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] bg-[#342721] text-white shadow-md hover:bg-[#4a3830]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Create Account</button>
-          </>
-        )}
-      </nav>
+      {currentUser && (
+        <nav className="hidden md:flex items-center bg-[#DDC5A3] rounded-full p-1 ml-4">
+          <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
+          <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
+          <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
+          <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
+          {currentUser?.role === 'admin' && (
+            <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
+          )}
+          {currentUser?.role === 'admin' && (
+            <NavLink to="/analytics" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Analytics</NavLink>
+          )}
+          <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
+        </nav>
+      )}
 
       <MobileNav currentUser={currentUser} onLogout={onLogout} />
 
       <div className="flex items-center gap-3">
+        {!currentUser && (
+          <button onClick={() => window.dispatchEvent(new Event("trigger-login"))} className="hidden md:flex px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] bg-[#342721] text-white shadow-md hover:bg-[#4a3830]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sign In</button>
+        )}
         <div className="relative">
           <button
             onClick={() => setNotifOpen(!notifOpen)}
