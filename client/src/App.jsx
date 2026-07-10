@@ -252,17 +252,26 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
         </div>
       </div>
       <nav className="hidden md:flex items-center bg-[#DDC5A3] rounded-full p-1 ml-4">
-        <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
-        <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
-        <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
-        <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
-        {currentUser?.role === 'admin' && (
-          <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
+        {currentUser ? (
+          <>
+            <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
+            <NavLink to="/report" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Issue</NavLink>
+            <NavLink to="/my-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>My Issues</NavLink>
+            <NavLink to="/public-issues" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Public Issues</NavLink>
+            {currentUser?.role === 'admin' && (
+              <NavLink to="/admin" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Dashboard</NavLink>
+            )}
+            {currentUser?.role === 'admin' && (
+              <NavLink to="/analytics" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Analytics</NavLink>
+            )}
+            <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
+          </>
+        ) : (
+          <>
+            <button onClick={() => window.dispatchEvent(new Event("trigger-login"))} className="px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] text-[#342721] hover:text-[#4a3830]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sign In</button>
+            <button onClick={() => window.dispatchEvent(new Event("trigger-signup"))} className="px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] bg-[#342721] text-white shadow-md" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Create Account</button>
+          </>
         )}
-        {currentUser?.role === 'admin' && (
-          <NavLink to="/analytics" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Analytics</NavLink>
-        )}
-        <NavLink to="/report-bug" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Report Bug</NavLink>
       </nav>
 
       <MobileNav currentUser={currentUser} onLogout={onLogout} />
@@ -784,7 +793,7 @@ const NonHomeBackground = () => {
   );
 };
 
-const Home = ({ issues = [] }) => {
+const Home = ({ issues = [], isAuthenticated = true, onGetStarted }) => {
   const stats = {
     total: issues.length,
     resolved: issues.filter(i => i.status === 'Resolved' || i.status === 'Completed').length
@@ -850,22 +859,24 @@ const Home = ({ issues = [] }) => {
         {/* CTA Buttons */}
         <div className="hero-text-4 flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 md:mb-16 w-full">
           <RippleButton
-            to="/report"
+            to={isAuthenticated ? "/report" : undefined}
+            onClick={!isAuthenticated ? () => onGetStarted('signup') : undefined}
             className="btn-primary-shimmer relative overflow-hidden w-full sm:w-auto flex items-center justify-center gap-2.5 px-9 py-4 rounded-full font-bold text-[14px] uppercase tracking-wider text-white active:scale-95 transition-transform duration-150"
             style={{ background: 'linear-gradient(135deg, #342721 0%, #342721 60%, #8B7355 100%)', border: '1px solid rgba(52,39,33,0.5)' }}
           >
             <span className="material-symbols-outlined text-lg relative z-10" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
-            <span className="relative z-10">Report an Issue</span>
+            <span className="relative z-10">{isAuthenticated ? "Report an Issue" : "Start Reporting"}</span>
             <span className="arrow-icon material-symbols-outlined text-base relative z-10">arrow_forward</span>
           </RippleButton>
 
           <RippleButton
-            to="/public-issues"
+            to={isAuthenticated ? "/public-issues" : undefined}
+            onClick={!isAuthenticated ? () => onGetStarted('login') : undefined}
             className="btn-ghost-shimmer relative overflow-hidden w-full sm:w-auto flex items-center justify-center gap-2.5 px-9 py-4 rounded-full font-bold text-[14px] uppercase tracking-wider text-white/90 active:scale-95 transition-all duration-200 hover:text-white"
             style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.22)', backdropFilter: 'blur(16px)' }}
           >
-            <span className="material-symbols-outlined text-lg relative z-10">public</span>
-            <span className="relative z-10">Public Board</span>
+            <span className="material-symbols-outlined text-lg relative z-10">{isAuthenticated ? "public" : "login"}</span>
+            <span className="relative z-10">{isAuthenticated ? "Public Board" : "Sign In"}</span>
           </RippleButton>
         </div>
 
@@ -928,10 +939,13 @@ const Home = ({ issues = [] }) => {
             { icon: 'water',         label: 'Drainage',     sub: 'Flooding',    color: 'text-cyan-300',   hoverBg: 'rgba(103,232,249,0.15)',  hoverBorder: 'rgba(103,232,249,0.45)', hoverShadow: 'rgba(103,232,249,0.3)' },
             { icon: 'delete',        label: 'Sanitation',   sub: 'Waste',       color: 'text-rose-300',   hoverBg: 'rgba(253,164,175,0.15)',  hoverBorder: 'rgba(253,164,175,0.45)', hoverShadow: 'rgba(253,164,175,0.3)' },
             { icon: 'park',          label: 'Parks',        sub: 'Public',      color: 'text-lime-300',   hoverBg: 'rgba(163,230,53,0.15)',   hoverBorder: 'rgba(163,230,53,0.45)',  hoverShadow: 'rgba(163,230,53,0.3)'  },
-          ].map((dept) => (
-            <NavLink
+          ].map((dept) => {
+            const Tag = isAuthenticated ? NavLink : 'button';
+            return (
+            <Tag
               key={dept.label}
-              to="/report"
+              to={isAuthenticated ? "/report" : undefined}
+              onClick={!isAuthenticated ? () => onGetStarted('signup') : undefined}
               className="dept-quick-card group relative flex flex-col items-center gap-2 py-4 px-2 rounded-2xl transition-all duration-300 hover:scale-[1.08] active:scale-95 overflow-hidden"
               style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(14px)' }}
               onMouseEnter={e => {
@@ -951,8 +965,8 @@ const Home = ({ issues = [] }) => {
                 <div className="text-[8px] text-white/35 group-hover:text-white/60 transition-colors uppercase tracking-wider font-semibold mt-0.5">{dept.sub}</div>
               </div>
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%)' }} />
-            </NavLink>
-          ))}
+            </Tag>
+          )})}
         </div>
       </div>
 
@@ -960,13 +974,15 @@ const Home = ({ issues = [] }) => {
       <div className="absolute bottom-0 left-0 right-0 overflow-hidden py-3"
         style={{ background: 'rgba(0,0,0,0.35)', borderTop: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(8px)' }}>
         <div className="ticker-track flex items-center gap-0" style={{ width: 'max-content' }}>
-          {tickerItems.map((item, i) => (
-            <NavLink key={i} to="/report" className="flex items-center gap-2 px-6 shrink-0 group cursor-pointer transition-all duration-200 hover:opacity-100">
+          {tickerItems.map((item, i) => {
+            const Tag = isAuthenticated ? NavLink : 'button';
+            return (
+            <Tag key={i} to={isAuthenticated ? "/report" : undefined} onClick={!isAuthenticated ? () => onGetStarted('signup') : undefined} className="flex items-center gap-2 px-6 shrink-0 group cursor-pointer transition-all duration-200 hover:opacity-100">
               <span className="material-symbols-outlined text-amber-200/70 text-sm group-hover:text-amber-200 transition-colors" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
               <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 group-hover:text-white/80 transition-colors">{item.label}</span>
               <span className="mx-3 text-white/10">·</span>
-            </NavLink>
-          ))}
+            </Tag>
+          )})}
         </div>
       </div>
 
@@ -1722,14 +1738,20 @@ export default function App() {
     };
 
     const handleAddAccount = () => setIsAddingAccount(true);
+    const handleTriggerLogin = () => setAuthView('login');
+    const handleTriggerSignup = () => setAuthView('signup');
 
     fetchState();
     window.addEventListener("portal-state-change", fetchState);
     window.addEventListener("trigger-add-account", handleAddAccount);
+    window.addEventListener("trigger-login", handleTriggerLogin);
+    window.addEventListener("trigger-signup", handleTriggerSignup);
     
     return () => {
       window.removeEventListener("portal-state-change", fetchState);
       window.removeEventListener("trigger-add-account", handleAddAccount);
+      window.removeEventListener("trigger-login", handleTriggerLogin);
+      window.removeEventListener("trigger-signup", handleTriggerSignup);
     };
   }, []);
 
@@ -1807,7 +1829,11 @@ export default function App() {
                   </div>
                 )}
                 {authView === 'landing' ? (
-                  <LandingPage onGetStarted={(mode) => setAuthView(mode)} />
+                  <Home 
+                    issues={portalState.issues} 
+                    isAuthenticated={false} 
+                    onGetStarted={(mode) => setAuthView(mode)} 
+                  />
                 ) : (
                   <div className="max-w-container-max mx-auto px-margin-desktop">
                     <button
