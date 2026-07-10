@@ -251,7 +251,7 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
           </span>
         </div>
       </div>
-      <nav className="hidden md:flex items-center bg-[#DDC5A3] rounded-full p-1 ml-4">
+      <nav className={`hidden md:flex items-center ml-4 ${currentUser ? 'bg-[#DDC5A3] rounded-full p-1' : 'gap-2'}`}>
         {currentUser ? (
           <>
             <NavLink to="/" className={({ isActive }) => `px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] ${isActive ? 'bg-[#342721] text-white shadow-md' : 'text-[#342721] hover:text-[#4a3830]'}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Home</NavLink>
@@ -268,8 +268,8 @@ const Header = ({ currentUser, onLogout, notifications = [] }) => {
           </>
         ) : (
           <>
-            <button onClick={() => window.dispatchEvent(new Event("trigger-login"))} className="px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] text-[#342721] hover:text-[#4a3830]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sign In</button>
-            <button onClick={() => window.dispatchEvent(new Event("trigger-signup"))} className="px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] bg-[#342721] text-white shadow-md" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Create Account</button>
+            <button onClick={() => window.dispatchEvent(new Event("trigger-login"))} className="px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] text-[#342721] hover:bg-[#DDC5A3]/50" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sign In</button>
+            <button onClick={() => window.dispatchEvent(new Event("trigger-signup"))} className="px-6 py-2 transition-all text-[13px] font-semibold rounded-full tracking-[-0.01em] bg-[#342721] text-white shadow-md hover:bg-[#4a3830]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Create Account</button>
           </>
         )}
       </nav>
