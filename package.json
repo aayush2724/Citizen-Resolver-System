@@ -2,10 +2,10 @@
   "name": "civicresolve",
   "version": "1.0.0",
   "private": true,
-  "description": "CivicResolve – civic issue reporting platform with real-time notifications, AI classification, GPS, PWA support, image upload, and analytics",
+  "description": "CivicResolve \u2013 civic issue reporting platform with real-time notifications, AI classification, GPS, PWA support, image upload, and analytics",
   "scripts": {
-    "dev": "concurrently --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
-    "start": "concurrently --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm run start --prefix server\" \"npm run dev --prefix client\"",
+    "dev": "node init && concurrently --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "start": "node init && concurrently --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm run start --prefix server\" \"npm run dev --prefix client\"",
     "install:all": "npm install && npm install --prefix server && npm install --prefix client",
     "init:db": "node server/scripts/init_db.js"
   },

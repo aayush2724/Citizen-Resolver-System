@@ -1,12 +1,12 @@
 {
   "name": "civicresolve-server",
   "version": "1.0.0",
-  "description": "CivicResolve – Express backend with SQLite, Socket.IO, and AI classification",
+  "description": "CivicResolve \u2013 Express backend with SQLite, Socket.IO, and AI classification",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
+    "dev": "node init && nodemon src/server.js",
+    "start": "node init && node src/server.js",
     "init:db": "node scripts/init_db.js"
   },
   "dependencies": {
